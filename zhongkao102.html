@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f4e79">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>中考古诗文默写打卡</title>
+<style>
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { font-size: 16px; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", serif;
+    background: #f5f2ea; color: #2f2a22; padding-bottom: 40px;
+  }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 0 14px; }
+  header { text-align: center; padding: 20px 0 6px; }
+  header h1 { font-size: 1.42rem; color: #1f4e79; letter-spacing: 1px; }
+  header .sub { color: #6a5c48; font-size: .88rem; margin-top: 3px; }
+  .wm { text-align: center; color: #b45f2a; font-size: .78rem; margin-top: 4px; }
+  .hint { text-align: center; color: #9a8b72; font-size: .78rem; margin: 6px 0 10px; }
+  .save-state { text-align: center; color: #2e8b57; font-size: .78rem; margin: 2px 0 8px; }
+  .warn {
+    display: none; background: #fdecea; color: #a9442f; border: 1px solid #f3c1bb;
+    border-radius: 12px; padding: 10px 12px; font-size: .84rem; margin-top: 12px;
+  }
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 10px; }
+  .chip {
+    flex-shrink: 0; border: 2px solid #e3dac8; background: #fff; color: #4a3f2f;
+    border-radius: 20px; padding: 8px 14px; font-size: .92rem; cursor: pointer; font-family: inherit;
+  }
+  .chip.on { border-color: #1f4e79; background: #eaf1f7; font-weight: 700; }
+  .chip.add { border-style: dashed; color: #1f4e79; }
+  .toolbar { display: flex; gap: 8px; margin-bottom: 12px; }
+  .toolbar .tbtn {
+    flex: 1; border: 1px solid #e3dac8; background: #fff; border-radius: 12px;
+    padding: 9px; font-size: .9rem; color: #4a3f2f; cursor: pointer; font-family: inherit;
+  }
+  .summary {
+    background: #fff; border-radius: 18px; border: 1px solid #e3dac8;
+    box-shadow: 0 4px 14px rgba(0,0,0,.06);
+    padding: 16px; display: flex; align-items: center; gap: 16px;
+  }
+  .ring { position: relative; width: 104px; height: 104px; flex-shrink: 0; }
+  .ring svg { transform: rotate(-90deg); }
+  .ring .num {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-weight: 700; font-size: 1.35rem; color: #1f4e79;
+  }
+  .ring .num small { font-size: .62rem; font-weight: 400; color: #6a5c48; }
+  .stats { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; }
+  .stat { background: #f7f2e8; border-radius: 12px; padding: 8px 10px; }
+  .stat .k { font-size: .72rem; color: #6a5c48; }
+  .stat .v { font-size: 1.08rem; font-weight: 700; color: #4a3f2f; margin-top: 2px; }
+  .stat .v.heat { color: #d97c2b; }
+  .big-btn {
+    width: 100%; margin-top: 12px; border: none; border-radius: 16px;
+    padding: 15px; font-size: 1.08rem; font-weight: 700; cursor: pointer;
+    background: linear-gradient(135deg, #2c5f8a, #2e8b57); color: #fff;
+    box-shadow: 0 4px 12px rgba(44,95,138,.25);
+  }
+  .big-btn.done { background: #e6ddca; color: #6a5c48; box-shadow: none; }
+  .cal-card { background: #fff; border: 1px solid #e3dac8; border-radius: 18px; padding: 14px; margin-top: 14px; }
+  .cal-card .tt { font-size: .9rem; font-weight: 700; color: #4a3f2f; margin-bottom: 10px; }
+  .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+  .cal .d {
+    aspect-ratio: 1; border-radius: 10px; background: #f0e9da;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .72rem; color: #9a8b72;
+  }
+  .cal .d.on { background: #2e8b57; color: #fff; font-weight: 700; }
+  .cal .d.today { outline: 2px solid #b45f2a; outline-offset: 1px; }
+  details.panel { margin-top: 14px; background: #fff; border: 1px solid #e3dac8; border-radius: 18px; overflow: hidden; }
+  details.panel > summary {
+    list-style: none; padding: 13px 16px; font-weight: 700; color: #4a3f2f;
+    cursor: pointer; font-size: .95rem; display: flex; align-items: center; gap: 8px;
+  }
+  details.panel > summary::-webkit-details-marker { display: none; }
+  details.panel > summary::after { content: "▾"; margin-left: auto; color: #1f4e79; }
+  details.panel[open] > summary::after { content: "▴"; }
+  details.panel .inner { padding: 0 16px 16px; display: grid; gap: 10px; }
+  details.panel .row { display: flex; flex-wrap: wrap; gap: 8px; }
+  details.panel .mini-btn {
+    flex: 1; min-width: 110px; border: 1px solid #ddd0bc; background: #fbf6ec;
+    border-radius: 12px; padding: 10px; font-size: .9rem; color: #4a3f2f; cursor: pointer;
+    font-family: inherit;
+  }
+  details.panel textarea {
+    width: 100%; border: 1px solid #ddd0bc; border-radius: 10px;
+    padding: 10px; font-size: .92rem; font-family: inherit; background: #fbf6ec;
+  }
+  details.panel textarea { height: 84px; }
+  .child-item {
+    display: flex; align-items: center; gap: 10px; background: #fbf6ec;
+    border: 1px solid #ece0cf; border-radius: 12px; padding: 9px 12px;
+  }
+  .child-item .nm { flex: 1; font-size: .95rem; color: #3a3020; }
+  .child-item button {
+    border: 1px solid #ddd0bc; background: #fff; border-radius: 10px;
+    padding: 6px 10px; font-size: .82rem; color: #4a3f2f; cursor: pointer; font-family: inherit;
+  }
+  .actinfo { font-size: .82rem; color: #6a5c48; background: #fbf6ec; border: 1px solid #ece0cf; border-radius: 12px; padding: 10px 12px; }
+  .group { background: #fff; border: 1px solid #e3dac8; border-radius: 18px; margin-top: 16px; overflow: hidden; }
+  .group > summary {
+    list-style: none; padding: 14px 16px; cursor: pointer; color: #fff;
+    display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1rem;
+  }
+  .group > summary::-webkit-details-marker { display: none; }
+  .group > summary .cnt { font-size: .68rem; background: rgba(255,255,255,.28); padding: 2px 9px; border-radius: 10px; font-weight: 400; }
+  .group > summary .gp { margin-left: auto; font-size: .72rem; font-weight: 400; opacity: .95; }
+  .group > summary::after { content: "▾"; margin-left: 4px; }
+  .group[open] > summary::after { content: "▴"; }
+  .group .cards { padding: 10px; }
+  .card { border: 1px solid #e3dac8; border-radius: 14px; margin-bottom: 10px; overflow: hidden; background: #fffdf8; }
+  .card .head {
+    width: 100%; border: none; background: transparent; cursor: pointer;
+    display: flex; align-items: center; gap: 10px; padding: 12px;
+    text-align: left; font-family: inherit;
+  }
+  .card .no {
+    width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: .76rem; font-weight: 700;
+  }
+  .card .t { font-size: .98rem; font-weight: 700; color: #33291a; }
+  .card .a { font-size: .76rem; color: #9a8b72; margin-left: auto; text-align: right; }
+  .card .chev { color: #c0ab90; font-size: .8rem; }
+  .card .body { display: none; padding: 0 12px 12px; }
+  .card.open .body { display: block; }
+  .card.open .chev { transform: rotate(180deg); }
+  .cblock {
+    background: #fbf4e7; border-left: 4px solid var(--c, #d8ae7a);
+    border-radius: 10px; padding: 10px 12px; margin-bottom: 8px;
+  }
+  .cblock .ct { font-weight: 700; color: #8b5a2b; font-size: .86rem; margin-bottom: 4px; }
+  .cblock .cc { font-size: .9rem; line-height: 1.8; color: #4a3a28; }
+  .exs { margin: 4px 0 8px; }
+  .exg { margin-bottom: 8px; }
+  .exg b { font-size: .86rem; color: #1f4e79; }
+  .exl {
+    background: #f7f2e8; border-radius: 8px; padding: 8px 10px; margin-top: 5px;
+    font-size: .92rem; line-height: 1.75; color: #3a3020;
+  }
+  .checks { display: flex; gap: 8px; margin-top: 10px; }
+  .ck {
+    flex: 1; border: 2px solid var(--bc, #c9b89e); background: #fff;
+    border-radius: 12px; padding: 8px 4px; cursor: pointer; font-family: inherit;
+    font-size: .82rem; color: #6a5c48; min-height: 54px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  }
+  .ck .dt { font-size: .6rem; color: #b3a084; }
+  .ck.on { border-color: var(--c, #2c5f8a); background: var(--c, #2c5f8a); color: #fff; font-weight: 700; }
+  .ck.on .dt { color: rgba(255,255,255,.85); }
+  .banner {
+    display: none; text-align: center; background: linear-gradient(135deg, #f6d365, #fda085);
+    border-radius: 16px; padding: 14px; margin-top: 14px; color: #5a3c12; font-weight: 700;
+  }
+  .banner.show { display: block; }
+  .toast {
+    position: fixed; left: 50%; bottom: 46px; transform: translateX(-50%);
+    background: rgba(47,42,34,.92); color: #fff; border-radius: 20px;
+    padding: 9px 18px; font-size: .86rem; opacity: 0; pointer-events: none;
+    transition: opacity .25s; z-index: 99; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+  .modal-bg {
+    display: none; position: fixed; inset: 0; background: rgba(47,42,34,.5);
+    z-index: 80; align-items: center; justify-content: center; padding: 24px;
+  }
+  .modal-bg.show { display: flex; }
+  .modal {
+    background: #fff; border-radius: 18px; width: 100%; max-width: 360px;
+    padding: 20px; box-shadow: 0 12px 40px rgba(0,0,0,.25);
+  }
+  .modal h3 { font-size: 1.1rem; color: #4a3f2f; margin-bottom: 12px; }
+  .emoji-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .emoji-opt {
+    width: 46px; height: 46px; font-size: 1.5rem; border: 2px solid #e3dac8;
+    border-radius: 12px; background: #fff; cursor: pointer;
+  }
+  .emoji-opt.on { border-color: #1f4e79; background: #eaf1f7; }
+  .modal input[type=text] {
+    width: 100%; border: 1px solid #ddd0bc; border-radius: 10px;
+    padding: 11px; font-size: 1rem; font-family: inherit; margin-bottom: 14px;
+  }
+  .modal .mrow { display: flex; gap: 10px; }
+  .modal .mrow button {
+    flex: 1; border: none; border-radius: 12px; padding: 12px; font-size: .98rem;
+    cursor: pointer; font-family: inherit;
+  }
+  .modal .mrow .ok { background: #1f4e79; color: #fff; font-weight: 700; }
+  .modal .mrow .no { background: #efe6d8; color: #4a3f2f; }
+  .activation {
+    display: none; position: fixed; inset: 0; z-index: 90; overflow-y: auto;
+    background: linear-gradient(160deg, #f5f2ea, #e8e2d2);
+    align-items: flex-start; justify-content: center; padding: 56px 20px 40px;
+  }
+  .activation.show { display: flex; }
+  .act-card {
+    background: #fff; border-radius: 20px; padding: 24px 22px; width: 100%; max-width: 400px;
+    box-shadow: 0 16px 50px rgba(0,0,0,.18); text-align: center;
+  }
+  .act-card .logo { font-size: 2.4rem; margin-bottom: 8px; }
+  .act-card h2 { color: #1f4e79; font-size: 1.22rem; margin-bottom: 4px; }
+  .act-card .tip { color: #6a5c48; font-size: .82rem; margin-bottom: 18px; line-height: 1.6; }
+  .act-card input {
+    width: 100%; border: 1px solid #ddd0bc; border-radius: 12px; padding: 12px;
+    font-size: 1rem; margin-bottom: 10px; font-family: inherit; text-align: center;
+  }
+  .act-card .go {
+    width: 100%; border: none; border-radius: 12px; padding: 14px; font-size: 1.05rem;
+    font-weight: 700; color: #fff; background: linear-gradient(135deg, #1f4e79, #2e8b57);
+    cursor: pointer; margin-top: 4px;
+  }
+  .act-card .err { color: #c0392b; font-size: .84rem; margin-top: 10px; min-height: 1.2em; }
+
+  .toolbar .tbtn.go { background: linear-gradient(135deg, #1f4e79, #2e8b57); color: #fff; font-weight: 700; border: none; }
+  .quiz-bg {
+    display: none; position: fixed; inset: 0; z-index: 95; background: rgba(31,40,55,.55);
+    align-items: flex-start; justify-content: center; padding: 30px 16px; overflow-y: auto;
+  }
+  .quiz-bg.show { display: flex; }
+  .quiz-card {
+    background: #fff; border-radius: 20px; padding: 20px 18px; width: 100%; max-width: 440px;
+    box-shadow: 0 18px 60px rgba(0,0,0,.25);
+  }
+  .quiz-card .qhead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .quiz-card .qhead .prog { font-size: .82rem; color: #9a8b72; }
+  .quiz-card .qhead .close { border: none; background: #f1ece2; border-radius: 50%; width: 30px; height: 30px; font-size: .9rem; cursor: pointer; }
+  .fill-q {
+    font-size: 1.05rem; color: #2f2a22; line-height: 2.2; padding: 12px 14px;
+    background: #fbf6ec; border-radius: 12px; margin-bottom: 8px;
+  }
+  .fill-src { font-size: .8rem; color: #9a8b72; margin-bottom: 6px; }
+  .fill-in {
+    border: none; border-bottom: 2px solid #8e44ad; background: transparent; width: 7em; max-width: 72%;
+    font-size: 1rem; padding: 2px 6px; margin: 0 4px; color: #1f4e79; font-weight: 700; font-family: inherit;
+  }
+  .fill-in.right { border-color: #2e8b57; background: #eaf7ee; }
+  .fill-in.wrong { border-color: #c0392b; background: #fdecea; }
+  .fill-ans { margin: 6px 0 10px; }
+  .fill-ans .ok { color: #1d5b34; font-weight: 700; }
+  .fill-ans .no { color: #a9442f; font-weight: 700; line-height: 1.7; }
+  .fill-check {
+    width: 100%; border: none; border-radius: 12px; padding: 12px; font-size: 1rem; font-weight: 700;
+    color: #fff; background: linear-gradient(135deg, #8e44ad, #2e8b57); cursor: pointer; font-family: inherit;
+  }
+  .quiz-card .next {
+    width: 100%; border: none; border-radius: 12px; padding: 12px; font-size: 1rem; font-weight: 700;
+    color: #fff; background: linear-gradient(135deg, #1f4e79, #2e8b57); cursor: pointer; font-family: inherit;
+  }
+  .quiz-card .score { text-align: center; font-size: 1.1rem; color: #1f4e79; font-weight: 700; padding: 16px 0 10px; }
+  
+  .quiz-card { max-width: 470px; border-radius: 26px; padding: 0 0 4px; overflow: hidden; animation: bczIn .28s ease; }
+  @keyframes bczIn { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
+  .progbar { height: 6px; background: #f0e9da; }
+  .progbar i { display: block; height: 100%; background: linear-gradient(90deg, #2e8b57, #8e44ad); transition: width .3s; }
+  .quiz-card .qhead { padding: 14px 18px 0; margin-bottom: 2px; }
+  .bcz-card {
+    font-size: 1.16rem; color: #2f2a22; line-height: 2.4; padding: 24px 22px 18px;
+    min-height: 150px; display: flex; align-items: center; flex-wrap: wrap;
+  }
+  .fill-src { padding: 0 22px 12px; font-size: .82rem; color: #9a8b72; }
+  .fill-ans { padding: 0 22px 12px; }
+  .fill-check, .quiz-card .next { width: calc(100% - 44px); margin: 0 22px 18px; }
+  .fill-in { width: 8em; border-bottom: 2.5px solid #8e44ad; font-size: 1.1rem; }
+  .fill-in.fill-wide { width: 100%; max-width: 100%; border: 2px dashed #8e44ad; border-radius: 12px; padding: 10px 12px; }
+  .zt-sec { margin-top: 20px; }
+  .zt-head { font-size: 1.08rem; font-weight: 800; color: #1f4e79; }
+  .zt-sub { font-size: .78rem; color: #9a8b72; margin: 4px 0 12px; line-height: 1.7; }
+  .zt-year { display: flex; align-items: center; gap: 8px; margin: 18px 0 10px; }
+  .zt-year .zy { font-size: 1rem; font-weight: 800; color: #8e44ad; background: rgba(142,68,173,.1); border: 1px solid rgba(142,68,173,.28); padding: 4px 14px; border-radius: 10px; }
+  .zt-year .zc { font-size: .76rem; color: #9a8b72; }
+  .zt-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (max-width: 980px) { .zt-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px) { .zt-grid { grid-template-columns: 1fr; } }
+  .zt-card { background: #fff; border: 1px solid #e3dac8; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 6px 16px rgba(0,0,0,.05); }
+  .zt-card.done.ok { border-color: #2e8b57; box-shadow: 0 0 0 2px rgba(46,139,87,.15); }
+  .zt-card.done.no { border-color: #c0392b; box-shadow: 0 0 0 2px rgba(192,57,43,.12); }
+  .zt-title { font-size: .82rem; font-weight: 800; color: #8e44ad; }
+  .zt-q { font-size: .96rem; line-height: 2.1; color: #2f2a22; }
+  .zt-in { border: none; border-bottom: 2px solid #8e44ad; background: transparent; width: 7em; max-width: 70%; font-size: .95rem; padding: 2px 4px; color: #1f4e79; font-weight: 700; font-family: inherit; }
+  .zt-in.zt-wide { width: 100%; max-width: 100%; border: 2px dashed #8e44ad; border-radius: 10px; padding: 8px 10px; }
+  .zt-in.right { border-color: #2e8b57; background: #eaf7ee; }
+  .zt-in.wrong { border-color: #c0392b; background: #fdecea; }
+  .zt-ans { font-size: .8rem; }
+  .zt-ans .ok { color: #1d5b34; font-weight: 700; }
+  .zt-ans .no { color: #a9442f; font-weight: 700; }
+  .zt-ans .show-ans { background: #f0f7ef; border: 1px dashed #2e8b57; border-radius: 10px; padding: 8px 10px; color: #1d5b34; line-height: 1.8; margin-top: 4px; }
+  .zt-check { border: none; border-radius: 10px; padding: 10px; font-size: .9rem; font-weight: 700; color: #fff; background: linear-gradient(135deg, #8e44ad, #2e8b57); cursor: pointer; font-family: inherit; margin-top: auto; }
+  .zt-card.done .zt-check { display: none; }
+    /* ===== UI POLISH ===== */
+  body {
+    background:
+      radial-gradient(820px 380px at 50% -6%, rgba(255,246,224,.85) 0%, rgba(255,246,224,0) 62%),
+      linear-gradient(180deg, #fdf9f1 0%, #f5eee0 100%);
+  }
+  header { padding: 26px 0 10px; }
+  header h1 {
+    font-family: "STKaiti", "KaiTi", "STSong", "SimSun", serif;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 8px rgba(139,69,19,.08);
+  }
+  .wm {
+    display: inline-block; background: #fff; border: 1px solid #ece0cf;
+    border-radius: 999px; padding: 3px 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  }
+  .hint {
+    background: rgba(255,255,255,.7); border: 1px solid #ece0cf;
+    border-radius: 12px; padding: 8px 12px; margin-top: 8px;
+  }
+  .chip {
+    transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,.04);
+  }
+  .chip:active { transform: scale(.96); }
+  .chip.on { box-shadow: 0 5px 12px rgba(0,0,0,.08); }
+  .toolbar .tbtn {
+    transition: transform .12s ease, box-shadow .12s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,.04);
+  }
+  .toolbar .tbtn:active { transform: scale(.97); }
+  .toolbar .tbtn.go { box-shadow: 0 6px 16px rgba(0,0,0,.14); }
+  .summary {
+    border-radius: 20px; border-color: #e6dcc8;
+    box-shadow: 0 12px 30px -14px rgba(0,0,0,.16);
+  }
+  .ring { filter: drop-shadow(0 4px 10px rgba(0,0,0,.08)); }
+  .stat { border: 1px solid rgba(0,0,0,.035); box-shadow: inset 0 1px 0 rgba(255,255,255,.7); }
+  .big-btn {
+    transition: transform .14s ease, box-shadow .14s ease, filter .14s ease;
+    border-radius: 18px;
+  }
+  .big-btn:not(.done):hover { transform: translateY(-2px); filter: brightness(1.04); }
+  .big-btn:not(.done):active { transform: translateY(0); }
+  .cal-card { border-radius: 20px; box-shadow: 0 8px 22px -16px rgba(0,0,0,.12); }
+  .cal .d { transition: transform .12s ease, box-shadow .12s ease; }
+  .cal .d:active { transform: scale(.9); }
+  .cal .d.on { box-shadow: 0 4px 10px rgba(0,0,0,.16); }
+  details.panel { border-radius: 20px; box-shadow: 0 8px 22px -16px rgba(0,0,0,.12); }
+  details.panel > summary { border-radius: 20px 20px 0 0; transition: background .15s ease; }
+  details.panel > summary:hover { background: #fdfaf3; }
+  details.panel .mini-btn { transition: transform .12s ease, box-shadow .12s ease, background .12s ease; }
+  details.panel .mini-btn:active { transform: scale(.97); }
+  details.panel input:focus, details.panel textarea:focus {
+    outline: none; border-color: #b45f2a;
+    box-shadow: 0 0 0 3px rgba(180,95,42,.12);
+  }
+  .group {
+    border-radius: 20px; border-color: #e6dcc8;
+    box-shadow: 0 10px 26px -18px rgba(0,0,0,.22);
+  }
+  .group > summary { letter-spacing: .5px; }
+  .card {
+    border-radius: 15px; border-color: #e9dfcd;
+    box-shadow: 0 3px 10px -5px rgba(0,0,0,.08);
+    transition: box-shadow .18s ease, transform .18s ease;
+  }
+  .card.open { box-shadow: 0 10px 24px -12px rgba(0,0,0,.16); }
+  .card .head { transition: background .15s ease; }
+  .card .head:hover { background: #fbf7ee; }
+  .card .no { box-shadow: 0 3px 8px rgba(0,0,0,.18); }
+  .poem-text {
+    font-family: "STKaiti", "KaiTi", "STSong", "SimSun", serif;
+    font-size: 1.08rem; letter-spacing: .5px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.6);
+  }
+  .ck {
+    transition: transform .12s ease, box-shadow .12s ease, background .12s ease, color .12s ease;
+  }
+  .ck:active { transform: scale(.97); }
+  .ck.on { box-shadow: 0 5px 14px rgba(0,0,0,.16); }
+  .banner { box-shadow: 0 8px 22px -12px rgba(0,0,0,.2); }
+  .modal { border-radius: 22px; }
+  .modal-bg { backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+  .act-card { border-radius: 24px; box-shadow: 0 26px 70px rgba(0,0,0,.32); }
+  .quiz-card { box-shadow: 0 26px 70px rgba(0,0,0,.34); }
+  .zt-sec .zt-head { letter-spacing: .5px; }
+  .zt-year .zy { box-shadow: 0 3px 8px rgba(142,68,173,.14); }
+  .zt-card { transition: transform .14s ease, box-shadow .14s ease; }
+  .zt-card:not(.done):hover { transform: translateY(-2px); box-shadow: 0 12px 26px -12px rgba(0,0,0,.18); }
+  .zt-check { transition: filter .12s ease, transform .12s ease; }
+  .zt-check:active { transform: scale(.97); }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+    /* ===== BCZ UI ===== */
+  .quiz-bg {
+    display: none; position: fixed; inset: 0; z-index: 95;
+    background: linear-gradient(180deg, #fdf6e8 0%, #f1e6d1 100%);
+    padding: 18px 16px 30px; overflow-y: auto;
+    align-items: stretch; justify-content: flex-start;
+  }
+  .quiz-bg.show { display: flex; }
+  .quiz-card {
+    width: 100%; max-width: 470px; margin: 0 auto;
+    background: #fff; border-radius: 28px; padding: 0 0 4px; overflow: hidden;
+    box-shadow: 0 22px 55px rgba(0,0,0,.16);
+    display: flex; flex-direction: column; min-height: 340px;
+    animation: bczIn .32s cubic-bezier(.22,.9,.3,1);
+  }
+  .quiz-card .progbar { height: 8px; background: #f2ecdd; }
+  .quiz-card .progbar i { border-radius: 0; }
+  .quiz-card .qhead { padding: 16px 20px 0; margin: 0; }
+  .quiz-card .qhead .prog { font-size: .9rem; font-weight: 800; color: #1f4e79; letter-spacing: .3px; }
+  .quiz-card .qhead .close { background: #f3ede0; width: 32px; height: 32px; font-size: .95rem; }
+  .bcz-card {
+    flex: 1; font-size: 1.24rem; line-height: 2.5; color: #2f2a22;
+    padding: 24px 24px 10px; min-height: 0; align-items: flex-start;
+  }
+  .fill-in { width: 8.5em; max-width: 80%; border-bottom: 3px solid #8e44ad; font-size: 1.18rem; padding: 2px 6px; }
+  .fill-in.fill-wide { width: 100%; max-width: 100%; font-size: 1.05rem; }
+  .fill-src { padding: 0 24px 12px; font-size: .84rem; color: #a08a6e; }
+  .fill-ans { padding: 0 24px 14px; }
+  .fill-ans .ok { font-size: 1.02rem; }
+  .fill-ans .show-ans { font-size: .96rem; }
+  .quiz-card > .fill-check, .quiz-card > .next {
+    width: calc(100% - 48px); margin: 0 24px 20px; border-radius: 999px;
+    padding: 15px; font-size: 1.05rem; letter-spacing: 1px;
+    box-shadow: 0 12px 26px -8px rgba(0,0,0,.28);
+  }
+  .quiz-card .score { font-size: 1.3rem; padding: 38px 20px 22px; }
+    /* ===== DESKTOP ===== */
+  @media (min-width: 900px) {
+    .wrap { max-width: 1120px; padding: 0 24px; }
+    header { padding-top: 30px; }
+    header h1 { font-size: 2rem; letter-spacing: 3px; }
+    header .sub { font-size: 1rem; }
+    .summary { padding: 22px 26px; gap: 26px; border-radius: 24px; }
+    .ring { width: 118px; height: 118px; }
+    .ring .num { font-size: 1.5rem; }
+    .stats { grid-template-columns: repeat(3, 1fr); gap: 10px 14px; }
+    .stat { padding: 12px 14px; }
+    .stat .v { font-size: 1.2rem; }
+    .toolbar .tbtn { padding: 12px; font-size: .96rem; }
+    .chips { padding-bottom: 14px; }
+    .group > summary { font-size: 1.05rem; padding: 15px 18px; }
+    .group .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; align-items: start; }
+    .card { margin-bottom: 0; }
+    .cal-card, .big-btn, .banner { max-width: 720px; margin-left: auto; margin-right: auto; }
+    .big-btn { display: block; }
+    .banner { text-align: center; }
+    .zt-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .bcz-card { font-size: 1.32rem; }
+    .fill-in { font-size: 1.24rem; }
+    .poem-text { font-size: 1.1rem; }
+  }
+    /* ===== LIQUID GLASS ===== */
+  body {
+    background: linear-gradient(165deg, #edf3ff 0%, #fdf1f6 48%, #edf8f2 100%);
+  }
+  .glowbg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .glowbg i { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .55; }
+  .glowbg .g1 { width: 460px; height: 460px; background: #bcd4ff; top: -130px; right: -90px; animation: glassFloat 16s ease-in-out infinite; }
+  .glowbg .g2 { width: 400px; height: 400px; background: #ffd9e8; bottom: -120px; left: -100px; animation: glassFloat 18s ease-in-out infinite reverse; }
+  .glowbg .g3 { width: 330px; height: 330px; background: #d2f0e1; top: 42%; left: 58%; animation: glassFloat 20s ease-in-out infinite; }
+  @keyframes glassFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-26px, 20px) scale(1.07); }
+  }
+  .wrap { position: relative; z-index: 1; }
+  header, .save-state, .hint, .chips, .toolbar, .summary, .big-btn, .banner, .cal-card,
+  details.panel, #app, #ztArea, .zt-sec, .wm { position: relative; z-index: 1; }
+  .summary, .cal-card, details.panel, .group, .modal, .zt-card, .stat {
+    background: rgba(255, 255, 255, .62);
+    backdrop-filter: blur(20px) saturate(170%);
+    -webkit-backdrop-filter: blur(20px) saturate(170%);
+    border: 1px solid rgba(255, 255, 255, .8);
+    box-shadow: 0 10px 34px rgba(31, 45, 70, .10);
+  }
+  .card {
+    background: rgba(255, 255, 255, .78);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, .85);
+  }
+  .quiz-card {
+    background: rgba(255, 255, 255, .82);
+    backdrop-filter: blur(26px) saturate(180%);
+    -webkit-backdrop-filter: blur(26px) saturate(180%);
+  }
+  .toolbar .tbtn {
+    background: rgba(255, 255, 255, .72);
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, .85);
+  }
+  .chip {
+    background: rgba(255, 255, 255, .8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-color: rgba(255, 255, 255, .9);
+  }
+  .act-card {
+    background: rgba(255, 255, 255, .85);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+  }
+  .banner { background: linear-gradient(135deg, rgba(246,211,101,.9), rgba(253,160,133,.9)); }
+  @media (prefers-reduced-motion: reduce) {
+    .glowbg i { animation: none !important; }
+  }
+    /* ===== APPLE STYLE ===== */
+  body, button, input, textarea, select {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro SC", "SF Pro Display", "SF Pro Text",
+      "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  header h1, .bcz-card, .fill-in, .poem-text {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro SC", "SF Pro Display", "SF Pro Text",
+      "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  header h1 { letter-spacing: 1px; font-weight: 700; }
+  .summary, .cal-card, details.panel, .group, .modal, .zt-card, .stat {
+    background: rgba(255, 255, 255, .5);
+    backdrop-filter: blur(28px) saturate(190%);
+    -webkit-backdrop-filter: blur(28px) saturate(190%);
+    border-color: rgba(255, 255, 255, .9);
+    box-shadow: 0 14px 44px -16px rgba(20, 40, 70, .18), inset 0 1px 0 rgba(255, 255, 255, .75);
+  }
+  .card {
+    background: rgba(255, 255, 255, .72);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    box-shadow: 0 8px 26px -12px rgba(20, 40, 70, .18), inset 0 1px 0 rgba(255, 255, 255, .8);
+  }
+  .quiz-card {
+    background: rgba(255, 255, 255, .8);
+    backdrop-filter: blur(30px) saturate(190%);
+    -webkit-backdrop-filter: blur(30px) saturate(190%);
+    box-shadow: 0 26px 70px rgba(0, 0, 0, .22), inset 0 1px 0 rgba(255, 255, 255, .85);
+  }
+  .toolbar .tbtn, .chip, details.panel .mini-btn {
+    background: rgba(255, 255, 255, .72);
+    backdrop-filter: blur(14px) saturate(170%);
+    -webkit-backdrop-filter: blur(14px) saturate(170%);
+    border-color: rgba(255, 255, 255, .9);
+  }
+  .act-card {
+    background: rgba(255, 255, 255, .8);
+    backdrop-filter: blur(30px) saturate(190%);
+    -webkit-backdrop-filter: blur(30px) saturate(190%);
+    box-shadow: 0 26px 70px rgba(0, 0, 0, .28), inset 0 1px 0 rgba(255, 255, 255, .85);
+  }
+  .bcz-card { letter-spacing: .3px; }
+  .fill-q, .zt-q { letter-spacing: .3px; }
+    /* ===== TRUE GLASS ===== */
+  .glowbg i { opacity: .7; }
+  .summary, .cal-card, details.panel, .group, .modal, .zt-card, .stat {
+    background: rgba(255, 255, 255, .26);
+    backdrop-filter: blur(36px) saturate(210%);
+    -webkit-backdrop-filter: blur(36px) saturate(210%);
+    border-color: rgba(255, 255, 255, .62);
+    box-shadow: 0 8px 30px rgba(20, 40, 70, .10), inset 0 1px 0 rgba(255, 255, 255, .55);
+  }
+  .card {
+    background: rgba(255, 255, 255, .34);
+    backdrop-filter: blur(24px) saturate(200%);
+    -webkit-backdrop-filter: blur(24px) saturate(200%);
+    box-shadow: 0 6px 22px -10px rgba(20, 40, 70, .14), inset 0 1px 0 rgba(255, 255, 255, .65);
+  }
+  .quiz-card {
+    background: rgba(255, 255, 255, .48);
+    backdrop-filter: blur(38px) saturate(210%);
+    -webkit-backdrop-filter: blur(38px) saturate(210%);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, .18), inset 0 1px 0 rgba(255, 255, 255, .75);
+  }
+  .toolbar .tbtn, .chip, details.panel .mini-btn {
+    background: rgba(255, 255, 255, .4);
+    backdrop-filter: blur(18px) saturate(190%);
+    -webkit-backdrop-filter: blur(18px) saturate(190%);
+    border-color: rgba(255, 255, 255, .75);
+  }
+  .act-card {
+    background: rgba(255, 255, 255, .55);
+    backdrop-filter: blur(40px) saturate(210%);
+    -webkit-backdrop-filter: blur(40px) saturate(210%);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, .22), inset 0 1px 0 rgba(255, 255, 255, .8);
+  }
+  .swipe-hint { font-size: .74rem; color: #9aa7b8; margin-top: 8px; text-align: center; }
+  .zt-card.done.ok { box-shadow: 0 0 0 2px rgba(46,139,87,.25), 0 8px 30px rgba(20,40,70,.10); }
+  .zt-card.done.no { box-shadow: 0 0 0 2px rgba(192,57,43,.22), 0 8px 30px rgba(20,40,70,.10); }
+    /* ===== CLEAN APPLE ===== */
+  body { background: #ffffff; }
+  .glowbg { display: none; }
+  .summary, .cal-card, details.panel, .group, .modal, .zt-card, .stat, .card, .quiz-card, .act-card, .toolbar .tbtn, .chip, details.panel .mini-btn {
+    background: #ffffff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .summary, .cal-card, details.panel, .group, .modal, .zt-card, .card {
+    border-color: #e8e8ed !important;
+    box-shadow: 0 6px 20px -14px rgba(0,0,0,.12) !important;
+  }
+  .toolbar .tbtn, .chip, details.panel .mini-btn {
+    border-color: #e8e8ed !important;
+    box-shadow: none !important;
+  }
+  .summary { border-radius: 22px; padding: 22px 24px; }
+  .ring .num { font-size: 1.4rem; }
+  .stat { background: #f5f5f7 !important; border: none !important; box-shadow: none !important; }
+  header h1 { font-size: 1.7rem; font-weight: 700; letter-spacing: -1px; }
+  header .sub { font-size: .88rem; color: #86868b; }
+  .hint { color: #86868b; font-size: .78rem; }
+  .group > summary { font-weight: 650; letter-spacing: .2px; }
+  .group .cards { padding: 12px; }
+  .card { border-radius: 16px; }
+  .card .t { font-size: 1.06rem; font-weight: 650; letter-spacing: -.2px; }
+  .card .a, .card .chev { color: #a1a1a6; }
+  .poem-text { font-size: 1.12rem; line-height: 2.1; color: #1d1d1f; }
+  .fill-q, .bcz-card { color: #1d1d1f; }
+  .zt-q { color: #1d1d1f; }
+  .zt-title { font-weight: 700; letter-spacing: .2px; }
+  .big-btn { border-radius: 999px; font-weight: 650; }
+  .mini-btn { border-radius: 12px; }
+  .ck { border-radius: 14px; }
+  .banner { border-radius: 18px; }
+  .cal-card .tt { font-weight: 650; }
+  details.panel > summary { font-weight: 650; }
+  details.panel .mini-btn { background: #ffffff !important; }
+  #selftest { display: none; }
+
+</style>
+</head>
+<body>
+<div class="glowbg"><i class="g1"></i><i class="g2"></i><i class="g3"></i></div>
+
+<div class="wrap">
+  <header>
+    <h1>📖 中考古诗文默写打卡</h1>
+    <div class="sub">江西中考 · 部编人教版初中必背古诗文102篇 · 默写刷题 · 商用版 V1.0</div>
+    <div class="wm" id="wm"></div>
+  </header>
+  <div class="save-state" id="saveState"></div>
+
+  <div class="hint">点开一篇 → 看注释、易错字 → 做默写练习 → 打勾过关</div>
+  <div class="warn" id="storageWarn">⚠️ 当前浏览器无法保存记录，进度只在本次使用中有效。请换用手机自带浏览器或微信打开。</div>
+
+  <div class="chips" id="chips"></div>
+  <div class="toolbar">
+    <button class="tbtn go" onclick="startFill()">📝 词语填空</button>
+    <button class="tbtn" onclick="openSettings()">⚙️ 设置</button>
+    <button class="tbtn" onclick="openChildModal('add', null)">👧 添加孩子</button>
+  </div>
+
+  <div class="summary">
+    <div class="ring">
+      <svg width="104" height="104" viewBox="0 0 104 104">
+        <circle cx="52" cy="52" r="34" fill="none" stroke="#e8e2d2" stroke-width="10"/>
+        <circle id="ringFg" cx="52" cy="52" r="34" fill="none" stroke="#2e8b57" stroke-width="10" stroke-linecap="round"/>
+      </svg>
+      <div class="num" id="ringNum">0<small>/102</small></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="k">默写零错字</div><div class="v" id="stWri">0 / 102</div></div>
+      <div class="stat"><div class="k">情景默写</div><div class="v" id="stPar">0 篇</div></div>
+      <div class="stat"><div class="k">填写正确率</div><div class="v" id="stFill">0%</div><div class="k" id="stFillSub">已练 0 题</div></div>
+      <div class="stat"><div class="k">连续打卡</div><div class="v heat" id="stStreak">0 天</div></div>
+      <div class="stat"><div class="k">今日状态</div><div class="v" id="stToday">—</div></div>
+    </div>
+  </div>
+
+  <button class="big-btn" id="todayBtn" onclick="checkin()">📅 今日打卡</button>
+  <div class="banner" id="banner">🎉 太棒了！102 篇全部背诵过关！</div>
+
+  <div class="cal-card">
+    <div class="tt">📆 最近 35 天打卡日历</div>
+    <div class="cal" id="cal"></div>
+  </div>
+
+  <details class="panel" id="settingsPanel">
+    <summary>⚙️ 备份与设置</summary>
+    <div class="inner">
+      <div class="actinfo" id="actInfo"></div>
+      <button class="mini-btn" onclick="reactivate()">🔑 重新激活</button>
+      <label style="font-size:.85rem;color:#4a3f2f">孩子管理（切换在顶部，可添加、改名、删除）</label>
+      <div id="childList" style="display:grid;gap:8px"></div>
+      <div class="row">
+        <button class="mini-btn" onclick="exportFile()">⬇️ 下载备份</button>
+        <button class="mini-btn" onclick="copyBackup()">📋 复制备份</button>
+      </div>
+      <div class="row">
+        <button class="mini-btn" onclick="resetAll()">🗑️ 清空当前孩子记录</button>
+        <label class="mini-btn" style="text-align:center;cursor:pointer">选择备份文件恢复
+          <input type="file" accept=".json,application/json" style="display:none" onchange="importFile(event)">
+        </label>
+      </div>
+      <div id="dlAnchor"></div>
+      <textarea id="importArea" placeholder="也可以把「复制备份」得到的内容粘贴到这里，再点恢复"></textarea>
+      <button class="mini-btn" onclick="importFromText()">♻️ 从粘贴内容恢复</button>
+      <label style="font-size:.85rem;color:#5c4b3a;display:block;margin-top:4px">开发者激活码（输入后本机所有产品免激活）</label>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="devCodeInput" placeholder="输入开发者激活码" autocomplete="off" style="flex:1;border:1px solid #ddd0bc;border-radius:10px;padding:9px;font-size:.85rem;font-family:inherit;background:#fbf6ec;min-width:0">
+        <button class="mini-btn" onclick="devUnlockSettings()" style="margin:0">激活</button>
+      </div>
+      <div id="devStatusLine" style="font-size:.8rem;color:#8a7a62">未开启</div>
+    </div>
+  </details>
+
+  <div id="app"></div>
+
+<div class="quiz-bg" id="fillBg">
+  <div class="quiz-card" id="fillBox"></div>
+</div>
+
+
+  <div id="selftest"></div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3 id="modalTitle">添加孩子</h3>
+    <div class="emoji-row" id="modalEmojiRow"></div>
+    <input type="text" id="childName" maxlength="8" placeholder="孩子名字（如：大宝）">
+    <div class="mrow">
+      <button type="button" class="ok" onclick="saveChild()">保存</button>
+      <button type="button" class="no" onclick="closeModal()">取消</button>
+    </div>
+  </div>
+</div>
+
+<div class="activation" id="activation">
+  <div class="act-card">
+    <div class="logo">📖</div>
+    <h2>中考古诗文默写打卡</h2>
+    <div class="tip">请先激活：输入购买时登记的姓名和随购买提供的授权码。<br>没有授权码请联系卖家。</div>
+    <form onsubmit="event.preventDefault();activate()">
+      <input type="text" id="actName" maxlength="12" placeholder="买家姓名">
+      <input type="text" id="actCode" maxlength="16" placeholder="授权码（如 ZK-XXXX-XXXX）">
+      <button type="submit" class="go">激活</button>
+    </form>
+    <div class="err" id="actErr"></div>
+  </div>
+</div>
+
+<script>
+
+const PIECES = [{"no": 1, "section": "初中必背古诗文", "color": "#c0392b", "title": "《观沧海》", "author": "东汉·曹操", "notes": "碣石（山名）；澹澹（水波摇荡）；竦峙（耸立）；星汉（银河）；幸甚至哉。", "errors": "碣石（勿错“竭”）；澹澹（勿作“谈谈”）；竦峙（“竦”勿少“立”）；丛生（非“从”）。江西高频：“日月之行，若出其中；星汉灿烂，若出其里”。", "exercises": [{"type": "原文挖空", "items": ["东临＿＿＿＿，以观沧海。水何澹澹，＿＿＿＿。树木丛生，百草丰茂。＿＿＿＿，洪波涌起。日月之行，＿＿＿＿；星汉灿烂，＿＿＿＿。"]}, {"type": "情景默写", "items": ["1. 曹操借想象表现大海吞吐日月星辰气概的句子：＿＿＿＿ 2. 描写秋风萧瑟中草木茂盛、海浪涌起的句子：＿＿＿＿"]}]}, {"no": 2, "section": "初中必背古诗文", "color": "#c0392b", "title": "《闻王昌龄左迁龙标遥有此寄》", "author": "唐·李白", "notes": "🔹左迁；杨花；子规；夜郎。", "errors": "杨花（非“扬”）；子规；夜郎。名句“我寄愁心与明月，随君直到夜郎西”。", "exercises": [{"type": "原文挖空", "items": ["＿＿＿＿落尽子规啼，闻道龙标过五溪。＿＿＿＿，随君直到夜郎西。"]}, {"type": "情景默写", "items": ["将明月人格化、表达对友人牵挂的句子：＿＿＿＿ 2. 点明暮春时节的句子：＿＿＿＿"]}]}, {"no": 3, "section": "初中必背古诗文", "color": "#c0392b", "title": "《次北固山下》", "author": "唐·王湾", "notes": "🔹次；客路；潮平两岸阔；海日生残夜；归雁。", "errors": "阔（勿“扩”）；生残夜（不是“升”）；入旧年；归雁（非“燕”）。名句“海日生残夜，江春入旧年”。", "exercises": [{"type": "原文挖空", "items": ["客路青山外，行舟绿水前。潮平两岸阔，＿＿＿＿。＿＿＿＿，江春入旧年。乡书何处达？＿＿＿＿。"]}, {"type": "情景默写", "items": ["蕴含新事物取代旧事物哲理的对偶句：＿＿＿＿ 2. 描绘江面开阔、风顺船稳的句子：＿＿＿＿"]}]}, {"no": 4, "section": "初中必背古诗文", "color": "#c0392b", "title": "《天净沙·秋思》", "author": "元·马致远", "notes": "🔹昏鸦；断肠人；天涯。", "errors": "枯藤（“藤”右下“水”）；昏鸦；瘦马。名句“夕阳西下，断肠人在天涯”。", "exercises": [{"type": "原文挖空", "items": ["枯藤老树昏鸦，＿＿＿＿，古道西风瘦马。夕阳西下，＿＿＿＿。"]}, {"type": "情景默写", "items": ["直抒游子凄楚之情的句子：＿＿＿＿ 2. 以乐景写哀情的句子：＿＿＿＿"]}]}, {"no": 5, "section": "初中必背古诗文", "color": "#c0392b", "title": "《峨眉山月歌》", "author": "唐·李白", "notes": "🔹半轮秋；平羌；清溪；渝州。", "errors": "🔴【易错】羌、渝。名句“峨眉山月半轮秋，影入平羌江水流”。", "exercises": [{"type": "原文挖空", "items": ["峨眉山月＿＿＿＿，影入平羌＿＿＿＿。夜发清溪向三峡，＿＿＿＿。"]}, {"type": "情景默写", "items": ["连用地名表达思念的句子：＿＿＿＿"]}]}, {"no": 6, "section": "初中必背古诗文", "color": "#c0392b", "title": "《江南逢李龟年》", "author": "唐·杜甫", "notes": "🔹岐王；崔九；落花时节。", "errors": "🔴【易错】岐（非“歧”）；宅。名句“正是江南好风景，落花时节又逢君”。", "exercises": [{"type": "原文挖空", "items": ["岐王宅里寻常见，＿＿＿＿。＿＿＿＿，落花时节又逢君。"]}, {"type": "情景默写", "items": ["表达世事无常、人生飘零的句子：＿＿＿＿"]}]}, {"no": 7, "section": "初中必背古诗文", "color": "#c0392b", "title": "《行军九日思长安故园》", "author": "唐·岑参", "notes": "🔹强欲登高；无人送酒；遥怜故园菊；傍战场开。", "errors": "🔴【易错】怜、傍。名句“遥怜故园菊，应傍战场开”。", "exercises": [{"type": "原文挖空", "items": ["强欲登高去，＿＿＿＿。遥怜故园菊，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表达对家乡菊花的思念及战乱忧虑：＿＿＿＿"]}]}, {"no": 8, "section": "初中必背古诗文", "color": "#c0392b", "title": "《夜上受降城闻笛》", "author": "唐·李益", "notes": "🔹回乐烽；沙似雪；芦管；征人。", "errors": "🔴【易错】烽（非“峰”）、芦管。名句“不知何处吹芦管，一夜征人尽望乡”。", "exercises": [{"type": "原文挖空", "items": ["回乐烽前沙似雪，＿＿＿＿。＿＿＿＿，一夜征人尽望乡。"]}, {"type": "情景默写", "items": ["笛声触发征人思乡的句子：＿＿＿＿"]}]}, {"no": 9, "section": "初中必背古诗文", "color": "#c0392b", "title": "《秋词（其一）》", "author": "唐·刘禹锡", "notes": "🔹自古逢秋悲寂寥；晴空一鹤排云上。", "errors": "🔴【易错】寂寥、排。名句“晴空一鹤排云上，便引诗情到碧霄”。", "exercises": [{"type": "原文挖空", "items": ["自古逢秋悲寂寥，＿＿＿＿。晴空一鹤排云上，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表现诗人豪迈乐观的句子：＿＿＿＿"]}]}, {"no": 10, "section": "初中必背古诗文", "color": "#c0392b", "title": "《十一月四日风雨大作（其二）》", "author": "宋·陆游", "notes": "🔹僵卧孤村；尚思为国戍轮台；夜阑卧听风吹雨。", "errors": "🔴【易错】戍（与戌、戊区分）、阑。名句“夜阑卧听风吹雨，铁马冰河入梦来”。", "exercises": [{"type": "原文挖空", "items": ["僵卧孤村不自哀，＿＿＿＿。＿＿＿＿，铁马冰河入梦来。"]}, {"type": "情景默写", "items": ["表现诗人爱国情怀的句子：＿＿＿＿"]}]}, {"no": 11, "section": "初中必背古诗文", "color": "#c0392b", "title": "《潼关》", "author": "清·谭嗣同", "notes": "🔹终古高云簇此城；河流大野犹嫌束。", "errors": "🔴【易错】簇、嫌。名句“河流大野犹嫌束，山入潼关不解平”。", "exercises": [{"type": "原文挖空", "items": ["终古高云簇此城，＿＿＿＿。＿＿＿＿，山入潼关不解平。"]}, {"type": "情景默写", "items": ["表现黄河奔腾、山势险峻的句子：＿＿＿＿"]}]}, {"no": 12, "section": "初中必背古诗文", "color": "#c0392b", "title": "《木兰诗》", "author": "北朝民歌", "notes": "🔹唧唧；机杼；鞍马；辔头；戎机；朔气；金柝；策勋；出郭；红妆；著我旧时裳；帖花黄；傍地走。", "errors": "🔴【易错】辔、朔、柝（非“析”）、策勋、著（通“着”）、帖（通“贴”）。名句“万里赴戎机，关山度若飞”。", "exercises": [{"type": "原文挖空", "items": ["万里赴戎机，＿＿＿＿。朔气传金柝，＿＿＿＿。将军百战死，＿＿＿＿。"]}, {"type": "情景默写", "items": ["1. 描写边塞艰苦战斗生活的对偶句：＿＿＿＿ 2. 表现木兰战功卓著的句子：＿＿＿＿"]}]}, {"no": 13, "section": "初中必背古诗文", "color": "#c0392b", "title": "《登幽州台歌》", "author": "唐·陈子昂", "notes": "🔹古人；来者；悠悠；怆然；涕下。", "errors": "🔴【易错】怆然（非“沧”）、涕。名句“前不见古人，后不见来者”。", "exercises": [{"type": "原文挖空", "items": ["前不见古人，＿＿＿＿。念天地之悠悠，＿＿＿＿！"]}, {"type": "情景默写", "items": ["抒发怀才不遇、孤寂悲愤的句子：＿＿＿＿"]}]}, {"no": 14, "section": "初中必背古诗文", "color": "#c0392b", "title": "《望岳》", "author": "唐·杜甫", "notes": "🔹岱宗；齐鲁青未了；造化；决眦；会当凌绝顶。", "errors": "🔴【易错】眦、凌（非“临”）。名句“会当凌绝顶，一览众山小”。", "exercises": [{"type": "原文挖空", "items": ["岱宗夫如何？＿＿＿＿。造化钟神秀，＿＿＿＿。荡胸生曾云，＿＿＿＿。会当凌绝顶，＿＿＿＿。"]}, {"type": "情景默写", "items": ["1. 表现诗人不怕困难、俯视一切的雄心：＿＿＿＿ 2. 写泰山神奇秀丽的句子：＿＿＿＿"]}]}, {"no": 15, "section": "初中必背古诗文", "color": "#c0392b", "title": "《游山西村》", "author": "宋·陆游", "notes": "🔹腊酒；足鸡豚；山重水复；柳暗花明；箫鼓；春社；闲乘月。", "errors": "🔴【易错】豚、箫（非“萧”）、社。名句“山重水复疑无路，柳暗花明又一村”。", "exercises": [{"type": "原文挖空", "items": ["莫笑农家腊酒浑，＿＿＿＿。山重水复疑无路，＿＿＿＿。＿＿＿＿，衣冠简朴古风存。"]}, {"type": "情景默写", "items": ["蕴含困境中蕴含希望哲理的句子：＿＿＿＿"]}]}, {"no": 16, "section": "初中必背古诗文", "color": "#c0392b", "title": "《己亥杂诗（其五）》", "author": "清·龚自珍", "notes": "🔹浩荡离愁；吟鞭；落红；春泥。", "errors": "🔴【易错】吟、落红。名句“落红不是无情物，化作春泥更护花”。", "exercises": [{"type": "原文挖空", "items": ["浩荡离愁白日斜，＿＿＿＿。落红不是无情物，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表达辞官后仍关心国家命运的句子：＿＿＿＿"]}]}, {"no": 17, "section": "初中必背古诗文", "color": "#c0392b", "title": "《登飞来峰》", "author": "宋·王安石", "notes": "🔹千寻塔；闻说鸡鸣见日升；不畏浮云遮望眼；自缘身在最高层。", "errors": "🔴【易错】遮、缘（非“原”）。名句“不畏浮云遮望眼，自缘身在最高层”。", "exercises": [{"type": "原文挖空", "items": ["飞来山上千寻塔，＿＿＿＿。不畏浮云遮望眼，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表现诗人远大政治抱负的句子：＿＿＿＿"]}]}, {"no": 18, "section": "初中必背古诗文", "color": "#c0392b", "title": "《竹里馆》", "author": "唐·王维", "notes": "🔹幽篁；长啸；深林人不知，明月来相照。", "errors": "🔴【易错】篁、啸。", "exercises": [{"type": "原文挖空", "items": ["独坐幽篁里，＿＿＿＿。深林人不知，＿＿＿＿。"]}, {"type": "情景默写", "items": ["明月相伴、淡泊宁静的句子：＿＿＿＿"]}]}, {"no": 19, "section": "初中必背古诗文", "color": "#c0392b", "title": "《春夜洛城闻笛》", "author": "唐·李白", "notes": "🔹折柳；故园情。", "errors": "🔴【易错】折柳、园。名句“此夜曲中闻折柳，何人不起故园情”。", "exercises": [{"type": "原文挖空", "items": ["谁家玉笛暗飞声，＿＿＿＿。＿＿＿＿，何人不起故园情。"]}, {"type": "情景默写", "items": ["表达思乡之情的句子：＿＿＿＿"]}]}, {"no": 20, "section": "初中必背古诗文", "color": "#c0392b", "title": "《逢入京使》", "author": "唐·岑参", "notes": "🔹龙钟；凭君传语报平安。", "errors": "🔴【易错】凭。名句“马上相逢无纸笔，凭君传语报平安”。", "exercises": [{"type": "原文挖空", "items": ["故园东望路漫漫，＿＿＿＿。马上相逢无纸笔，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表达报平安的句子：＿＿＿＿"]}]}, {"no": 21, "section": "初中必背古诗文", "color": "#c0392b", "title": "《晚春》", "author": "唐·韩愈", "notes": "🔹杨花榆荚无才思，惟解漫天作雪飞。", "errors": "🔴【易错】荚、惟。", "exercises": [{"type": "原文挖空", "items": ["草树知春不久归，＿＿＿＿。杨花榆荚无才思，＿＿＿＿。"]}, {"type": "情景默写", "items": ["拟人手法写晚春景象的句子：＿＿＿＿"]}]}, {"no": 22, "section": "初中必背古诗文", "color": "#c0392b", "title": "《泊秦淮》", "author": "唐·杜牧", "notes": "🔹烟笼寒水月笼沙；商女；后庭花。", "errors": "🔴【易错】笼、庭。名句“商女不知亡国恨，隔江犹唱后庭花”。", "exercises": [{"type": "原文挖空", "items": ["烟笼寒水月笼沙，＿＿＿＿。商女不知亡国恨，＿＿＿＿。"]}, {"type": "情景默写", "items": ["借古讽今表达忧国之情的句子：＿＿＿＿"]}]}, {"no": 23, "section": "初中必背古诗文", "color": "#c0392b", "title": "《贾生》", "author": "唐·李商隐", "notes": "🔹宣室求贤访逐臣；贾生才调更无伦；不问苍生问鬼神。", "errors": "🔴【易错】伦、苍。", "exercises": [{"type": "原文挖空", "items": ["宣室求贤访逐臣，＿＿＿＿。＿＿＿＿，不问苍生问鬼神。"]}, {"type": "情景默写", "items": ["讽刺统治者不顾民生的句子：＿＿＿＿"]}]}, {"no": 24, "section": "初中必背古诗文", "color": "#c0392b", "title": "《过松源晨炊漆公店》", "author": "宋·杨万里", "notes": "🔹莫言下岭便无难；政入万山围子里。", "errors": "🔴【易错】政（通“正”）、拦。", "exercises": [{"type": "原文挖空", "items": ["莫言下岭便无难，＿＿＿＿。＿＿＿＿，一山放出一山拦。"]}, {"type": "情景默写", "items": ["借下山说明不能松懈的句子：＿＿＿＿"]}]}, {"no": 25, "section": "初中必背古诗文", "color": "#c0392b", "title": "《约客》", "author": "宋·赵师秀", "notes": "🔹黄梅时节家家雨；闲敲棋子落灯花。", "errors": "🔴【易错】蛙、敲。", "exercises": [{"type": "原文挖空", "items": ["黄梅时节家家雨，＿＿＿＿。有约不来过夜半，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表现等待客人寂寞心情的句子：＿＿＿＿"]}]}, {"no": 26, "section": "初中必背古诗文", "color": "#c0392b", "title": "《论语》十二章", "author": "", "notes": "🔹说（通“悦”）；愠；三省；忠信；不惑；天命；耳顺；逾矩；罔；殆；箪；陋巷；肱；疏食；三人行；川上；逝者如斯夫；匹夫不可夺志；博学笃志。", "errors": "🔴【易错】说、愠、罔、殆、肱、笃。高频：“学而不思则罔，思而不学则殆”“三军可夺帅也，匹夫不可夺志也”。", "exercises": [{"type": "原文挖空", "items": ["学而不思则罔，＿＿＿＿。择其善者而从之，＿＿＿＿。三军可夺帅也，＿＿＿＿。"]}, {"type": "情景默写", "items": ["1. 阐述学思辩证关系的句子：＿＿＿＿ 2. 表达即使普通人也有坚定志向的句子：＿＿＿＿"]}]}, {"no": 27, "section": "初中必背古诗文", "color": "#c0392b", "title": "《诫子书》", "author": "三国·诸葛亮", "notes": "🔹静以修身；淡泊明志；宁静致远；淫慢；励精；险躁；治性。", "errors": "🔴【易错】淫慢、躁（非“燥”）、励精。名句“非淡泊无以明志，非宁静无以致远”。", "exercises": [{"type": "原文挖空", "items": ["夫君子之行，＿＿＿＿，俭以养德。＿＿＿＿，非宁静无以致远。"]}, {"type": "情景默写", "items": ["强调内心恬淡、宁静专一的句子：＿＿＿＿"]}]}, {"no": 28, "section": "初中必背古诗文", "color": "#c0392b", "title": "《孙权劝学》", "author": "宋·司马光", "notes": "🔹当涂掌事；辞以军中多务；治经为博士邪；但当涉猎；见往事耳；刮目相待。", "errors": "🔴【易错】邪（通“耶”）、涉猎、刮目。名句“士别三日，即更刮目相待”。", "exercises": [{"type": "原文挖空", "items": ["士别三日，＿＿＿＿，大兄何见事之晚乎！"]}, {"type": "情景默写", "items": ["吕蒙的变化让人刮目相待的句子：＿＿＿＿"]}]}, {"no": 29, "section": "初中必背古诗文", "color": "#c0392b", "title": "《陋室铭》", "author": "唐·刘禹锡", "notes": "🔹惟吾德馨；苔痕上阶绿；鸿儒；调素琴；金经；丝竹；案牍劳形。", "errors": "🔴【易错】馨、儒、牍。名句“斯是陋室，惟吾德馨”“苔痕上阶绿，草色入帘青”。", "exercises": [{"type": "原文挖空", "items": ["山不在高，＿＿＿＿。斯是陋室，＿＿＿＿。苔痕上阶绿，＿＿＿＿。"]}, {"type": "情景默写", "items": ["写陋室环境清幽的对偶句：＿＿＿＿"]}]}, {"no": 30, "section": "初中必背古诗文", "color": "#c0392b", "title": "《爱莲说》", "author": "宋·周敦颐", "notes": "🔹出淤泥而不染；濯清涟而不妖；中通外直；不蔓不枝；香远益清；亭亭净植；亵玩。", "errors": "🔴【易错】淤、濯、涟、亵。名句“出淤泥而不染，濯清涟而不妖”。", "exercises": [{"type": "原文挖空", "items": ["予独爱莲之＿＿＿＿，濯清涟而不妖。"]}, {"type": "情景默写", "items": ["写莲高洁质朴的句子：＿＿＿＿"]}]}, {"no": 31, "section": "初中必背古诗文", "color": "#c0392b", "title": "《河中石兽》", "author": "清·纪昀", "notes": "🔹圮；棹；铁钯；木杮；湮；啮沙；臆断。", "errors": "🔴【易错】圮、杮（非“柿”）、湮、臆断。名句“然则天下之事，但知其一，不知其二者多矣，可据理臆断欤”。", "exercises": [{"type": "原文挖空", "items": ["然则天下之事，＿＿＿＿，不知其二者多矣，＿＿＿＿？"]}, {"type": "情景默写", "items": ["揭示不能片面判断的句子：＿＿＿＿"]}]}, {"no": 32, "section": "初中必背古诗文", "color": "#c0392b", "title": "《野望》", "author": "唐·王绩", "notes": "🔹东皋；徙倚；树树皆秋色；牧人驱犊返；相顾无相识，长歌怀采薇。", "errors": "🔴【易错】皋、犊、薇。名句“树树皆秋色，山山唯落晖”。", "exercises": [{"type": "原文挖空", "items": ["东皋薄暮望，＿＿＿＿。树树皆秋色，＿＿＿＿。"]}, {"type": "情景默写", "items": ["描写秋天山野景色的对偶句：＿＿＿＿"]}]}, {"no": 33, "section": "初中必背古诗文", "color": "#c0392b", "title": "《黄鹤楼》", "author": "唐·崔颢", "notes": "🔹昔人已乘黄鹤去；白云千载空悠悠；晴川历历汉阳树；芳草萋萋鹦鹉洲。", "errors": "🔴【易错】萋、鹦鹉、洲。名句“晴川历历汉阳树，芳草萋萋鹦鹉洲”。", "exercises": [{"type": "原文挖空", "items": ["昔人已乘黄鹤去，＿＿＿＿。晴川历历汉阳树，＿＿＿＿。"]}, {"type": "情景默写", "items": ["登楼远眺引发乡愁的句子：＿＿＿＿"]}]}, {"no": 34, "section": "初中必背古诗文", "color": "#c0392b", "title": "《使至塞上》", "author": "唐·王维", "notes": "🔹征蓬；汉塞；归雁；大漠孤烟直，长河落日圆。", "errors": "🔴【易错】蓬、圆、候骑。名句“大漠孤烟直，长河落日圆”。", "exercises": [{"type": "原文挖空", "items": ["征蓬出汉塞，＿＿＿＿。大漠孤烟直，＿＿＿＿。"]}, {"type": "情景默写", "items": ["描绘塞外奇特壮丽风光的句子：＿＿＿＿"]}]}, {"no": 35, "section": "初中必背古诗文", "color": "#c0392b", "title": "《渡荆门送别》", "author": "唐·李白", "notes": "🔹山随平野尽；月下飞天镜；云生结海楼；仍怜故乡水。", "errors": "🔴【易错】荆、镜。名句“山随平野尽，江入大荒流”。", "exercises": [{"type": "原文挖空", "items": ["山随平野尽，＿＿＿＿。月下飞天镜，＿＿＿＿。"]}, {"type": "情景默写", "items": ["写船入开阔平原的句子：＿＿＿＿"]}]}, {"no": 36, "section": "初中必背古诗文", "color": "#c0392b", "title": "《钱塘湖春行》", "author": "唐·白居易", "notes": "🔹早莺争暖树；新燕啄春泥；乱花渐欲迷人眼；浅草才能没马蹄。", "errors": "🔴【易错】啄、没。名句“几处早莺争暖树，谁家新燕啄春泥”。", "exercises": [{"type": "原文挖空", "items": ["几处早莺争暖树，＿＿＿＿。乱花渐欲迷人眼，＿＿＿＿。"]}, {"type": "情景默写", "items": ["早春生机勃勃的画面：＿＿＿＿"]}]}, {"no": 37, "section": "初中必背古诗文", "color": "#c0392b", "title": "《庭中有奇树》", "author": "《古诗十九首》", "notes": "🔹庭中有奇树；攀条折其荣；馨香盈怀袖。", "errors": "🔴【易错】攀、馨。", "exercises": [{"type": "原文挖空", "items": ["庭中有奇树，＿＿＿＿。攀条折其荣，＿＿＿＿。"]}, {"type": "情景默写", "items": ["借折花表达思念的句子：＿＿＿＿"]}]}, {"no": 38, "section": "初中必背古诗文", "color": "#c0392b", "title": "《龟虽寿》", "author": "东汉·曹操", "notes": "🔹老骥伏枥，志在千里；烈士暮年，壮心不已。", "errors": "🔴【易错】骥、枥、暮。", "exercises": [{"type": "原文挖空", "items": ["老骥伏枥，＿＿＿＿；烈士暮年，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表现老当益壮豪情的句子：＿＿＿＿"]}]}, {"no": 39, "section": "初中必背古诗文", "color": "#c0392b", "title": "《赠从弟（其二）》", "author": "东汉·刘桢", "notes": "🔹亭亭山上松；风声一何盛，松枝一何劲；岂不罹凝寒？松柏有本性。", "errors": "🔴【易错】罹、凝。", "exercises": [{"type": "原文挖空", "items": ["风声一何盛，＿＿＿＿！＿＿＿＿？松柏有本性。"]}, {"type": "情景默写", "items": ["借松柏喻人坚贞的句子：＿＿＿＿"]}]}, {"no": 40, "section": "初中必背古诗文", "color": "#c0392b", "title": "《梁甫行》", "author": "三国·曹植", "notes": "🔹八方各异气；剧哉边海民；妻子象禽兽，行止依林阻。", "errors": "🔴【易错】剧、阻。", "exercises": [{"type": "原文挖空", "items": ["八方各异气，＿＿＿＿。妻子象禽兽，＿＿＿＿。"]}, {"type": "情景默写", "items": ["描写海边百姓困苦的句子：＿＿＿＿"]}]}, {"no": 41, "section": "初中必背古诗文", "color": "#c0392b", "title": "《饮酒（其五）》", "author": "晋·陶渊明", "notes": "🔹结庐在人境；心远地自偏；采菊东篱下，悠然见南山；山气日夕佳。", "errors": "🔴【易错】偏、篱、悠。名句“采菊东篱下，悠然见南山”。", "exercises": [{"type": "原文挖空", "items": ["采菊东篱下，＿＿＿＿。山气日夕佳，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表现隐居生活闲适的句子：＿＿＿＿"]}]}, {"no": 42, "section": "初中必背古诗文", "color": "#c0392b", "title": "《春望》", "author": "唐·杜甫", "notes": "🔹感时花溅泪；烽火连三月，家书抵万金；浑欲不胜簪。", "errors": "🔴【易错】溅、搔、簪。名句“烽火连三月，家书抵万金”。", "exercises": [{"type": "原文挖空", "items": ["感时花溅泪，＿＿＿＿。烽火连三月，＿＿＿＿。"]}, {"type": "情景默写", "items": ["写战乱中思念亲人的句子：＿＿＿＿"]}]}, {"no": 43, "section": "初中必背古诗文", "color": "#c0392b", "title": "《雁门太守行》", "author": "唐·李贺", "notes": "🔹黑云压城；甲光向日金鳞开；角声满天秋色里；提携玉龙为君死。", "errors": "🔴【易错】鳞、携。名句“黑云压城城欲摧，甲光向日金鳞开”。", "exercises": [{"type": "原文挖空", "items": ["黑云压城城欲摧，＿＿＿＿。角声满天秋色里，＿＿＿＿。"]}, {"type": "情景默写", "items": ["渲染敌军兵临城下紧张气氛的句子：＿＿＿＿"]}]}, {"no": 44, "section": "初中必背古诗文", "color": "#c0392b", "title": "《赤壁》", "author": "唐·杜牧", "notes": "🔹折戟沉沙铁未销；东风不与周郎便，铜雀春深锁二乔。", "errors": "🔴【易错】戟、郎。", "exercises": [{"type": "原文挖空", "items": ["折戟沉沙铁未销，＿＿＿＿。东风不与周郎便，＿＿＿＿。"]}, {"type": "情景默写", "items": ["借历史抒发感慨的句子：＿＿＿＿"]}]}, {"no": 45, "section": "初中必背古诗文", "color": "#c0392b", "title": "《渔家傲·天接云涛连晓雾》", "author": "宋·李清照", "notes": "🔹星河欲转千帆舞；殷勤问我归何处；风休住，蓬舟吹取三山去。", "errors": "🔴【易错】蓬。名句“九万里风鹏正举。风休住，蓬舟吹取三山去”。", "exercises": [{"type": "原文挖空", "items": ["天接云涛连晓雾，＿＿＿＿。九万里风鹏正举。＿＿＿＿，蓬舟吹取三山去。"]}, {"type": "情景默写", "items": ["表现豪迈气概与追求的句子：＿＿＿＿"]}]}, {"no": 46, "section": "初中必背古诗文", "color": "#c0392b", "title": "《浣溪沙·一曲新词酒一杯》", "author": "宋·晏殊", "notes": "🔹一曲新词酒一杯；夕阳西下几时回？无可奈何花落去，似曾相识燕归来。", "errors": "🔴【易错】燕。名句“无可奈何花落去，似曾相识燕归来”。", "exercises": [{"type": "原文挖空", "items": ["无可奈何花落去，＿＿＿＿。"]}, {"type": "情景默写", "items": ["蕴含时光流逝感伤的句子：＿＿＿＿"]}]}, {"no": 47, "section": "初中必背古诗文", "color": "#c0392b", "title": "《采桑子·轻舟短棹西湖好》", "author": "宋·欧阳修", "notes": "🔹绿水逶迤；芳草长堤；无风水面琉璃滑。", "errors": "🔴【易错】逶迤、琉璃。", "exercises": [{"type": "原文挖空", "items": ["绿水逶迤，＿＿＿＿。无风水面琉璃滑，＿＿＿＿。"]}, {"type": "情景默写", "items": ["描绘西湖安闲的句子：＿＿＿＿"]}]}, {"no": 48, "section": "初中必背古诗文", "color": "#c0392b", "title": "《相见欢·金陵城上西楼》", "author": "宋·朱敦儒", "notes": "🔹万里夕阳垂地大江流；中原乱，簪缨散；试倩悲风吹泪过扬州。", "errors": "🔴【易错】簪缨。", "exercises": [{"type": "原文挖空", "items": ["金陵城上西楼，＿＿＿＿。万里夕阳垂地＿＿＿＿。"]}, {"type": "情景默写", "items": ["表达亡国之痛的句子：＿＿＿＿"]}]}, {"no": 49, "section": "初中必背古诗文", "color": "#c0392b", "title": "《如梦令·常记溪亭日暮》", "author": "宋·李清照", "notes": "🔹常记溪亭日暮；误入藕花深处；惊起一滩鸥鹭。", "errors": "🔴【易错】藕、鸥鹭。", "exercises": [{"type": "原文挖空", "items": ["常记溪亭日暮，＿＿＿＿。争渡，争渡，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表现少女活泼天真的句子：＿＿＿＿"]}]}, {"no": 50, "section": "初中必背古诗文", "color": "#c0392b", "title": "《关雎》", "author": "《诗经》", "notes": "🔹雎鸠；窈窕淑女；寤寐思服；琴瑟友之。", "errors": "🔴【易错】雎、寤寐、瑟。名句“关关雎鸠，在河之洲。窈窕淑女，君子好逑”。", "exercises": [{"type": "原文挖空", "items": ["关关雎鸠，＿＿＿＿。窈窕淑女，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表达对美好爱情的追求：＿＿＿＿"]}]}, {"no": 51, "section": "初中必背古诗文", "color": "#c0392b", "title": "《蒹葭》", "author": "《诗经》", "notes": "🔹蒹葭苍苍；溯洄从之；宛在水中央；未晞。", "errors": "🔴【易错】葭、溯洄、晞。名句“所谓伊人，在水一方”。", "exercises": [{"type": "原文挖空", "items": ["蒹葭苍苍，＿＿＿＿。所谓伊人，＿＿＿＿。"]}, {"type": "情景默写", "items": ["可望而不可即的惆怅：＿＿＿＿"]}]}, {"no": 52, "section": "初中必背古诗文", "color": "#c0392b", "title": "《式微》", "author": "《诗经·邶风》", "notes": "🔹式微式微；胡不归？微君之故，胡为乎中露！", "errors": "🔴【易错】微、露。", "exercises": [{"type": "原文挖空", "items": ["式微式微，＿＿＿＿？微君之故，＿＿＿＿！"]}, {"type": "情景默写", "items": ["表达对统治者的不满：＿＿＿＿"]}]}, {"no": 53, "section": "初中必背古诗文", "color": "#c0392b", "title": "《子衿》", "author": "《诗经·郑风》", "notes": "🔹青青子衿；纵我不往，子宁不嗣音？", "errors": "🔴【易错】衿、嗣。", "exercises": [{"type": "原文挖空", "items": ["青青子衿，＿＿＿＿。纵我不往，＿＿＿＿？"]}, {"type": "情景默写", "items": ["表达女子对恋人思念的句子：＿＿＿＿"]}]}, {"no": 54, "section": "初中必背古诗文", "color": "#c0392b", "title": "《送杜少府之任蜀州》", "author": "唐·王勃", "notes": "🔹城阙辅三秦；与君离别意；海内存知己，天涯若比邻；无为在歧路。", "errors": "🔴【易错】阙、歧。名句“海内存知己，天涯若比邻”。", "exercises": [{"type": "原文挖空", "items": ["城阙辅三秦，＿＿＿＿。海内存知己，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表达真挚友情不受时空阻隔的句子：＿＿＿＿"]}]}, {"no": 55, "section": "初中必背古诗文", "color": "#c0392b", "title": "《望洞庭湖赠张丞相》", "author": "唐·孟浩然", "notes": "🔹八月湖水平；气蒸云梦泽，波撼岳阳城；欲济无舟楫；坐观垂钓者。", "errors": "🔴【易错】撼、楫。名句“气蒸云梦泽，波撼岳阳城”。", "exercises": [{"type": "原文挖空", "items": ["气蒸云梦泽，＿＿＿＿。欲济无舟楫，＿＿＿＿。"]}, {"type": "情景默写", "items": ["借洞庭湖表达求仕愿望的句子：＿＿＿＿"]}]}, {"no": 56, "section": "初中必背古诗文", "color": "#c0392b", "title": "《茅屋为秋风所破歌》", "author": "唐·杜甫", "notes": "🔹风怒号；三重茅；布衾多年冷似铁；大庇天下寒士俱欢颜；吾庐独破受冻死亦足。", "errors": "🔴【易错】衾、庇、庐。名句“安得广厦千万间，大庇天下寒士俱欢颜”。", "exercises": [{"type": "原文挖空", "items": ["安得广厦千万间，＿＿＿＿！风雨不动安如山。"]}, {"type": "情景默写", "items": ["体现诗人忧国忧民情怀：＿＿＿＿"]}]}, {"no": 57, "section": "初中必背古诗文", "color": "#c0392b", "title": "《卖炭翁》", "author": "唐·白居易", "notes": "🔹伐薪烧炭南山中；满面尘灰烟火色；心忧炭贱愿天寒；晓驾炭车辗冰辙；黄衣使者白衫儿；半匹红纱一丈绫。", "errors": "🔴【易错】辗、辙。名句“可怜身上衣正单，心忧炭贱愿天寒”。", "exercises": [{"type": "原文挖空", "items": ["可怜身上衣正单，＿＿＿＿。夜来城外一尺雪，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表现卖炭翁矛盾心理：＿＿＿＿"]}]}, {"no": 58, "section": "初中必背古诗文", "color": "#c0392b", "title": "《题破山寺后禅院》", "author": "唐·常建", "notes": "🔹清晨入古寺；曲径通幽处，禅房花木深；山光悦鸟性，潭影空人心。", "errors": "🔴【易错】禅。名句“曲径通幽处，禅房花木深”。", "exercises": [{"type": "原文挖空", "items": ["曲径通幽处，＿＿＿＿。山光悦鸟性，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表现环境清幽的句子：＿＿＿＿"]}]}, {"no": 59, "section": "初中必背古诗文", "color": "#c0392b", "title": "《送友人》", "author": "唐·李白", "notes": "🔹青山横北郭；浮云游子意，落日故人情；挥手自兹去，萧萧班马鸣。", "errors": "🔴【易错】班马（非“斑”）。", "exercises": [{"type": "原文挖空", "items": ["浮云游子意，＿＿＿＿。挥手自兹去，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表达对友人依依惜别的句子：＿＿＿＿"]}]}, {"no": 60, "section": "初中必背古诗文", "color": "#c0392b", "title": "《卜算子·黄州定慧院寓居作》", "author": "宋·苏轼", "notes": "🔹缺月挂疏桐；漏断人初静；谁见幽人独往来，缥缈孤鸿影。", "errors": "🔴【易错】疏、缥缈。", "exercises": [{"type": "原文挖空", "items": ["缺月挂疏桐，＿＿＿＿。谁见幽人独往来，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表现词人孤高自许的句子：＿＿＿＿"]}]}, {"no": 61, "section": "初中必背古诗文", "color": "#c0392b", "title": "《卜算子·咏梅》", "author": "宋·陆游", "notes": "🔹驿外断桥边；已是黄昏独自愁，更著风和雨；零落成泥碾作尘，只有香如故。", "errors": "🔴【易错】驿、碾。名句“零落成泥碾作尘，只有香如故”。", "exercises": [{"type": "原文挖空", "items": ["零落成泥碾作尘，＿＿＿＿。"]}, {"type": "情景默写", "items": ["赞美梅花坚贞品格的句子：＿＿＿＿"]}]}, {"no": 62, "section": "初中必背古诗文", "color": "#c0392b", "title": "《三峡》", "author": "北魏·郦道元", "notes": "🔹自非亭午夜分；沿溯阻绝；素湍绿潭；清荣峻茂；高猿长啸；巴东三峡巫峡长，猿鸣三声泪沾裳。", "errors": "🔴【易错】曦、溯、湍、裳。名句“有时朝发白帝，暮到江陵”。", "exercises": [{"type": "原文挖空", "items": ["自非亭午夜分，＿＿＿＿。虽乘奔御风，＿＿＿＿。"]}, {"type": "情景默写", "items": ["侧面描写山势高峻的句子：＿＿＿＿"]}]}, {"no": 63, "section": "初中必背古诗文", "color": "#c0392b", "title": "《答谢中书书》", "author": "南朝·陶弘景", "notes": "🔹高峰入云；清流见底；晓雾将歇；夕日欲颓；沉鳞竞跃；实是欲界之仙都。", "errors": "🔴【易错】颓、竞。", "exercises": [{"type": "原文挖空", "items": ["晓雾将歇，＿＿＿＿；夕日欲颓，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表现山川之美的句子：＿＿＿＿"]}]}, {"no": 64, "section": "初中必背古诗文", "color": "#c0392b", "title": "《记承天寺夜游》", "author": "宋·苏轼", "notes": "🔹积水空明；水中藻、荇交横；但少闲人如吾两人者耳。", "errors": "🔴【易错】藻荇、闲。名句“庭下如积水空明，水中藻、荇交横，盖竹柏影也”。", "exercises": [{"type": "原文挖空", "items": ["庭下如积水空明，＿＿＿＿，盖竹柏影也。何夜无月？＿＿＿＿？但少闲人如吾两人者耳。"]}, {"type": "情景默写", "items": ["表达微妙复杂心境的句子：＿＿＿＿"]}]}, {"no": 65, "section": "初中必背古诗文", "color": "#c0392b", "title": "《与朱元思书》", "author": "南朝·吴均", "notes": "🔹风烟俱净；急湍甚箭；猛浪若奔；负势竞上；鸢飞戾天者；经纶世务者。", "errors": "🔴【易错】戾、纶。名句“鸢飞戾天者，望峰息心；经纶世务者，窥谷忘反”。", "exercises": [{"type": "原文挖空", "items": ["鸢飞戾天者，＿＿＿＿；经纶世务者，＿＿＿＿。"]}, {"type": "情景默写", "items": ["触景生情、淡泊名利的句子：＿＿＿＿"]}]}, {"no": 66, "section": "初中必背古诗文", "color": "#c0392b", "title": "《得道多助，失道寡助》", "author": "《孟子》", "notes": "🔹天时不如地利；地利不如人和；域民不以封疆之界；固国不以山溪之险；威天下不以兵革之利；得道者多助；寡助之至，亲戚畔之。", "errors": "🔴【易错】域、畔（通“叛”）。名句“天时不如地利，地利不如人和”。", "exercises": [{"type": "原文挖空", "items": ["天时不如地利，＿＿＿＿。寡助之至，＿＿＿＿。"]}, {"type": "情景默写", "items": ["强调“人和”重要性的句子：＿＿＿＿"]}]}, {"no": 67, "section": "初中必背古诗文", "color": "#c0392b", "title": "《富贵不能淫》", "author": "《孟子》", "notes": "🔹公孙衍、张仪岂不诚大丈夫哉？居天下之广居，立天下之正位，行天下之大道；富贵不能淫，贫贱不能移，威武不能屈。", "errors": "🔴【易错】淫、移。名句“富贵不能淫，贫贱不能移，威武不能屈”。", "exercises": [{"type": "原文挖空", "items": ["富贵不能淫，＿＿＿＿，威武不能屈。"]}, {"type": "情景默写", "items": ["体现大丈夫坚贞品格：＿＿＿＿"]}]}, {"no": 68, "section": "初中必背古诗文", "color": "#c0392b", "title": "《生于忧患，死于安乐》", "author": "《孟子》", "notes": "🔹舜发于畎亩之中；傅说举于版筑之间；胶鬲举于鱼盐之中；管夷吾举于士；孙叔敖举于海；百里奚举于市；动心忍性，曾益其所不能；入则无法家拂士，出则无敌国外患者。", "errors": "🔴【易错】畎、鬲、曾（通“增”）、拂（通“弼”）。名句“故天将降大任于是人也，必先苦其心志……”。", "exercises": [{"type": "原文挖空", "items": ["故天将降大任于是人也，＿＿＿＿，劳其筋骨…… 入则无法家拂士，＿＿＿＿，国恒亡。"]}, {"type": "情景默写", "items": ["论证忧患使人生存、安乐使人灭亡的句子：＿＿＿＿"]}]}, {"no": 69, "section": "初中必背古诗文", "color": "#c0392b", "title": "《愚公移山》", "author": "《列子》", "notes": "🔹方七百里；高万仞；惩山北之塞；叩石垦壤；箕畚运于渤海之尾；始龀；无穷匮也；何苦而不平？", "errors": "🔴【易错】仞、箕畚、龀、匮。名句“子子孙孙无穷匮也，而山不加增，何苦而不平”。", "exercises": [{"type": "原文挖空", "items": ["子子孙孙无穷匮也，＿＿＿＿，何苦而不平？"]}, {"type": "情景默写", "items": ["表现愚公坚定信念的句子：＿＿＿＿"]}]}, {"no": 70, "section": "初中必背古诗文", "color": "#c0392b", "title": "《桃花源记》", "author": "晋·陶渊明", "notes": "🔹落英缤纷；欲穷其林；豁然开朗；阡陌交通；鸡犬相闻；黄发垂髫；皆叹惋；遂迷，不复得路。", "errors": "🔴【易错】缤、髫、惋。名句“阡陌交通，鸡犬相闻”“黄发垂髫，并怡然自乐”。", "exercises": [{"type": "原文挖空", "items": ["土地平旷，屋舍俨然，＿＿＿＿。阡陌交通，＿＿＿＿。"]}, {"type": "情景默写", "items": ["描写桃花源和平安宁的句子：＿＿＿＿"]}]}, {"no": 71, "section": "初中必背古诗文", "color": "#c0392b", "title": "《小石潭记》", "author": "唐·柳宗元", "notes": "🔹如鸣佩环；俶尔远逝；往来翕忽；斗折蛇行；凄神寒骨，悄怆幽邃。", "errors": "🔴【易错】俶、翕、邃。名句“潭中鱼可百许头，皆若空游无所依”。", "exercises": [{"type": "原文挖空", "items": ["潭中鱼可百许头，＿＿＿＿。俶尔远逝，＿＿＿＿。"]}, {"type": "情景默写", "items": ["写潭水清澈、游鱼自由：＿＿＿＿"]}]}, {"no": 72, "section": "初中必背古诗文", "color": "#c0392b", "title": "《北冥有鱼》", "author": "《庄子》", "notes": "🔹北冥有鱼；化而为鸟；怒而飞；海运则将徙于南冥；野马也，尘埃也，生物之以息相吹也。", "errors": "🔴【易错】冥（通“溟”）、徙。", "exercises": [{"type": "原文挖空", "items": ["北冥有鱼，＿＿＿＿。化而为鸟，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表现大鹏振翅高飞的句子：＿＿＿＿"]}]}, {"no": 73, "section": "初中必背古诗文", "color": "#c0392b", "title": "《虽有嘉肴》", "author": "《礼记》", "notes": "🔹虽有嘉肴，弗食，不知其旨也；教学相长；学学半。", "errors": "🔴【易错】肴、旨、学学半（前“学”通“敩”）。名句“教学相长”。", "exercises": [{"type": "原文挖空", "items": ["虽有嘉肴，＿＿＿＿，不知其旨也。知不足，＿＿＿＿；知困，＿＿＿＿。"]}, {"type": "情景默写", "items": ["说明教与学互相促进的句子：＿＿＿＿"]}]}, {"no": 74, "section": "初中必背古诗文", "color": "#c0392b", "title": "《大道之行也》", "author": "《礼记》", "notes": "🔹天下为公；选贤与能；讲信修睦；老有所终；壮有所用；矜、寡、孤、独、废疾者皆有所养。", "errors": "🔴【易错】与（通“举”）、矜（通“鳏”）。名句“大道之行也，天下为公”。", "exercises": [{"type": "原文挖空", "items": ["大道之行也，＿＿＿＿。选贤与能，＿＿＿＿。"]}, {"type": "情景默写", "items": ["描写理想社会特征的句子：＿＿＿＿"]}]}, {"no": 75, "section": "初中必背古诗文", "color": "#c0392b", "title": "《马说》", "author": "唐·韩愈", "notes": "🔹祗辱于奴隶人之手；骈死于槽枥之间；食马者不知其能千里而食也；食不饱，力不足，才美不外见。", "errors": "🔴【易错】祗、骈、食（通“饲”）、见（通“现”）。名句“千里马常有，而伯乐不常有”。", "exercises": [{"type": "原文挖空", "items": ["千里马常有，＿＿＿＿。其真无马邪？＿＿＿＿！"]}, {"type": "情景默写", "items": ["揭示食马者愚妄的句子：＿＿＿＿"]}]}, {"no": 76, "section": "初中必背古诗文", "color": "#c0392b", "title": "《行路难（其一）》", "author": "唐·李白", "notes": "🔹金樽清酒斗十千；停杯投箸不能食；欲渡黄河冰塞川，将登太行雪满山；长风破浪会有时，直挂云帆济沧海。", "errors": "🔴【易错】箸、济。名句“长风破浪会有时，直挂云帆济沧海”。", "exercises": [{"type": "原文挖空", "items": ["长风破浪会有时，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表达乐观自信、执着追求的句子：＿＿＿＿"]}]}, {"no": 77, "section": "初中必背古诗文", "color": "#c0392b", "title": "《酬乐天扬州初逢席上见赠》", "author": "唐·刘禹锡", "notes": "🔹巴山楚水凄凉地；怀旧空吟闻笛赋；沉舟侧畔千帆过，病树前头万木春。", "errors": "🔴【易错】赋、畔。名句“沉舟侧畔千帆过，病树前头万木春”。", "exercises": [{"type": "原文挖空", "items": ["沉舟侧畔千帆过，＿＿＿＿。"]}, {"type": "情景默写", "items": ["蕴含新事物必将取代旧事物的句子：＿＿＿＿"]}]}, {"no": 78, "section": "初中必背古诗文", "color": "#c0392b", "title": "《水调歌头·明月几时有》", "author": "宋·苏轼", "notes": "🔹把酒问青天；起舞弄清影；不应有恨，何事长向别时圆？但愿人长久，千里共婵娟。", "errors": "🔴【易错】婵娟。名句“但愿人长久，千里共婵娟”。", "exercises": [{"type": "原文挖空", "items": ["但愿人长久，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表达对亲人美好祝愿的句子：＿＿＿＿"]}]}, {"no": 79, "section": "初中必背古诗文", "color": "#c0392b", "title": "《月夜忆舍弟》", "author": "唐·杜甫", "notes": "🔹戍鼓断人行；露从今夜白，月是故乡明。", "errors": "🔴【易错】戍。名句“露从今夜白，月是故乡明”。", "exercises": [{"type": "原文挖空", "items": ["露从今夜白，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表达对故乡思念的句子：＿＿＿＿"]}]}, {"no": 80, "section": "初中必背古诗文", "color": "#c0392b", "title": "《长沙过贾谊宅》", "author": "唐·刘长卿", "notes": "🔹三年谪宦此栖迟；秋草独寻人去后，寒林空见日斜时。", "errors": "🔴【易错】谪、栖。", "exercises": [{"type": "原文挖空", "items": ["秋草独寻人去后，＿＿＿＿。"]}, {"type": "情景默写", "items": ["借古伤怀的句子：＿＿＿＿"]}]}, {"no": 81, "section": "初中必背古诗文", "color": "#c0392b", "title": "《左迁至蓝关示侄孙湘》", "author": "唐·韩愈", "notes": "🔹一封朝奏九重天，夕贬潮州路八千；欲为圣明除弊事，肯将衰朽惜残年！", "errors": "🔴【易错】弊、朽。名句“云横秦岭家何在？雪拥蓝关马不前”。", "exercises": [{"type": "原文挖空", "items": ["云横秦岭家何在？＿＿＿＿。"]}, {"type": "情景默写", "items": ["表现英雄失路的悲慨：＿＿＿＿"]}]}, {"no": 82, "section": "初中必背古诗文", "color": "#c0392b", "title": "《商山早行》", "author": "唐·温庭筠", "notes": "🔹晨起动征铎；鸡声茅店月，人迹板桥霜；槲叶落山路，枳花明驿墙。", "errors": "🔴【易错】铎、槲、枳。名句“鸡声茅店月，人迹板桥霜”。", "exercises": [{"type": "原文挖空", "items": ["鸡声茅店月，＿＿＿＿。"]}, {"type": "情景默写", "items": ["用意象罗列写早行之苦：＿＿＿＿"]}]}, {"no": 83, "section": "初中必背古诗文", "color": "#c0392b", "title": "《咸阳城东楼》", "author": "唐·许浑", "notes": "🔹一上高城万里愁；溪云初起日沉阁，山雨欲来风满楼。", "errors": "🔴【易错】阁。名句“山雨欲来风满楼”。", "exercises": [{"type": "原文挖空", "items": ["溪云初起日沉阁，＿＿＿＿。"]}, {"type": "情景默写", "items": ["常用来比喻重大事件前的紧张气氛：＿＿＿＿"]}]}, {"no": 84, "section": "初中必背古诗文", "color": "#c0392b", "title": "《无题》", "author": "唐·李商隐", "notes": "🔹相见时难别亦难；春蚕到死丝方尽，蜡炬成灰泪始干。", "errors": "🔴【易错】蜡炬。名句“春蚕到死丝方尽，蜡炬成灰泪始干”。", "exercises": [{"type": "原文挖空", "items": ["春蚕到死丝方尽，＿＿＿＿。"]}, {"type": "情景默写", "items": ["赞美无私奉献精神：＿＿＿＿"]}]}, {"no": 85, "section": "初中必背古诗文", "color": "#c0392b", "title": "《丑奴儿·书博山道中壁》", "author": "宋·辛弃疾", "notes": "🔹少年不识愁滋味；为赋新词强说愁；而今识尽愁滋味，欲说还休。", "errors": "🔴【易错】赋。", "exercises": [{"type": "原文挖空", "items": ["少年不识愁滋味，＿＿＿＿。而今识尽愁滋味，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表现人生不同阶段对愁的感受：＿＿＿＿"]}]}, {"no": 86, "section": "初中必背古诗文", "color": "#c0392b", "title": "《渔家傲·秋思》", "author": "宋·范仲淹", "notes": "🔹塞下秋来风景异；浊酒一杯家万里；燕然未勒归无计；人不寐，将军白发征夫泪。", "errors": "🔴【易错】勒、寐。名句“浊酒一杯家万里，燕然未勒归无计”。", "exercises": [{"type": "原文挖空", "items": ["浊酒一杯家万里，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表现边塞将士思乡而不得归的矛盾：＿＿＿＿"]}]}, {"no": 87, "section": "初中必背古诗文", "color": "#c0392b", "title": "《江城子·密州出猎》", "author": "宋·苏轼", "notes": "🔹老夫聊发少年狂；锦帽貂裘，千骑卷平冈；会挽雕弓如满月，西北望，射天狼。", "errors": "🔴【易错】貂、冈、雕。名句“会挽雕弓如满月，西北望，射天狼”。", "exercises": [{"type": "原文挖空", "items": ["会挽雕弓如满月，＿＿＿＿，＿＿＿＿。"]}, {"type": "情景默写", "items": ["抒发杀敌报国豪情的句子：＿＿＿＿"]}]}, {"no": 88, "section": "初中必背古诗文", "color": "#c0392b", "title": "《破阵子·为陈同甫赋壮词以寄之》", "author": "宋·辛弃疾", "notes": "🔹醉里挑灯看剑；五十弦翻塞外声；马作的卢飞快，弓如霹雳弦惊；了却君王天下事，赢得生前身后名。", "errors": "🔴【易错】的卢、霹雳。名句“了却君王天下事，赢得生前身后名。可怜白发生！”。", "exercises": [{"type": "原文挖空", "items": ["了却君王天下事，＿＿＿＿。可怜白发生！"]}, {"type": "情景默写", "items": ["表达壮志难酬的悲愤：＿＿＿＿"]}]}, {"no": 89, "section": "初中必背古诗文", "color": "#c0392b", "title": "《满江红·小住京华》", "author": "清·秋瑾", "notes": "🔹小住京华；四面歌残终破楚；八年风味徒思浙；苦将侬强派作蛾眉，殊未屑！", "errors": "🔴【易错】侬、屑。名句“身不得，男儿列，心却比，男儿烈”。", "exercises": [{"type": "原文挖空", "items": ["身不得，男儿列，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表现巾帼英雄气概的句子：＿＿＿＿"]}]}, {"no": 90, "section": "初中必背古诗文", "color": "#c0392b", "title": "《十五从军征》", "author": "汉乐府", "notes": "🔹十五从军征，八十始得归；遥看是君家，松柏冢累累；舂谷持作饭，采葵持作羹。", "errors": "🔴【易错】冢、舂、羹。", "exercises": [{"type": "原文挖空", "items": ["遥看是君家，＿＿＿＿。"]}, {"type": "情景默写", "items": ["揭露战争残酷的句子：＿＿＿＿"]}]}, {"no": 91, "section": "初中必背古诗文", "color": "#c0392b", "title": "《白雪歌送武判官归京》", "author": "唐·岑参", "notes": "🔹忽如一夜春风来，千树万树梨花开；瀚海阑干百丈冰；愁云惨淡万里凝；山回路转不见君，雪上空留马行处。", "errors": "🔴【易错】阑干、凝。名句“忽如一夜春风来，千树万树梨花开”。", "exercises": [{"type": "原文挖空", "items": ["忽如一夜春风来，＿＿＿＿。"]}, {"type": "情景默写", "items": ["以春花喻冬雪的千古名句：＿＿＿＿"]}]}, {"no": 92, "section": "初中必背古诗文", "color": "#c0392b", "title": "《南乡子·登京口北固亭有怀》", "author": "宋·辛弃疾", "notes": "🔹何处望神州？满眼风光北固楼；年少万兜鍪，坐断东南战未休；生子当如孙仲谋。", "errors": "🔴【易错】兜鍪。", "exercises": [{"type": "原文挖空", "items": ["年少万兜鍪，＿＿＿＿。天下英雄谁敌手？＿＿＿＿。"]}, {"type": "情景默写", "items": ["表达对英雄的仰慕：＿＿＿＿"]}]}, {"no": 93, "section": "初中必背古诗文", "color": "#c0392b", "title": "《过零丁洋》", "author": "宋·文天祥", "notes": "🔹辛苦遭逢起一经；山河破碎风飘絮；人生自古谁无死？留取丹心照汗青。", "errors": "🔴【易错】汗青。名句“人生自古谁无死？留取丹心照汗青”。", "exercises": [{"type": "原文挖空", "items": ["人生自古谁无死？＿＿＿＿。"]}, {"type": "情景默写", "items": ["表现视死如归民族气节：＿＿＿＿"]}]}, {"no": 94, "section": "初中必背古诗文", "color": "#c0392b", "title": "《山坡羊·潼关怀古》", "author": "元·张养浩", "notes": "🔹峰峦如聚，波涛如怒；伤心秦汉经行处，宫阙万间都做了土；兴，百姓苦；亡，百姓苦。", "errors": "🔴【易错】峦、阙。名句“兴，百姓苦；亡，百姓苦”。", "exercises": [{"type": "原文挖空", "items": ["伤心秦汉经行处，＿＿＿＿。兴，百姓苦；＿＿＿＿。"]}, {"type": "情景默写", "items": ["表达对百姓疾苦深切同情的句子：＿＿＿＿"]}]}, {"no": 95, "section": "初中必背古诗文", "color": "#c0392b", "title": "《岳阳楼记》", "author": "宋·范仲淹", "notes": "🔹滕子京谪守巴陵郡；朝晖夕阴；沙鸥翔集；锦鳞游泳；皓月千里；渔歌互答；先天下之忧而忧，后天下之乐而乐。", "errors": "🔴【易错】谪、晖、皓。名句“先天下之忧而忧，后天下之乐而乐”。", "exercises": [{"type": "原文挖空", "items": ["先天下之忧而忧，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表达政治抱负的千古名句：＿＿＿＿"]}]}, {"no": 96, "section": "初中必背古诗文", "color": "#c0392b", "title": "《醉翁亭记》", "author": "宋·欧阳修", "notes": "🔹环滁皆山也；林壑尤美；峰回路转；醉翁之意不在酒，在乎山水之间也；日出而林霏开；野芳发而幽香；颓然乎其间。", "errors": "🔴【易错】滁、壑、霏。名句“醉翁之意不在酒，在乎山水之间也”。", "exercises": [{"type": "原文挖空", "items": ["醉翁之意不在酒，＿＿＿＿。"]}, {"type": "情景默写", "items": ["写朝暮景色的句子：＿＿＿＿"]}]}, {"no": 97, "section": "初中必背古诗文", "color": "#c0392b", "title": "《湖心亭看雪》", "author": "明·张岱", "notes": "🔹雾凇沆砀；天与云与山与水，上下一白；湖中焉得更有此人！", "errors": "🔴【易错】凇、沆砀。", "exercises": [{"type": "原文挖空", "items": ["雾凇沆砀，＿＿＿＿。"]}, {"type": "情景默写", "items": ["描绘雪景苍茫的句子：＿＿＿＿"]}]}, {"no": 98, "section": "初中必背古诗文", "color": "#c0392b", "title": "《鱼我所欲也》", "author": "《孟子》", "notes": "🔹生亦我所欲，所欲有甚于生者，故不为苟得也；死亦我所恶，所恶有甚于死者，故患有所不辟也；万钟则不辩礼义而受之。", "errors": "🔴【易错】辟（通“避”）、辩（通“辨”）。名句“生，亦我所欲也；义，亦我所欲也。二者不可得兼，舍生而取义者也”。", "exercises": [{"type": "原文挖空", "items": ["生，亦我所欲也；义，亦我所欲也。二者不可得兼，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表明舍生取义决心的句子：＿＿＿＿"]}]}, {"no": 99, "section": "初中必背古诗文", "color": "#c0392b", "title": "《送东阳马生序》", "author": "明·宋濂", "notes": "🔹余幼时即嗜学；无从致书以观；走送之；援疑质理；负箧曳屣；余则缊袍敝衣处其间；以中有足乐者。", "errors": "🔴【易错】嗜、箧、屣、缊。名句“以中有足乐者，不知口体之奉不若人也”。", "exercises": [{"type": "原文挖空", "items": ["以中有足乐者，＿＿＿＿。"]}, {"type": "情景默写", "items": ["表现作者以读书为乐的句子：＿＿＿＿"]}]}, {"no": 100, "section": "初中必背古诗文", "color": "#c0392b", "title": "《曹刿论战》", "author": "《左传》", "notes": "🔹肉食者谋之；小信未孚，神弗福也；一鼓作气，再而衰，三而竭；彼竭我盈；望其旗靡。", "errors": "🔴【易错】孚、靡。名句“一鼓作气，再而衰，三而竭”。", "exercises": [{"type": "原文挖空", "items": ["一鼓作气，＿＿＿＿，三而竭。"]}, {"type": "情景默写", "items": ["说明作战时机的句子：＿＿＿＿"]}]}, {"no": 101, "section": "初中必背古诗文", "color": "#c0392b", "title": "《邹忌讽齐王纳谏》", "author": "《战国策》", "notes": "🔹邹忌修八尺有余；朝服衣冠；窥镜；孰与城北徐公美？私我也；皆以美于徐公；王之蔽甚矣；门庭若市。", "errors": "🔴【易错】窥、蔽。名句“群臣吏民能面刺寡人之过者，受上赏”。", "exercises": [{"type": "原文挖空", "items": ["群臣吏民能面刺寡人之过者，＿＿＿＿。"]}, {"type": "情景默写", "items": ["齐王纳谏后效果：＿＿＿＿"]}]}, {"no": 102, "section": "初中必背古诗文", "color": "#c0392b", "title": "《出师表》", "author": "三国·诸葛亮", "notes": "①崩殂（cú）：指皇帝去世。②疲弊：人力疲惫，物力缺乏。③陟罚臧否（zhì fá zāng pǐ）：奖惩功过、评定人物好坏。④猥自枉屈：降低身份，委屈自己。⑤攘除奸凶：铲除奸邪凶恶之人。⑥斟酌损益：考虑取舍，掌握分寸。", "errors": "“崩殂”的“殂”易错；“疲弊”的“弊”勿作“蔽”；“陟罚臧否”中“陟”“否”易错；“猥自枉屈”的“猥”易误；“攘除”的“攘”易错；“咨诹善道”的“诹”易错。高频句：受任于败军之际，奉命于危难之间；亲贤臣，远小人，此先汉所以兴隆也。", "exercises": [{"type": "原文挖空", "items": ["先帝创业未半而中道崩殂，今天下三分，＿＿＿＿，此诚危急存亡之秋也。", "亲贤臣，远小人，＿＿＿＿；亲小人，远贤臣，＿＿＿＿。"]}, {"type": "情景默写", "items": ["诸葛亮自述临危受命、奉命出征的两句：＿＿＿＿，＿＿＿＿。", "表明诸葛亮淡泊名利的句子：＿＿＿＿，＿＿＿＿。"]}]}];
+const FILL = [{"t": "《论语》", "q": "学而时习之，不亦＿＿乎？", "a": "说", "n": "通“悦”，高兴"}, {"t": "《论语》", "q": "温故而知新，可以为师＿＿。", "a": "矣", "n": "语气词，了"}, {"t": "《论语》", "q": "三人行，必有我师＿＿。", "a": "焉", "n": "兼词，在其中"}, {"t": "《论语》", "q": "择其善者而从之，其不善者而改＿＿。", "a": "之", "n": "代词，指不好的方面"}, {"t": "《论语》", "q": "学而不思则罔，思而不学则＿＿。", "a": "殆", "n": "“殆”疑惑；易误写“怠”"}, {"t": "《论语》", "q": "三军可夺帅也，匹夫不可夺＿＿也。", "a": "志", "n": "志向"}, {"t": "《陋室铭》", "q": "山不在高，有仙则＿＿。", "a": "名", "n": "“名”出名"}, {"t": "《陋室铭》", "q": "苔痕上阶绿，草色入帘＿＿。", "a": "青", "n": "帘青"}, {"t": "《陋室铭》", "q": "谈笑有鸿儒，往来无白＿＿。", "a": "丁", "n": "白丁，平民；“儒”易误写“孺”"}, {"t": "《陋室铭》", "q": "无丝竹之乱耳，无案牍之劳＿＿。", "a": "形", "n": "劳形，使身体劳累；“牍”易误写“读”"}, {"t": "《爱莲说》", "q": "出淤泥而不染，濯清涟而不＿＿。", "a": "妖", "n": "“妖”妖艳"}, {"t": "《爱莲说》", "q": "中通外直，不蔓不＿＿。", "a": "枝", "n": "不生枝蔓"}, {"t": "《爱莲说》", "q": "香远益清，亭亭净＿＿。", "a": "植", "n": "“植”树立"}, {"t": "《三峡》", "q": "自三峡七百里中，两岸连山，略无＿＿处。", "a": "阙", "n": "通“缺”，缺口"}, {"t": "《三峡》", "q": "清荣峻茂，良多趣＿＿。", "a": "味", "n": "趣味"}, {"t": "《三峡》", "q": "巴东三峡巫峡长，猿鸣三声泪沾＿＿。", "a": "裳", "n": "衣裳"}, {"t": "《记承天寺夜游》", "q": "庭下如积水空明，水中藻、荇交横，盖竹柏影＿＿。", "a": "也", "n": "判断句标志"}, {"t": "《与朱元思书》", "q": "风烟俱净，天山共＿＿。", "a": "色", "n": "共色，同样的颜色"}, {"t": "《与朱元思书》", "q": "急湍甚箭，猛浪若＿＿。", "a": "奔", "n": "“奔”飞奔的马"}, {"t": "《与朱元思书》", "q": "鸢飞戾天者，望峰息＿＿。", "a": "心", "n": "平息名利之心；“鸢”易误写“鸳”"}, {"t": "《生于忧患》", "q": "故天将降大任于是人也，必先苦其心志，劳其筋＿＿。", "a": "骨", "n": "筋骨"}, {"t": "《生于忧患》", "q": "入则无法家拂士，出则无敌国外患者，国恒＿＿。", "a": "亡", "n": "灭亡"}, {"t": "《得道多助》", "q": "天时不如地利，地利不如人＿＿。", "a": "和", "n": "人和"}, {"t": "《得道多助》", "q": "得道者多助，失道者寡＿＿。", "a": "助", "n": "帮助"}, {"t": "《富贵不能淫》", "q": "富贵不能淫，贫贱不能移，威武不能＿＿。", "a": "屈", "n": "屈服"}, {"t": "《愚公移山》", "q": "汝心之固，固不可＿＿。", "a": "彻", "n": "“彻”通"}, {"t": "《愚公移山》", "q": "子子孙孙无穷＿＿也。", "a": "匮", "n": "“匮”穷尽；易误写“溃”"}, {"t": "《桃花源记》", "q": "土地平旷，屋舍俨＿＿。", "a": "然", "n": "整齐的样子"}, {"t": "《桃花源记》", "q": "阡陌交通，鸡犬相＿＿。", "a": "闻", "n": "相闻，互相听到"}, {"t": "《桃花源记》", "q": "黄发垂髫，并怡然自＿＿。", "a": "乐", "n": "自乐；“髫”易误写“髻”"}, {"t": "《小石潭记》", "q": "潭中鱼可百许头，皆若空游无所＿＿。", "a": "依", "n": "依靠"}, {"t": "《小石潭记》", "q": "日光下澈，影布石＿＿。", "a": "上", "n": "石上"}, {"t": "《小石潭记》", "q": "斗折蛇行，明灭可＿＿。", "a": "见", "n": "可见"}, {"t": "《小石潭记》", "q": "凄神寒骨，悄怆幽＿＿。", "a": "邃", "n": "“邃”深；易误写“遂”"}, {"t": "《岳阳楼记》", "q": "政通人和，百废具＿＿。", "a": "兴", "n": "“具”同“俱”，全、都"}, {"t": "《岳阳楼记》", "q": "沙鸥翔集，锦鳞游＿＿。", "a": "泳", "n": "游泳"}, {"t": "《岳阳楼记》", "q": "浮光跃金，静影沉＿＿。", "a": "璧", "n": "“璧”圆形的玉，易误写“壁”"}, {"t": "《岳阳楼记》", "q": "不以物喜，不以己＿＿。", "a": "悲", "n": "悲伤"}, {"t": "《岳阳楼记》", "q": "先天下之忧而忧，后天下之乐而＿＿。", "a": "乐", "n": "快乐"}, {"t": "《醉翁亭记》", "q": "醉翁之意不在酒，在乎山水之间＿＿。", "a": "也", "n": "判断语气"}, {"t": "《醉翁亭记》", "q": "日出而林霏开，云归而岩穴＿＿。", "a": "暝", "n": "“暝”昏暗；易误写“瞑”"}, {"t": "《醉翁亭记》", "q": "野芳发而幽香，佳木秀而繁＿＿。", "a": "阴", "n": "繁阴，浓密的绿荫"}, {"t": "《醉翁亭记》", "q": "苍颜白发，颓然乎其间者，太守醉＿＿。", "a": "也", "n": "判断语气"}, {"t": "《湖心亭看雪》", "q": "雾凇沆砀，天与云与山与水，上下一＿＿。", "a": "白", "n": "一片白；易误写“百”"}, {"t": "《鱼我所欲也》", "q": "二者不可得兼，舍生而取＿＿者也。", "a": "义", "n": "道义"}, {"t": "《鱼我所欲也》", "q": "非独贤者有是心也，人皆有＿＿。", "a": "之", "n": "代词，这种心"}, {"t": "《送东阳马生序》", "q": "余幼时即嗜学，家贫，无从致书以＿＿。", "a": "观", "n": "观看"}, {"t": "《送东阳马生序》", "q": "以中有足乐者，不知口体之奉不若人＿＿。", "a": "也", "n": "判断语气"}, {"t": "《曹刿论战》", "q": "一鼓作气，再而衰，三而＿＿。", "a": "竭", "n": "“竭”尽；易误写“揭”"}, {"t": "《曹刿论战》", "q": "吾视其辙乱，望其旗＿＿。", "a": "靡", "n": "“靡”倒下"}, {"t": "《邹忌讽齐王纳谏》", "q": "群臣吏民能面刺寡人之过者，受上＿＿。", "a": "赏", "n": "上赏"}, {"t": "《邹忌讽齐王纳谏》", "q": "此所谓战胜于朝＿＿。", "a": "廷", "n": "朝廷"}, {"t": "《出师表》", "q": "受任于败军之际，奉命于危难之＿＿。", "a": "间", "n": "之间"}, {"t": "《出师表》", "q": "亲贤臣，远小人，此先汉所以兴隆＿＿。", "a": "也", "n": "判断语气"}, {"t": "《出师表》", "q": "苟全性命于乱世，不求闻达于诸＿＿。", "a": "侯", "n": "诸侯"}, {"t": "《出师表》", "q": "先帝不以臣卑鄙，猥自枉屈，三顾臣于草庐之＿＿。", "a": "中", "n": "草庐中"}, {"t": "《观沧海》", "q": "水何澹澹，山岛竦＿＿。", "a": "峙", "n": "“峙”耸立；易误写“寺”"}, {"t": "《观沧海》", "q": "秋风萧瑟，洪波涌＿＿。", "a": "起", "n": "涌起"}, {"t": "《观沧海》", "q": "星汉灿烂，若出其＿＿。", "a": "里", "n": "其里，其中"}, {"t": "《次北固山下》", "q": "潮平两岸阔，风正一帆＿＿。", "a": "悬", "n": "高挂；“悬”易误写“玄”"}, {"t": "《次北固山下》", "q": "海日生残夜，江春入旧＿＿。", "a": "年", "n": "旧年"}, {"t": "《天净沙·秋思》", "q": "枯藤老树昏鸦，小桥流水人＿＿。", "a": "家", "n": "人家"}, {"t": "《天净沙·秋思》", "q": "夕阳西下，断肠人在天＿＿。", "a": "涯", "n": "天涯"}, {"t": "《木兰诗》", "q": "万里赴戎机，关山度若＿＿。", "a": "飞", "n": "若飞"}, {"t": "《木兰诗》", "q": "朔气传金柝，寒光照铁＿＿。", "a": "衣", "n": "铁衣；“柝”易误写“拆”"}, {"t": "《木兰诗》", "q": "将军百战死，壮士十年＿＿。", "a": "归", "n": "归来"}, {"t": "《木兰诗》", "q": "当窗理云鬓，对镜帖花＿＿。", "a": "黄", "n": "花黄，古代妇女饰物"}, {"t": "《木兰诗》", "q": "雄兔脚扑朔，雌兔眼迷＿＿。", "a": "离", "n": "迷离"}, {"t": "《登幽州台歌》", "q": "前不见古人，后不见来＿＿。", "a": "者", "n": "来者"}, {"t": "《登幽州台歌》", "q": "念天地之悠悠，独怆然而涕＿＿。", "a": "下", "n": "涕下，流泪"}, {"t": "《望岳》", "q": "造化钟神秀，阴阳割昏＿＿。", "a": "晓", "n": "昏晓，早晚"}, {"t": "《望岳》", "q": "荡胸生曾云，决眦入归＿＿。", "a": "鸟", "n": "归鸟；“眦”读zì，眼角"}, {"t": "《望岳》", "q": "会当凌绝顶，一览众山＿＿。", "a": "小", "n": "众山小"}, {"t": "《春望》", "q": "国破山河在，城春草木＿＿。", "a": "深", "n": "草木深"}, {"t": "《春望》", "q": "感时花溅泪，恨别鸟惊＿＿。", "a": "心", "n": "惊心"}, {"t": "《春望》", "q": "烽火连三月，家书抵万＿＿。", "a": "金", "n": "抵万金"}, {"t": "《春望》", "q": "白头搔更短，浑欲不胜＿＿。", "a": "簪", "n": "发簪；“簪”易误写“赞”"}, {"t": "《雁门太守行》", "q": "黑云压城城欲摧，甲光向日金鳞＿＿。", "a": "开", "n": "金鳞开"}, {"t": "《赤壁》", "q": "东风不与周郎便，铜雀春深锁二＿＿。", "a": "乔", "n": "二乔"}, {"t": "《饮酒》", "q": "采菊东篱下，悠然见南＿＿。", "a": "山", "n": "南山"}, {"t": "《饮酒》", "q": "山气日夕佳，飞鸟相与＿＿。", "a": "还", "n": "相与还，结伴归巢"}, {"t": "《饮酒》", "q": "此中有真意，欲辨已忘＿＿。", "a": "言", "n": "忘言"}, {"t": "《钱塘湖春行》", "q": "几处早莺争暖树，谁家新燕啄春＿＿。", "a": "泥", "n": "春泥"}, {"t": "《钱塘湖春行》", "q": "乱花渐欲迷人眼，浅草才能没马＿＿。", "a": "蹄", "n": "马蹄"}, {"t": "《钱塘湖春行》", "q": "最爱湖东行不足，绿杨阴里白沙＿＿。", "a": "堤", "n": "白沙堤；“堤”易误写“提”"}, {"t": "《使至塞上》", "q": "征蓬出汉塞，归雁入胡＿＿。", "a": "天", "n": "胡天"}, {"t": "《使至塞上》", "q": "大漠孤烟直，长河落日＿＿。", "a": "圆", "n": "落日圆"}, {"t": "《渡荆门送别》", "q": "山随平野尽，江入大荒＿＿。", "a": "流", "n": "大荒流"}, {"t": "《黄鹤楼》", "q": "晴川历历汉阳树，芳草萋萋鹦鹉＿＿。", "a": "洲", "n": "鹦鹉洲；“洲”易误写“州”"}, {"t": "《黄鹤楼》", "q": "日暮乡关何处是？烟波江上使人＿＿。", "a": "愁", "n": "使人愁"}, {"t": "《行路难》", "q": "金樽清酒斗十千，玉盘珍羞直万＿＿。", "a": "钱", "n": "万钱；“直”同“值”"}, {"t": "《行路难》", "q": "长风破浪会有时，直挂云帆济沧＿＿。", "a": "海", "n": "沧海"}, {"t": "《关雎》", "q": "关关雎鸠，在河之＿＿。", "a": "洲", "n": "河洲；“雎”易误写“雎”的左边"}, {"t": "《关雎》", "q": "窈窕淑女，君子好＿＿。", "a": "逑", "n": "“逑”配偶；易误写“求”"}, {"t": "《蒹葭》", "q": "蒹葭苍苍，白露为＿＿。", "a": "霜", "n": "白露为霜"}, {"t": "《蒹葭》", "q": "所谓伊人，在水一＿＿。", "a": "方", "n": "一方"}, {"t": "《茅屋为秋风所破歌》", "q": "安得广厦千万间，大庇天下寒士俱欢＿＿。", "a": "颜", "n": "欢颜；“庇”易误写“屁”"}, {"t": "《茅屋为秋风所破歌》", "q": "俄顷风定云墨色，秋天漠漠向昏＿＿。", "a": "黑", "n": "昏黑"}, {"t": "《白雪歌送武判官归京》", "q": "忽如一夜春风来，千树万树梨花＿＿。", "a": "开", "n": "梨花开"}, {"t": "《白雪歌送武判官归京》", "q": "山回路转不见君，雪上空留马行＿＿。", "a": "处", "n": "马行处"}, {"t": "《己亥杂诗》", "q": "浩荡离愁白日斜，吟鞭东指即天＿＿。", "a": "涯", "n": "天涯"}, {"t": "《己亥杂诗》", "q": "落红不是无情物，化作春泥更护＿＿。", "a": "花", "n": "护花"}, {"t": "《卖炭翁》", "q": "满面尘灰烟火色，两鬓苍苍十指＿＿。", "a": "黑", "n": "十指黑"}, {"t": "《卖炭翁》", "q": "可怜身上衣正单，心忧炭贱愿天＿＿。", "a": "寒", "n": "愿天寒"}, {"t": "《酬乐天扬州初逢席上见赠》", "q": "沉舟侧畔千帆过，病树前头万木＿＿。", "a": "春", "n": "万木春"}, {"t": "《酬乐天扬州初逢席上见赠》", "q": "怀旧空吟闻笛赋，到乡翻似烂柯＿＿。", "a": "人", "n": "烂柯人"}, {"t": "《水调歌头》", "q": "人有悲欢离合，月有阴晴圆＿＿。", "a": "缺", "n": "圆缺"}, {"t": "《水调歌头》", "q": "但愿人长久，千里共婵＿＿。", "a": "娟", "n": "婵娟，指月亮；“婵”易误写“蝉”"}, {"t": "《过零丁洋》", "q": "山河破碎风飘絮，身世浮沉雨打＿＿。", "a": "萍", "n": "浮萍"}, {"t": "《过零丁洋》", "q": "人生自古谁无死？留取丹心照汗＿＿。", "a": "青", "n": "汗青，史册；“汗”易误写“汉”"}, {"t": "《山坡羊·潼关怀古》", "q": "峰峦如聚，波涛如＿＿。", "a": "怒", "n": "如怒"}, {"t": "《破阵子》", "q": "醉里挑灯看剑，梦回吹角连＿＿。", "a": "营", "n": "连营"}, {"t": "《破阵子》", "q": "马作的卢飞快，弓如霹雳弦＿＿。", "a": "惊", "n": "弦惊"}, {"t": "《破阵子》", "q": "了却君王天下事，赢得生前身后＿＿。", "a": "名", "n": "身后名"}, {"t": "《江城子·密州出猎》", "q": "老夫聊发少年狂，左牵黄，右擎＿＿。", "a": "苍", "n": "右擎苍，右手托着苍鹰；“擎”易误写“秦”"}, {"t": "《江城子·密州出猎》", "q": "会挽雕弓如满月，西北望，射天＿＿。", "a": "狼", "n": "射天狼"}, {"t": "《渔家傲·秋思》", "q": "塞下秋来风景异，衡阳雁去无留＿＿。", "a": "意", "n": "留意"}, {"t": "《渔家傲·秋思》", "q": "浊酒一杯家万里，燕然未勒归无＿＿。", "a": "计", "n": "归无计；“勒”易误写“乐”"}, {"t": "《登飞来峰》", "q": "不畏浮云遮望眼，自缘身在最高＿＿。", "a": "层", "n": "最高层"}, {"t": "《浣溪沙》", "q": "无可奈何花落去，似曾相识燕归＿＿。", "a": "来", "n": "燕归来"}, {"t": "《南乡子·登京口北固亭有怀》", "q": "千古兴亡多少事？悠悠。不尽长江滚滚＿＿。", "a": "流", "n": "滚滚流"}, {"t": "《满江红》", "q": "四面歌残终破楚，八年风味徒思＿＿。", "a": "浙", "n": "思浙，思念浙江家乡"}];
+const SECRET = "zk102-2026-secret-key";
+const PREFIX = "ZK";
+const TOTAL = PIECES.length;
+const LS_KEY = "zk102_v2";
+const EMOJIS = ["🧒", "👧", "👦", "🧑‍🎓", "🐼", "🦊"];
+window.__EMBEDDED__ = null;
+let lastSavedAt = "";
+
+
+function fnv1a(s){let h=0x811c9dc5;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0;}return h>>>0;}
+function makeCode(name){const h=fnv1a((name||"").trim()+"|"+"zk102-2026-secret-key").toString(36).toUpperCase().padStart(8,"0");return "ZK-"+h.slice(0,4)+"-"+h.slice(4);}
+function checkCode(name,code){const norm=String(code||"").toUpperCase().replace(/[^A-Z0-9]/g,"");return norm===makeCode(name).replace(/-/g,"");}
+
+
+function fmt(d) {
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
+function todayStr(offset) {
+  const d = new Date();
+  if (offset) d.setDate(d.getDate() + offset);
+  return fmt(d);
+}
+function el(id) { return document.getElementById(id); }
+function flash(msg) {
+  const t = el("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(t._h);
+  t._h = setTimeout(function () { t.classList.remove("show"); }, 1400);
+}
+
+function defaultState() {
+  return {
+    v: 2,
+    children: { c1: { name: "孩子", emoji: "🧒", rec: {}, wri: {}, par: {}, prac: 0, corr: 0, days: [] } },
+    active: "c1",
+    activated: {}
+  };
+}
+let storageOK = true;
+function migrate(o) {
+  if (!o.children && (o.rec || o.wri || o.par || o.days)) {
+    const s = defaultState();
+    const c = s.children.c1;
+    c.rec = o.rec || {}; c.wri = o.wri || {}; c.par = o.par || {}; c.days = o.days || [];
+    return s;
+  }
+  if (o.children) {
+    Object.keys(o.children).forEach(function (k) {
+      const ch = o.children[k];
+      if (!ch.prac) ch.prac = 0;
+      if (!ch.corr) ch.corr = 0;
+    });
+  }
+  return o;
+}
+function load() {
+  const s = defaultState();
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) Object.assign(s, migrate(JSON.parse(raw)));
+  } catch (e) { storageOK = false; }
+  if (!s.children || Object.keys(s.children).length === 0) s.children = defaultState().children;
+  if (!s.children[s.active]) s.active = Object.keys(s.children)[0];
+  return s;
+}
+let state = load();
+function devUnlocked() {
+  try { return localStorage.getItem("gsk_dev_ok") === "1"; } catch (e) { return false; }
+}
+
+function devUnlockSettings() {
+  const v = (document.getElementById("devCodeInput") ? document.getElementById("devCodeInput").value : "").trim();
+  const norm = String(v).toUpperCase().replace(/[^A-Z0-9]/g, "");
+  const want = "hitiken599@gmail".toUpperCase().replace(/[^A-Z0-9]/g, "");
+  const st = document.getElementById("devStatusLine");
+  if (!st) return;
+  if (norm === want) {
+    try { localStorage.setItem("gsk_dev_ok", "1"); } catch (e) {}
+    st.textContent = "✅ 开发者模式已开启（本机所有产品免激活）";
+    st.style.color = "#1d5b34";
+    setTimeout(function () { location.reload(); }, 600);
+  } else {
+    st.textContent = "❌ 开发者激活码不正确";
+    st.style.color = "#a9442f";
+  }
+}
+(function () {
+  try {
+    const st = document.getElementById("devStatusLine");
+    if (st) {
+      if (localStorage.getItem("gsk_dev_ok") === "1") {
+        st.textContent = "✅ 开发者模式已开启（本机所有产品免激活）";
+        st.style.color = "#1d5b34";
+      } else {
+        st.textContent = "未开启";
+      }
+    }
+  } catch (e) {}
+})();
+
+function save() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+  catch (e) { storageOK = false; }
+  const now = new Date();
+  lastSavedAt = (now.getMonth() + 1) + "月" + now.getDate() + "日 " + now.getHours() + ":" + String(now.getMinutes()).padStart(2, "0");
+}
+
+function cur() { return state.children[state.active]; }
+function childList() { return Object.keys(state.children).map(function (k) { return state.children[k]; }); }
+function childIdOf(ch) { return Object.keys(state.children).find(function (k) { return state.children[k] === ch; }); }
+function addChildRaw(name, emoji) {
+  const id = "c" + Date.now() + Math.floor(Math.random() * 1000);
+  state.children[id] = { name: name || "孩子", emoji: emoji || "🧒", rec: {}, wri: {}, par: {}, prac: 0, corr: 0, days: [] };
+  return id;
+}
+function addChild(name, emoji) { const id = addChildRaw(name, emoji); state.active = id; save(); render(); }
+function switchChild(id) { if (state.children[id]) { state.active = id; save(); render(); } }
+function renameChild(id, name) { if (state.children[id]) { state.children[id].name = name; save(); render(); } }
+function removeChild(id) {
+  const keys = Object.keys(state.children);
+  if (keys.length <= 1) { flash("至少保留一个孩子"); return; }
+  delete state.children[id];
+  if (state.active === id) state.active = keys.find(function (k) { return k !== id; });
+  save(); render();
+}
+
+function toggleRec(no) {
+  const c = cur();
+  if (c.rec[no]) delete c.rec[no];
+  else { c.rec[no] = todayStr(); flash("背诵过关已打卡"); }
+  save(); render();
+}
+function toggleWri(no) {
+  const c = cur();
+  if (c.wri[no]) delete c.wri[no];
+  else { c.wri[no] = todayStr(); flash("默写零错字已打卡"); }
+  save(); render();
+}
+function togglePar(no) {
+  const c = cur();
+  if (c.par[no]) delete c.par[no];
+  else { c.par[no] = todayStr(); flash("情景默写已打卡"); }
+  save(); render();
+}
+function checkin(today) {
+  const t = today || todayStr();
+  const c = cur();
+  if (!c.days.includes(t)) c.days.push(t);
+  save(); render();
+}
+function computeStreak(days, today) {
+  const set = new Set(days || []);
+  let d = new Date(today || Date.now());
+  if (!set.has(fmt(d))) d.setDate(d.getDate() - 1);
+  let n = 0;
+  while (set.has(fmt(d))) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+
+function setCk(btn, on, date, label) {
+  btn.classList.toggle("on", on);
+  btn.innerHTML = (on ? "✓ " : "") + label + "<span class='dt'>" + (on ? date : "点我打勾") + "</span>";
+}
+function toggleCard(head) { head.parentElement.classList.toggle("open"); }
+function shuffle(a) {
+  const arr = a.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+  }
+  return arr;
+}
+function normPlain(s) {
+  return String(s || "").replace(/[，。；、？！?？：:""''《》〈〉·—…\s＿_]/g, "");
+}
+function normNoParen(s) {
+  return normPlain(String(s || "").replace(/[（(][^）)]*[)）]/g, ""));
+}
+function normParenChars(s) {
+  return normPlain(String(s || "").replace(/[（）()]/g, ""));
+}
+function splitBlanks(q) {
+  return String(q || "").split(/＿+/);
+}
+function fillMatch(input, accepted) {
+  const variants = [normPlain(input), normNoParen(input), normParenChars(input)];
+  return (accepted || []).some(function (a) {
+    return variants.indexOf(normPlain(a)) >= 0
+      || variants.indexOf(normNoParen(a)) >= 0
+      || variants.indexOf(normParenChars(a)) >= 0;
+  });
+}
+let fillList = [], fillIdx = 0, fillScore = 0, fillParts = [], fillAccepted = [];
+function itQ(it) { return it.q !== undefined ? it.q : it.notes; }
+function itAns(it) { return it.a !== undefined ? it.a : it.ans; }
+function itSrc(it) { return it.t !== undefined ? it.t : (it.year ? it.year + " " + it.paper : (it.title || "")); }
+function itNote(it) { return it.n || ""; }
+function startFill() {
+  fillList = shuffle(FILL).slice(0, 10);
+  fillIdx = 0; fillScore = 0;
+  el("fillBg").classList.add("show");
+  showFill();
+}
+function showFill() {
+  const item = fillList[fillIdx];
+  const q = itQ(item);
+  fillAccepted = Array.isArray(itAns(item)) ? itAns(item) : [itAns(item)];
+  const segs = splitBlanks(q);
+  const blanks = segs.length - 1;
+  fillParts = [];
+  fillPerBlank = false;
+  if (blanks > 0 && fillAccepted.length === 1) {
+    const cand = String(fillAccepted[0]).split(/[，,；;。.？！?！]/).map(function (x) { return x.trim(); }).filter(Boolean);
+    if (cand.length === blanks) { fillPerBlank = true; fillParts = cand; }
+  }
+  let html = "<div class='progbar'><i style='width:" + Math.round((fillIdx + 1) / fillList.length * 100) + "%'></i></div>";
+  html += "<div class='qhead'><span class='prog'>第 " + (fillIdx + 1) + " / " + fillList.length + " 题 · 已对 " + fillScore + " 题</span><button class='close' onclick='closeFill()'>✕</button></div>";
+  html += "<div class='bcz-card'>";
+  if (fillPerBlank) {
+    segs.forEach(function (s, i) { html += s; if (i < segs.length - 1) html += "<input class='fill-in' id='f" + i + "' placeholder='填写' autocomplete='off'>"; });
+  } else {
+    html += String(q).replace(/＿+/g, "<input class='fill-in fill-wide' id='f0' placeholder='整句填写' autocomplete='off'>");
+  }
+  html += "</div>";
+  html += "<div class='fill-src'>" + itSrc(item) + "　" + itNote(item) + "</div>";
+  html += "<div class='fill-ans' id='fillAns'></div>";
+  html += "<button class='fill-check' id='fillCheck' onclick='checkFill()'>检查答案</button>";
+  html += "<button class='next' style='display:none' id='fillNext' onclick='nextFill()'>下一题</button>";
+  el("fillBox").innerHTML = html;
+  const bcx = el("fillBox");
+  bcx.style.animation = "none"; void bcx.offsetWidth; bcx.style.animation = "";
+  const fi = document.querySelector("#fillBox .fill-in");
+  if (fi) fi.focus();
+  bcx.dataset.mode = "question";
+  if (fi) {
+    fi.addEventListener("keydown", function (ev) {
+      if (ev.key === "Enter") {
+        ev.preventDefault();
+        const ckB = el("fillCheck");
+        if (ckB && ckB.style.display !== "none") checkFill(); else nextFill();
+      }
+    });
+  }
+  let tX0 = null;
+  bcx.ontouchstart = function (e) { if (bcx.dataset.mode === "done") tX0 = e.touches[0].clientX; };
+  bcx.ontouchend = function (e) {
+    if (bcx.dataset.mode !== "done" || tX0 === null) { tX0 = null; return; }
+    const dx = e.changedTouches[0].clientX - tX0;
+    tX0 = null;
+    if (Math.abs(dx) > 60) nextFill();
+  };
+}
+function checkFill() {
+  const item = fillList[fillIdx];
+  let ok = true;
+  if (fillPerBlank && fillParts.length > 0) {
+    for (let i = 0; i < fillParts.length; i++) {
+      const inp = el("f" + i);
+      const good = fillMatch(inp.value, [fillParts[i]]);
+      inp.classList.add(good ? "right" : "wrong");
+      if (!good) ok = false;
+    }
+  } else {
+    const inp = el("f0");
+    const good = fillMatch(inp.value, fillAccepted);
+    inp.classList.add(good ? "right" : "wrong");
+    ok = good;
+  }
+  if (ok) fillScore++;
+  const c = cur();
+  c.prac += 1;
+  if (ok) c.corr += 1;
+  save(); render();
+  const ansTxt = fillAccepted.join("<br>");
+  el("fillAns").innerHTML = ok
+    ? "<div class='ok'>✅ 太棒了！</div>"
+    : "<div class='no'>❌ 参考答案：</div><div class='show-ans'>" + ansTxt + "</div>"
+    + "<div class='swipe-hint'>👆 左右滑动卡片或点「下一题」</div>";
+  el("fillBox").dataset.mode = "done";
+  el("fillCheck").style.display = "none";
+  const nxt = el("fillNext");
+  nxt.style.display = "block";
+  nxt.textContent = fillIdx === fillList.length - 1 ? "查看成绩" : "下一题";
+}
+function nextFill() {
+  fillIdx++;
+  if (fillIdx >= fillList.length) {
+    const pct = Math.round(fillScore / fillList.length * 100);
+    const emoji = pct === 100 ? "🏆" : (pct >= 60 ? "👏" : "💪");
+    el("fillBox").innerHTML = "<div class='qhead'><span class='prog'>练习完成</span><button class='close' onclick='closeFill()'>✕</button></div>"
+      + "<div class='score'>" + emoji + " 本次答对 " + fillScore + " / " + fillList.length + " 题（" + pct + "%）</div>"
+      + "<button class='next' onclick='closeFill()'>完成</button>";
+    return;
+  }
+  showFill();
+}
+function closeFill() { el("fillBg").classList.remove("show"); }function render() {
+  if (!state.activated || !state.activated.name) return;
+  const c = cur();
+  const recN = Object.keys(c.rec).length;
+  const wriN = Object.keys(c.wri).length;
+  const parN = Object.keys(c.par).length;
+  const today = todayStr();
+  const streak = computeStreak(c.days, today);
+  const circ = 2 * Math.PI * 34;
+  el("ringFg").style.strokeDasharray = circ;
+  el("ringFg").style.strokeDashoffset = circ * (1 - recN / TOTAL);
+  el("ringNum").innerHTML = recN + "<small> / " + TOTAL + "</small>";
+  el("stWri").textContent = wriN + " / " + TOTAL;
+  el("stPar").textContent = parN + " 篇";
+  el("stFill").textContent = (c.prac ? Math.round(c.corr / c.prac * 100) : 0) + "%";
+  el("stFillSub").textContent = "已练 " + c.prac + " 题 · 对 " + c.corr + " 题";
+  el("stStreak").textContent = streak + " 天";
+  const doneToday = c.days.includes(today);
+  const todayBtn = el("todayBtn");
+  todayBtn.textContent = doneToday ? "✓ 今日已打卡" : "📅 今日打卡";
+  todayBtn.classList.toggle("done", doneToday);
+  el("stToday").textContent = doneToday ? "✓ 已打卡" : "未打卡";
+  el("wm").textContent = "已授权：" + state.activated.name + " · " + state.activated.code;
+  el("actInfo").textContent = "授权姓名：" + state.activated.name + "  授权码：" + state.activated.code + "  激活日期：" + state.activated.date;
+  el("saveState").textContent = lastSavedAt ? "✓ 记录已自动保存在本机 · " + lastSavedAt : "✓ 记录将自动保存在本机";
+
+  const cal = el("cal");
+  cal.innerHTML = "";
+  for (let i = 34; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const s = fmt(d);
+    const n = document.createElement("div");
+    n.className = "d" + (c.days.includes(s) ? " on" : "") + (s === today ? " today" : "");
+    n.textContent = d.getDate();
+    cal.appendChild(n);
+  }
+
+  const chips = el("chips");
+  chips.innerHTML = "";
+  childList().forEach(function (ch) {
+    const b = document.createElement("button");
+    b.className = "chip" + (ch === c ? " on" : "");
+    b.textContent = ch.emoji + " " + ch.name;
+    b.onclick = function () { switchChild(childIdOf(ch)); };
+    chips.appendChild(b);
+  });
+  const addB = document.createElement("button");
+  addB.className = "chip add";
+  addB.textContent = "＋ 添加";
+  addB.onclick = function () { openChildModal("add", null); };
+  chips.appendChild(addB);
+
+  document.querySelectorAll(".card").forEach(function (card) {
+    const no = card.dataset.no;
+    setCk(card.querySelector(".ck.rec"), !!c.rec[no], c.rec[no], "背诵过关");
+    setCk(card.querySelector(".ck.wri"), !!c.wri[no], c.wri[no], "默写零错字");
+    setCk(card.querySelector(".ck.par"), !!c.par[no], c.par[no], "情景默写");
+  });
+  document.querySelectorAll(".group").forEach(function (g) {
+    const done = g.querySelectorAll(".ck.rec.on").length;
+    const total = g.querySelectorAll(".card").length;
+    g.querySelector(".gp").textContent = done + "/" + total + " 已背";
+  });
+
+  const cl = el("childList");
+  cl.innerHTML = "";
+  childList().forEach(function (ch) {
+    const row = document.createElement("div");
+    row.className = "child-item";
+    row.innerHTML = "<span style='font-size:1.3rem'>" + ch.emoji + "</span><span class='nm'>" + ch.name + "</span>";
+    const rn = document.createElement("button");
+    rn.textContent = "改名";
+    rn.onclick = function () { openChildModal("edit", childIdOf(ch)); };
+    const rm = document.createElement("button");
+    rm.textContent = "删除";
+    rm.onclick = function () { if (confirm("确定删除 " + ch.name + " 的打卡记录吗？")) removeChild(childIdOf(ch)); };
+    row.appendChild(rn); row.appendChild(rm);
+    cl.appendChild(row);
+  });
+
+  el("banner").classList.toggle("show", recN === TOTAL);
+}
+
+function openSettings() {
+  const p = el("settingsPanel");
+  if (p) {
+    p.open = true;
+    p.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+
+/* 打开「带记录的版本」时自动恢复本地记忆 */
+function importEmbedded() {
+  if (!window.__EMBEDDED__) return false;
+  try {
+    const o = JSON.parse(JSON.stringify(window.__EMBEDDED__));
+    if (!o || !o.children) return false;
+    let hasLocal = false;
+    try { hasLocal = !!localStorage.getItem(LS_KEY); } catch (e) { hasLocal = false; }
+    if (!hasLocal) {
+      state = Object.assign(defaultState(), migrate(o));
+      save();
+      flash("已从文件恢复全部记录");
+      return true;
+    }
+    flash("检测到文件内记录，本机已有记录，未覆盖");
+    return false;
+  } catch (e) { return false; }
+}
+
+/* 生成一个自带全部记录的应用文件 */
+function downloadWithRecords() {
+  const marker = "window.__EMBEDDED__ = null;";
+  const html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+  const stateJson = JSON.stringify(state).split("</").join("<\/");
+  const src = html.replace(marker, "window.__EMBEDDED__ = " + stateJson + ";");
+  const blob = new Blob([src], { type: "text/html;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "中考打卡-带记录-" + todayStr() + ".html";
+  
+  if (window.AndroidBridge) { AndroidBridge.saveText(a.download, src, "text/html;charset=utf-8"); return; }
+  a.click();
+  setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+  flash("已生成带记录的文件，请保存好");
+}
+
+/* 孩子弹窗 */
+let modalMode = "add", modalId = null, modalEmoji = "🧒";
+function openChildModal(mode, id) {
+  modalMode = mode; modalId = id || null;
+  const c = id ? state.children[id] : null;
+  modalEmoji = c ? c.emoji : "🧒";
+  el("modalTitle").textContent = mode === "add" ? "添加孩子" : "修改孩子";
+  el("childName").value = c ? c.name : "";
+  const row = el("modalEmojiRow");
+  row.innerHTML = "";
+  EMOJIS.forEach(function (e) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "emoji-opt" + (e === modalEmoji ? " on" : "");
+    b.textContent = e;
+    b.onclick = function () {
+      modalEmoji = e;
+      row.querySelectorAll(".emoji-opt").forEach(function (x) { x.classList.remove("on"); });
+      b.classList.add("on");
+    };
+    row.appendChild(b);
+  });
+  el("modalBg").classList.add("show");
+}
+function closeModal() { el("modalBg").classList.remove("show"); }
+function saveChild() {
+  const name = el("childName").value.trim() || "孩子";
+  if (modalMode === "add") addChild(name, modalEmoji);
+  else renameChild(modalId, name);
+  closeModal();
+}
+
+/* 激活 */
+function activate() {
+  const name = el("actName").value.trim();
+  const code = el("actCode").value.trim();
+  if (!name || !code) { el("actErr").textContent = "请填写姓名和授权码"; return; }
+  if (!checkCode(name, code)) {
+    el("actErr").textContent = "授权码不正确，请核对后重试（姓名须与购买时登记的一致）";
+    return;
+  }
+  state.activated = { name: name, code: makeCode(name), date: todayStr() };
+  save(); render();
+  el("activation").classList.remove("show");
+  flash("激活成功，欢迎使用！");
+}
+function reactivate() {
+  if (!confirm("确定重新激活吗？当前授权将失效，打卡记录会保留。")) return;
+  state.activated = {};
+  save();
+  el("activation").classList.add("show");
+}
+
+/* 备份与设置 */
+function exportFile() {
+  const blob = new Blob([JSON.stringify(state)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "中考打卡备份-" + todayStr() + ".json";
+  
+  if (window.AndroidBridge) { AndroidBridge.saveText(a.download, JSON.stringify(state), "application/json"); return; }
+  a.click();
+  setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+  flash("备份文件已生成");
+}
+function copyBackup() {
+  const txt = JSON.stringify(state);
+  function done() { flash("备份内容已复制"); }
+  function fallbackCopy() {
+    const ta = el("importArea");
+    ta.value = txt; ta.select();
+    document.execCommand("copy");
+    done();
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(done, fallbackCopy);
+  } else fallbackCopy();
+}
+function importFromText() {
+  const txt = el("importArea").value.trim();
+  if (!txt) { flash("请先粘贴备份内容"); return; }
+  try {
+    const o = JSON.parse(txt);
+    state = Object.assign(defaultState(), migrate(o));
+    if (!state.children || Object.keys(state.children).length === 0) state = defaultState();
+    save(); render();
+    flash("备份已恢复");
+  } catch (e) { flash("内容格式不对"); }
+}
+function importFile(ev) {
+  const f = ev.target.files && ev.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = function () { el("importArea").value = r.result; importFromText(); };
+  r.readAsText(f);
+}
+function resetAll() {
+  if (!confirm("确定清空当前孩子所有打卡记录吗？建议先备份。")) return;
+  if (!confirm("再次确认：真的要全部清空吗？")) return;
+  state.children[state.active] = { name: cur().name, emoji: cur().emoji, rec: {}, wri: {}, par: {}, days: [] };
+  save(); render();
+  flash("已清空当前孩子记录");
+}
+function resetAllData() {
+  if (!confirm("确定重置全部数据吗？将清空所有孩子的打卡记录、授权激活，恢复到出厂状态。")) return;
+  if (!confirm("再次确认：此操作不可恢复，建议先备份。真的要重置吗？")) return;
+  state = defaultState();
+  save();
+  render();
+  el("activation").classList.add("show");
+  flash("已重置全部数据");
+}
+
+/* 初始化 */
+function init() {
+  const app = el("app");
+  PIECES.forEach(function (p) {
+    let curG = app.lastElementChild;
+    if (!curG || curG.dataset.section !== p.section) {
+      const g = document.createElement("details");
+      g.className = "group";
+      g.dataset.section = p.section;
+      g.style.background = "linear-gradient(160deg, " + p.color + ", " + p.color + "cc)";
+      g.innerHTML = "<summary>" + p.section + "<span class='cnt'></span><span class='gp'></span></summary><div class='cards'></div>";
+      g.querySelector(".cnt").textContent = PIECES.filter(function (x) { return x.section === p.section; }).length + " 篇";
+      app.appendChild(g);
+      curG = g;
+    }
+    let exHtml = "";
+    if (p.exercises && p.exercises.length) {
+      exHtml = "<div class='exs'>";
+      p.exercises.forEach(function (g) {
+        exHtml += "<div class='exg'><b>" + (g.type === "原文挖空" ? "① 原文挖空默写" : "② 情景式默写") + "</b>";
+        g.items.forEach(function (it) { exHtml += "<div class='exl'>" + it + "</div>"; });
+        exHtml += "</div>";
+      });
+      exHtml += "</div>";
+    }
+    const card = document.createElement("div");
+    card.className = "card";
+    card.dataset.no = p.no;
+    card.style.setProperty("--c", p.color);
+    card.innerHTML =
+      "<button class='head' onclick='toggleCard(this)'>" +
+        "<span class='no' style='background:" + p.color + "'>" + p.no + "</span>" +
+        "<span class='t'>" + p.title + "</span>" +
+        "<span class='a'>" + p.author + "</span><span class='chev'>▾</span>" +
+      "</button>" +
+      "<div class='body'>" +
+        (p.notes ? "<div class='cblock'><div class='ct'>📖 重点注释</div><div class='cc'>" + p.notes + "</div></div>" : "") +
+        (p.errors ? "<div class='cblock' style='border-left-color:#c0392b'><div class='ct' style='color:#c0392b'>⚠️ 易错字词</div><div class='cc'>" + p.errors + "</div></div>" : "") +
+        exHtml +
+        "<div class='checks'>" +
+          "<button class='ck rec' style='--c:#2c5f8a;--bc:#2c5f8a' onclick='toggleRec(" + p.no + ")'></button>" +
+          "<button class='ck wri' style='--c:#d97c2b;--bc:#d97c2b' onclick='toggleWri(" + p.no + ")'></button>" +
+          "<button class='ck par' style='--c:#b45f2a;--bc:#b45f2a' onclick='togglePar(" + p.no + ")'></button>" +
+        "</div>" +
+      "</div>";
+    curG.querySelector(".cards").appendChild(card);
+  });
+
+  const pinBox = el("dlAnchor");
+  const dlBlock = document.createElement("div");
+  dlBlock.style.cssText = "display:grid;gap:6px";
+  const dlLabel = document.createElement("label");
+  dlLabel.style.cssText = "font-size:.85rem;color:#4a3f2f";
+  dlLabel.textContent = "💾 最省事：下载「带记录的版本」——文件自带全部记录，发到新手机打开，记录自动恢复";
+  const dlBtn = document.createElement("button");
+  dlBtn.className = "mini-btn";
+  dlBtn.textContent = "💾 下载带记录的版本（推荐）";
+  dlBtn.onclick = downloadWithRecords;
+  dlBlock.appendChild(dlLabel);
+  dlBlock.appendChild(dlBtn);
+  pinBox.parentNode.insertBefore(dlBlock, pinBox);
+  const rsBtn = document.createElement("button");
+  rsBtn.className = "mini-btn";
+  rsBtn.style.cssText = "background:#fdecea;color:#a9442f;border-color:#f3c1bb";
+  rsBtn.textContent = "🔄 重置全部数据（清空所有记录和激活，恢复出厂）";
+  rsBtn.onclick = resetAllData;
+  pinBox.parentNode.insertBefore(rsBtn, pinBox);
+
+  importEmbedded();
+  render();
+  if (!storageOK) el("storageWarn").style.display = "block";
+  if (devUnlocked() && (!state.activated || !state.activated.name)) {
+    state.activated = { name: "开发者", code: "DEV", date: todayStr() };
+  }
+  if (!state.activated || !state.activated.name) el("activation").classList.add("show");
+  if (location.search.indexOf("selftest") >= 0) runSelfTest();
+}
+
+/* 自检 */
+function runSelfTest() {
+  state = defaultState();
+  state.activated = { name: "张三", code: makeCode("张三"), date: "2026-08-06" };
+  el("activation").classList.remove("show");
+  const codeOk = checkCode("张三", makeCode("张三"));
+  const codeBad = checkCode("张三", "GK60-0000-0000");
+  toggleRec("1"); toggleRec("2");
+  checkin("2026-08-06"); checkin("2026-08-05");
+  const s1 = computeStreak(cur().days, "2026-08-06");
+  const rA = Object.keys(cur().rec).length;
+  const idB = addChildRaw("妹妹", "👧");
+  switchChild(idB);
+  toggleRec("3");
+  const rB = Object.keys(cur().rec).length;
+  const firstId = Object.keys(state.children)[0];
+  const rA2 = Object.keys(state.children[firstId].rec).length;
+  PIECES.forEach(function (p) { cur().rec[String(p.no)] = "2026-08-06"; });
+  render();
+  const onN = document.querySelectorAll(".ck.rec.on").length;
+  const banner = el("banner").classList.contains("show");
+  const saveTxt = el("saveState").textContent.indexOf("自动保存在本机") > -1;
+  const marker = "window.__EMBEDDED__ = null;";
+  const htmlSrc = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+  const hasMarker = htmlSrc.indexOf(marker) > -1;
+  const src2 = htmlSrc.replace(marker, "window.__EMBEDDED__ = " + JSON.stringify({ v: 2 }) + ";");
+  const embOk = src2.indexOf('window.__EMBEDDED__ = {"v":2};') > -1;
+  const fnReset = typeof resetAllData === "function";
+  const fnSet = typeof openSettings === "function" && !!el("settingsPanel");
+  let stOK = true;
+  try {
+    save();
+    state = defaultState();
+    state = load();
+    stOK = !!state.children && Object.keys(state.children).length === 2;
+  } catch (e) { stOK = false; }
+  window.__EMBEDDED__ = { v: 2, children: state.children, active: state.active, activated: state.activated };
+  try { localStorage.removeItem(LS_KEY); } catch (e) {}
+  const impBefore = Object.keys(state.children).length;
+  state = defaultState();
+  const impOk = importEmbedded() && Object.keys(state.children).length === impBefore;
+  window.__EMBEDDED__ = null;
+  const sp = splitBlanks("甲＿＿＿＿乙＿＿＿＿丙");
+  const spOk = sp.length === 3;
+  const fm1 = fillMatch("春眠不觉晓，处处闻啼鸟", ["春眠不觉晓，处处闻啼鸟"]);
+  const fm2 = !fillMatch("春眠不觉晓", ["春眠不觉晓，处处闻啼鸟"]);
+  const fm3 = fillMatch("歌", ["歌"]);
+  const fillOk = spOk && fm1 && fm2 && fm3 && FILL.length > 50;
+  const devT = (function () {
+    try {
+      localStorage.setItem("gsk_dev_ok", "1");
+      const r = devUnlocked();
+      localStorage.removeItem("gsk_dev_ok");
+      return r;
+    } catch (e) { return false; }
+  })();
+  const ok = codeOk && devT && fillOk && !codeBad && s1 === 2 && rA === 2 && rB === 1 && rA2 === 2 && onN === TOTAL && banner && stOK && hasMarker && embOk && saveTxt && impOk && fnReset && fnSet;
+  el("selftest").textContent = "SELFTEST " + (ok ? "OK" : "FAIL")
+    + " code=" + codeOk + "/" + codeBad + " streak=" + s1 + " rA=" + rA + " rB=" + rB
+    + " rA2=" + rA2 + " on=" + onN + " banner=" + banner + " storage=" + stOK
+    + " marker=" + hasMarker + "/" + embOk + " save=" + saveTxt + " imp=" + impOk
+    + " reset=" + fnReset + " set=" + fnSet + " fill=" + spOk + "/" + fm1 + "/" + fm2 + "/" + fm3 + " pool=" + FILL.length;
+  el("selftest").style.display = "block";
+}
+
+document.addEventListener("DOMContentLoaded", init);
+document.addEventListener("DOMContentLoaded", function () {
+  if (location.search.indexOf("fill=1") >= 0 && typeof startFill === "function") {
+    setTimeout(startFill, 400);
+  }
+});
+
+</script>
+</body>
+</html>

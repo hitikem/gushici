@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f4e79">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>文言文常用实词120打卡</title>
+<style>
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { font-size: 16px; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", serif;
+    background: #f5f2ea; color: #2f2a22; padding-bottom: 40px;
+  }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 0 14px; }
+  header { text-align: center; padding: 20px 0 6px; }
+  header h1 { font-size: 1.38rem; color: #1f4e79; letter-spacing: 1px; }
+  header .sub { color: #6a5c48; font-size: .86rem; margin-top: 3px; line-height: 1.6; }
+  .wm { text-align: center; color: #b45f2a; font-size: .78rem; margin-top: 4px; }
+  .hint { text-align: center; color: #9a8b72; font-size: .78rem; margin: 6px 0 10px; }
+  .save-state { text-align: center; color: #2e8b57; font-size: .78rem; margin: 2px 0 8px; }
+  .warn {
+    display: none; background: #fdecea; color: #a9442f; border: 1px solid #f3c1bb;
+    border-radius: 12px; padding: 10px 12px; font-size: .84rem; margin-top: 12px;
+  }
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 10px; }
+  .chip {
+    flex-shrink: 0; border: 2px solid #e3dac8; background: #fff; color: #4a3f2f;
+    border-radius: 20px; padding: 8px 14px; font-size: .92rem; cursor: pointer; font-family: inherit;
+  }
+  .chip.on { border-color: #1f4e79; background: #eaf1f7; font-weight: 700; }
+  .chip.add { border-style: dashed; color: #1f4e79; }
+  .toolbar { display: flex; gap: 8px; margin-bottom: 12px; }
+  .toolbar .tbtn {
+    flex: 1; border: 1px solid #e3dac8; background: #fff; border-radius: 12px;
+    padding: 9px; font-size: .9rem; color: #4a3f2f; cursor: pointer; font-family: inherit;
+  }
+  .toolbar .tbtn.go { background: linear-gradient(135deg, #1f4e79, #2e8b57); color: #fff; font-weight: 700; border: none; }
+  .summary {
+    background: #fff; border-radius: 18px; border: 1px solid #e3dac8;
+    padding: 14px 16px; display: flex; align-items: center; gap: 16px;
+  }
+  .ring { position: relative; width: 104px; height: 104px; flex-shrink: 0; }
+  .ring .num {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 1.25rem; font-weight: 800; color: #1f4e79;
+  }
+  .ring .num small { font-size: .68rem; color: #9a8b72; font-weight: 400; margin-left: 2px; }
+  .stats { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat .k { font-size: .74rem; color: #9a8b72; }
+  .stat .v { font-size: 1.02rem; font-weight: 700; color: #4a3f2f; }
+  .stat .v.heat { color: #d97c2b; }
+  .big-btn {
+    width: 100%; margin-top: 12px; border: none; border-radius: 14px; padding: 14px;
+    font-size: 1rem; font-weight: 700; color: #fff; background: linear-gradient(135deg, #1f4e79, #2e8b57);
+    cursor: pointer; font-family: inherit;
+  }
+  .big-btn.done { background: #e8e2d2; color: #6a5c48; }
+  .banner {
+    display: none; margin-top: 12px; background: #fff3d6; border: 1px solid #f0d9a8; color: #7a5a12;
+    border-radius: 14px; padding: 12px; text-align: center; font-size: .92rem;
+  }
+  .banner.show { display: block; }
+  .cal-card { background: #fff; border: 1px solid #e3dac8; border-radius: 18px; padding: 14px; margin-top: 12px; }
+  .cal-card .tt { font-size: .88rem; color: #1f4e79; font-weight: 700; margin-bottom: 10px; }
+  .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+  .cal .d {
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    font-size: .76rem; color: #9a8b72; background: #f7f3ea; border-radius: 8px;
+  }
+  .cal .d.on { background: #2e8b57; color: #fff; font-weight: 700; }
+  .cal .d.today { outline: 2px solid #d97c2b; }
+  .panel { background: #fff; border: 1px solid #e3dac8; border-radius: 18px; margin-top: 12px; overflow: hidden; }
+  .panel summary { padding: 14px; font-size: .95rem; font-weight: 700; color: #1f4e79; cursor: pointer; }
+  .panel .inner { padding: 4px 14px 16px; display: grid; gap: 8px; }
+  .actinfo { font-size: .8rem; color: #4a3f2f; background: #fbf6ec; border-radius: 10px; padding: 8px 10px; line-height: 1.7; }
+  .mini-btn {
+    border: 1px solid #e3dac8; background: #fff; border-radius: 12px; padding: 11px;
+    font-size: .9rem; color: #1f4e79; cursor: pointer; font-family: inherit;
+  }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  textarea {
+    width: 100%; border: 1px solid #ddd0bc; border-radius: 12px; padding: 10px;
+    font-size: .86rem; font-family: inherit; height: 70px;
+  }
+  .child-item {
+    display: flex; align-items: center; gap: 8px; background: #fbf6ec; border-radius: 10px; padding: 8px 10px;
+  }
+  .child-item .nm { flex: 1; font-size: .92rem; }
+  .child-item button { border: 1px solid #e3dac8; background: #fff; border-radius: 8px; padding: 5px 10px; font-size: .8rem; }
+  .group { border-radius: 18px; margin-top: 14px; overflow: hidden; border: 1px solid rgba(0,0,0,.06); }
+  .group summary {
+    display: flex; align-items: center; gap: 8px; color: #fff; padding: 12px 14px;
+    font-weight: 700; font-size: .96rem; cursor: pointer;
+  }
+  .group summary .cnt { font-size: .76rem; opacity: .9; font-weight: 400; }
+  .group summary .gp { margin-left: auto; font-size: .8rem; font-weight: 700; opacity: .95; }
+  .cards { padding: 10px; background: rgba(255,255,255,.92); }
+  .card { border: 1px solid #e3dac8; border-radius: 14px; margin-bottom: 10px; background: #fff; overflow: hidden; }
+  .card .head {
+    width: 100%; border: none; background: none; text-align: left; padding: 12px 14px;
+    display: flex; align-items: center; gap: 10px; cursor: pointer; font-family: inherit;
+  }
+  .card .head .no {
+    width: 34px; height: 34px; border-radius: 10px; color: #fff; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; font-size: .86rem; flex-shrink: 0;
+  }
+  .card .head .t { flex: 1; font-size: 1.12rem; font-weight: 800; color: #1f4e79; }
+  .card .head .py { color: #9a8b72; font-size: .82rem; }
+  .card .head .chev { color: #c9bda8; }
+  .card.open .head .chev { transform: rotate(180deg); }
+  .card .body { display: none; padding: 2px 14px 14px; }
+  .card.open .body { display: block; }
+  .sense {
+    border-left: 3px solid #1f4e79; background: #f7f9fb; border-radius: 0 10px 10px 0;
+    padding: 9px 12px; margin-bottom: 8px;
+  }
+  .sense .m { font-weight: 700; color: #1f4e79; font-size: .94rem; }
+  .sense .x { color: #4a3f2f; font-size: .92rem; margin-top: 3px; line-height: 1.6; }
+  .sense .r { color: #9a8b72; font-size: .78rem; margin-top: 2px; }
+  .checks { display: flex; justify-content: flex-end; margin-top: 8px; }
+  .ck {
+    border: 2px solid #e3dac8; background: #fff; color: #4a3f2f; border-radius: 20px;
+    padding: 8px 16px; font-size: .9rem; cursor: pointer; font-family: inherit;
+  }
+  .ck.on { background: #2e8b57; border-color: #2e8b57; color: #fff; font-weight: 700; }
+  .search { width: 100%; border: 1px solid #ddd0bc; border-radius: 12px; padding: 11px 14px; font-size: .95rem; margin-bottom: 10px; font-family: inherit; background: #fff; }
+  .quiz-bg {
+    display: none; position: fixed; inset: 0; z-index: 95; background: rgba(31,40,55,.55);
+    align-items: flex-start; justify-content: center; padding: 30px 16px; overflow-y: auto;
+  }
+  .quiz-bg.show { display: flex; }
+  .quiz-card {
+    background: #fff; border-radius: 20px; padding: 20px 18px; width: 100%; max-width: 440px;
+    box-shadow: 0 18px 60px rgba(0,0,0,.25);
+  }
+  .quiz-card .qhead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .quiz-card .qhead .prog { font-size: .82rem; color: #9a8b72; }
+  .quiz-card .qhead .close { border: none; background: #f1ece2; border-radius: 50%; width: 30px; height: 30px; font-size: .9rem; cursor: pointer; }
+  .quiz-card .sentence { font-size: 1.05rem; color: #2f2a22; line-height: 1.9; padding: 12px 14px; background: #fbf6ec; border-radius: 12px; margin-bottom: 12px; }
+  .quiz-card .sentence b { color: #c0392b; }
+  .opt {
+    width: 100%; text-align: left; border: 2px solid #e3dac8; background: #fff; border-radius: 12px;
+    padding: 11px 14px; font-size: .95rem; margin-bottom: 8px; cursor: pointer; font-family: inherit; color: #2f2a22;
+  }
+  .opt.right { border-color: #2e8b57; background: #eaf7ee; color: #1d5b34; font-weight: 700; }
+  .opt.wrong { border-color: #c0392b; background: #fdecea; color: #a9442f; }
+  .opt:disabled { cursor: default; }
+  .quiz-card .next { width: 100%; border: none; border-radius: 12px; padding: 12px; font-size: 1rem; font-weight: 700; color: #fff; background: linear-gradient(135deg, #1f4e79, #2e8b57); cursor: pointer; font-family: inherit; }
+  .quiz-card .score { text-align: center; font-size: 1.1rem; color: #1f4e79; font-weight: 700; padding: 16px 0 10px; }
+  .fill-q {
+    font-size: 1.05rem; color: #2f2a22; line-height: 2.2; padding: 12px 14px;
+    background: #fbf6ec; border-radius: 12px; margin-bottom: 8px;
+  }
+  .fill-src { font-size: .8rem; color: #9a8b72; margin-bottom: 6px; }
+  .fill-in {
+    border: none; border-bottom: 2px solid #8e44ad; background: transparent; width: 7em; max-width: 72%;
+    font-size: 1rem; padding: 2px 6px; margin: 0 4px; color: #1f4e79; font-weight: 700; font-family: inherit;
+  }
+  .fill-in.right { border-color: #2e8b57; background: #eaf7ee; }
+  .fill-in.wrong { border-color: #c0392b; background: #fdecea; }
+  .fill-ans { margin: 6px 0 10px; }
+  .fill-ans .ok { color: #1d5b34; font-weight: 700; }
+  .fill-ans .no { color: #a9442f; font-weight: 700; line-height: 1.7; }
+  .fill-check {
+    width: 100%; border: none; border-radius: 12px; padding: 12px; font-size: 1rem; font-weight: 700;
+    color: #fff; background: linear-gradient(135deg, #8e44ad, #2e8b57); cursor: pointer; font-family: inherit;
+  }
+  .modal-bg {
+    display: none; position: fixed; inset: 0; z-index: 80; background: rgba(31,40,55,.5);
+    align-items: center; justify-content: center; padding: 24px;
+  }
+  .modal-bg.show { display: flex; }
+  .modal { background: #fff; border-radius: 20px; padding: 20px; width: 100%; max-width: 380px; }
+  .modal h3 { color: #1f4e79; margin-bottom: 12px; }
+  .modal input[type=text] {
+    width: 100%; border: 1px solid #ddd0bc; border-radius: 12px; padding: 11px;
+    font-size: 1rem; font-family: inherit; margin-bottom: 12px;
+  }
+  .emoji-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .emoji-opt { border: 1px solid #e3dac8; background: #fff; border-radius: 12px; width: 44px; height: 44px; font-size: 1.2rem; cursor: pointer; }
+  .emoji-opt.on { border-color: #1f4e79; background: #eaf1f7; }
+  .modal .mrow { display: flex; gap: 10px; }
+  .modal .mrow button { flex: 1; border: none; border-radius: 12px; padding: 12px; font-size: .98rem; cursor: pointer; font-family: inherit; }
+  .modal .mrow .ok { background: #1f4e79; color: #fff; font-weight: 700; }
+  .modal .mrow .no { background: #efe6d8; color: #4a3f2f; }
+  .activation {
+    display: none; position: fixed; inset: 0; z-index: 90; overflow-y: auto;
+    background: linear-gradient(160deg, #f5f2ea, #e8e2d2);
+    align-items: flex-start; justify-content: center; padding: 56px 20px 40px;
+  }
+  .activation.show { display: flex; }
+  .act-card { background: #fff; border-radius: 20px; padding: 24px 22px; width: 100%; max-width: 400px; box-shadow: 0 16px 50px rgba(0,0,0,.18); text-align: center; }
+  .act-card .logo { font-size: 2.4rem; margin-bottom: 8px; }
+  .act-card h2 { color: #1f4e79; font-size: 1.18rem; margin-bottom: 4px; }
+  .act-card .tip { color: #6a5c48; font-size: .82rem; margin-bottom: 18px; line-height: 1.6; }
+  .act-card input { width: 100%; border: 1px solid #ddd0bc; border-radius: 12px; padding: 12px; font-size: 1rem; margin-bottom: 10px; font-family: inherit; text-align: center; }
+  .act-card .go { width: 100%; border: none; border-radius: 12px; padding: 14px; font-size: 1.05rem; font-weight: 700; color: #fff; background: linear-gradient(135deg, #1f4e79, #2e8b57); cursor: pointer; margin-top: 4px; }
+  .act-card .err { color: #c0392b; font-size: .84rem; margin-top: 10px; min-height: 1.2em; }
+  
+  .quiz-card { max-width: 470px; border-radius: 26px; padding: 0 0 4px; overflow: hidden; animation: bczIn .28s ease; }
+  @keyframes bczIn { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
+  .progbar { height: 6px; background: #f0e9da; }
+  .progbar i { display: block; height: 100%; background: linear-gradient(90deg, #2e8b57, #8e44ad); transition: width .3s; }
+  .quiz-card .qhead { padding: 14px 18px 0; margin-bottom: 2px; }
+  .bcz-card {
+    font-size: 1.16rem; color: #2f2a22; line-height: 2.4; padding: 24px 22px 18px;
+    min-height: 150px; display: flex; align-items: center; flex-wrap: wrap;
+  }
+  .fill-src { padding: 0 22px 12px; font-size: .82rem; color: #9a8b72; }
+  .fill-ans { padding: 0 22px 12px; }
+  .fill-check, .quiz-card .next { width: calc(100% - 44px); margin: 0 22px 18px; }
+  .fill-in { width: 8em; border-bottom: 2.5px solid #8e44ad; font-size: 1.1rem; }
+  .fill-in.fill-wide { width: 100%; max-width: 100%; border: 2px dashed #8e44ad; border-radius: 12px; padding: 10px 12px; }
+  .zt-sec { margin-top: 20px; }
+  .zt-head { font-size: 1.08rem; font-weight: 800; color: #1f4e79; }
+  .zt-sub { font-size: .78rem; color: #9a8b72; margin: 4px 0 12px; line-height: 1.7; }
+  .zt-year { display: flex; align-items: center; gap: 8px; margin: 18px 0 10px; }
+  .zt-year .zy { font-size: 1rem; font-weight: 800; color: #8e44ad; background: rgba(142,68,173,.1); border: 1px solid rgba(142,68,173,.28); padding: 4px 14px; border-radius: 10px; }
+  .zt-year .zc { font-size: .76rem; color: #9a8b72; }
+  .zt-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (max-width: 980px) { .zt-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px) { .zt-grid { grid-template-columns: 1fr; } }
+  .zt-card { background: #fff; border: 1px solid #e3dac8; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 6px 16px rgba(0,0,0,.05); }
+  .zt-card.done.ok { border-color: #2e8b57; box-shadow: 0 0 0 2px rgba(46,139,87,.15); }
+  .zt-card.done.no { border-color: #c0392b; box-shadow: 0 0 0 2px rgba(192,57,43,.12); }
+  .zt-title { font-size: .82rem; font-weight: 800; color: #8e44ad; }
+  .zt-q { font-size: .96rem; line-height: 2.1; color: #2f2a22; }
+  .zt-in { border: none; border-bottom: 2px solid #8e44ad; background: transparent; width: 7em; max-width: 70%; font-size: .95rem; padding: 2px 4px; color: #1f4e79; font-weight: 700; font-family: inherit; }
+  .zt-in.zt-wide { width: 100%; max-width: 100%; border: 2px dashed #8e44ad; border-radius: 10px; padding: 8px 10px; }
+  .zt-in.right { border-color: #2e8b57; background: #eaf7ee; }
+  .zt-in.wrong { border-color: #c0392b; background: #fdecea; }
+  .zt-ans { font-size: .8rem; }
+  .zt-ans .ok { color: #1d5b34; font-weight: 700; }
+  .zt-ans .no { color: #a9442f; font-weight: 700; }
+  .zt-ans .show-ans { background: #f0f7ef; border: 1px dashed #2e8b57; border-radius: 10px; padding: 8px 10px; color: #1d5b34; line-height: 1.8; margin-top: 4px; }
+  .zt-check { border: none; border-radius: 10px; padding: 10px; font-size: .9rem; font-weight: 700; color: #fff; background: linear-gradient(135deg, #8e44ad, #2e8b57); cursor: pointer; font-family: inherit; margin-top: auto; }
+  .zt-card.done .zt-check { display: none; }
+    /* ===== UI POLISH ===== */
+  body {
+    background:
+      radial-gradient(820px 380px at 50% -6%, rgba(255,246,224,.85) 0%, rgba(255,246,224,0) 62%),
+      linear-gradient(180deg, #fdf9f1 0%, #f5eee0 100%);
+  }
+  header { padding: 26px 0 10px; }
+  header h1 {
+    font-family: "STKaiti", "KaiTi", "STSong", "SimSun", serif;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 8px rgba(139,69,19,.08);
+  }
+  .wm {
+    display: inline-block; background: #fff; border: 1px solid #ece0cf;
+    border-radius: 999px; padding: 3px 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  }
+  .hint {
+    background: rgba(255,255,255,.7); border: 1px solid #ece0cf;
+    border-radius: 12px; padding: 8px 12px; margin-top: 8px;
+  }
+  .chip {
+    transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,.04);
+  }
+  .chip:active { transform: scale(.96); }
+  .chip.on { box-shadow: 0 5px 12px rgba(0,0,0,.08); }
+  .toolbar .tbtn {
+    transition: transform .12s ease, box-shadow .12s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,.04);
+  }
+  .toolbar .tbtn:active { transform: scale(.97); }
+  .toolbar .tbtn.go { box-shadow: 0 6px 16px rgba(0,0,0,.14); }
+  .summary {
+    border-radius: 20px; border-color: #e6dcc8;
+    box-shadow: 0 12px 30px -14px rgba(0,0,0,.16);
+  }
+  .ring { filter: drop-shadow(0 4px 10px rgba(0,0,0,.08)); }
+  .stat { border: 1px solid rgba(0,0,0,.035); box-shadow: inset 0 1px 0 rgba(255,255,255,.7); }
+  .big-btn {
+    transition: transform .14s ease, box-shadow .14s ease, filter .14s ease;
+    border-radius: 18px;
+  }
+  .big-btn:not(.done):hover { transform: translateY(-2px); filter: brightness(1.04); }
+  .big-btn:not(.done):active { transform: translateY(0); }
+  .cal-card { border-radius: 20px; box-shadow: 0 8px 22px -16px rgba(0,0,0,.12); }
+  .cal .d { transition: transform .12s ease, box-shadow .12s ease; }
+  .cal .d:active { transform: scale(.9); }
+  .cal .d.on { box-shadow: 0 4px 10px rgba(0,0,0,.16); }
+  details.panel { border-radius: 20px; box-shadow: 0 8px 22px -16px rgba(0,0,0,.12); }
+  details.panel > summary { border-radius: 20px 20px 0 0; transition: background .15s ease; }
+  details.panel > summary:hover { background: #fdfaf3; }
+  details.panel .mini-btn { transition: transform .12s ease, box-shadow .12s ease, background .12s ease; }
+  details.panel .mini-btn:active { transform: scale(.97); }
+  details.panel input:focus, details.panel textarea:focus {
+    outline: none; border-color: #b45f2a;
+    box-shadow: 0 0 0 3px rgba(180,95,42,.12);
+  }
+  .group {
+    border-radius: 20px; border-color: #e6dcc8;
+    box-shadow: 0 10px 26px -18px rgba(0,0,0,.22);
+  }
+  .group > summary { letter-spacing: .5px; }
+  .card {
+    border-radius: 15px; border-color: #e9dfcd;
+    box-shadow: 0 3px 10px -5px rgba(0,0,0,.08);
+    transition: box-shadow .18s ease, transform .18s ease;
+  }
+  .card.open { box-shadow: 0 10px 24px -12px rgba(0,0,0,.16); }
+  .card .head { transition: background .15s ease; }
+  .card .head:hover { background: #fbf7ee; }
+  .card .no { box-shadow: 0 3px 8px rgba(0,0,0,.18); }
+  .poem-text {
+    font-family: "STKaiti", "KaiTi", "STSong", "SimSun", serif;
+    font-size: 1.08rem; letter-spacing: .5px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.6);
+  }
+  .ck {
+    transition: transform .12s ease, box-shadow .12s ease, background .12s ease, color .12s ease;
+  }
+  .ck:active { transform: scale(.97); }
+  .ck.on { box-shadow: 0 5px 14px rgba(0,0,0,.16); }
+  .banner { box-shadow: 0 8px 22px -12px rgba(0,0,0,.2); }
+  .modal { border-radius: 22px; }
+  .modal-bg { backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+  .act-card { border-radius: 24px; box-shadow: 0 26px 70px rgba(0,0,0,.32); }
+  .quiz-card { box-shadow: 0 26px 70px rgba(0,0,0,.34); }
+  .zt-sec .zt-head { letter-spacing: .5px; }
+  .zt-year .zy { box-shadow: 0 3px 8px rgba(142,68,173,.14); }
+  .zt-card { transition: transform .14s ease, box-shadow .14s ease; }
+  .zt-card:not(.done):hover { transform: translateY(-2px); box-shadow: 0 12px 26px -12px rgba(0,0,0,.18); }
+  .zt-check { transition: filter .12s ease, transform .12s ease; }
+  .zt-check:active { transform: scale(.97); }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+    /* ===== BCZ UI ===== */
+  .quiz-bg {
+    display: none; position: fixed; inset: 0; z-index: 95;
+    background: linear-gradient(180deg, #fdf6e8 0%, #f1e6d1 100%);
+    padding: 18px 16px 30px; overflow-y: auto;
+    align-items: stretch; justify-content: flex-start;
+  }
+  .quiz-bg.show { display: flex; }
+  .quiz-card {
+    width: 100%; max-width: 470px; margin: 0 auto;
+    background: #fff; border-radius: 28px; padding: 0 0 4px; overflow: hidden;
+    box-shadow: 0 22px 55px rgba(0,0,0,.16);
+    display: flex; flex-direction: column; min-height: 340px;
+    animation: bczIn .32s cubic-bezier(.22,.9,.3,1);
+  }
+  .quiz-card .progbar { height: 8px; background: #f2ecdd; }
+  .quiz-card .progbar i { border-radius: 0; }
+  .quiz-card .qhead { padding: 16px 20px 0; margin: 0; }
+  .quiz-card .qhead .prog { font-size: .9rem; font-weight: 800; color: #1f4e79; letter-spacing: .3px; }
+  .quiz-card .qhead .close { background: #f3ede0; width: 32px; height: 32px; font-size: .95rem; }
+  .bcz-card {
+    flex: 1; font-size: 1.24rem; line-height: 2.5; color: #2f2a22;
+    padding: 24px 24px 10px; min-height: 0; align-items: flex-start;
+  }
+  .fill-in { width: 8.5em; max-width: 80%; border-bottom: 3px solid #8e44ad; font-size: 1.18rem; padding: 2px 6px; }
+  .fill-in.fill-wide { width: 100%; max-width: 100%; font-size: 1.05rem; }
+  .fill-src { padding: 0 24px 12px; font-size: .84rem; color: #a08a6e; }
+  .fill-ans { padding: 0 24px 14px; }
+  .fill-ans .ok { font-size: 1.02rem; }
+  .fill-ans .show-ans { font-size: .96rem; }
+  .quiz-card > .fill-check, .quiz-card > .next {
+    width: calc(100% - 48px); margin: 0 24px 20px; border-radius: 999px;
+    padding: 15px; font-size: 1.05rem; letter-spacing: 1px;
+    box-shadow: 0 12px 26px -8px rgba(0,0,0,.28);
+  }
+  .quiz-card .score { font-size: 1.3rem; padding: 38px 20px 22px; }
+    /* ===== DESKTOP ===== */
+  @media (min-width: 900px) {
+    .wrap { max-width: 1120px; padding: 0 24px; }
+    header { padding-top: 30px; }
+    header h1 { font-size: 2rem; letter-spacing: 3px; }
+    header .sub { font-size: 1rem; }
+    .summary { padding: 22px 26px; gap: 26px; border-radius: 24px; }
+    .ring { width: 118px; height: 118px; }
+    .ring .num { font-size: 1.5rem; }
+    .stats { grid-template-columns: repeat(3, 1fr); gap: 10px 14px; }
+    .stat { padding: 12px 14px; }
+    .stat .v { font-size: 1.2rem; }
+    .toolbar .tbtn { padding: 12px; font-size: .96rem; }
+    .chips { padding-bottom: 14px; }
+    .group > summary { font-size: 1.05rem; padding: 15px 18px; }
+    .group .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; align-items: start; }
+    .card { margin-bottom: 0; }
+    .cal-card, .big-btn, .banner { max-width: 720px; margin-left: auto; margin-right: auto; }
+    .big-btn { display: block; }
+    .banner { text-align: center; }
+    .zt-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .bcz-card { font-size: 1.32rem; }
+    .fill-in { font-size: 1.24rem; }
+    .poem-text { font-size: 1.1rem; }
+  }
+    /* ===== LIQUID GLASS ===== */
+  body {
+    background: linear-gradient(165deg, #edf3ff 0%, #fdf1f6 48%, #edf8f2 100%);
+  }
+  .glowbg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .glowbg i { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .55; }
+  .glowbg .g1 { width: 460px; height: 460px; background: #bcd4ff; top: -130px; right: -90px; animation: glassFloat 16s ease-in-out infinite; }
+  .glowbg .g2 { width: 400px; height: 400px; background: #ffd9e8; bottom: -120px; left: -100px; animation: glassFloat 18s ease-in-out infinite reverse; }
+  .glowbg .g3 { width: 330px; height: 330px; background: #d2f0e1; top: 42%; left: 58%; animation: glassFloat 20s ease-in-out infinite; }
+  @keyframes glassFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-26px, 20px) scale(1.07); }
+  }
+  .wrap { position: relative; z-index: 1; }
+  header, .save-state, .hint, .chips, .toolbar, .summary, .big-btn, .banner, .cal-card,
+  details.panel, #app, #ztArea, .zt-sec, .wm { position: relative; z-index: 1; }
+  .summary, .cal-card, details.panel, .group, .modal, .zt-card, .stat {
+    background: rgba(255, 255, 255, .62);
+    backdrop-filter: blur(20px) saturate(170%);
+    -webkit-backdrop-filter: blur(20px) saturate(170%);
+    border: 1px solid rgba(255, 255, 255, .8);
+    box-shadow: 0 10px 34px rgba(31, 45, 70, .10);
+  }
+  .card {
+    background: rgba(255, 255, 255, .78);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, .85);
+  }
+  .quiz-card {
+    background: rgba(255, 255, 255, .82);
+    backdrop-filter: blur(26px) saturate(180%);
+    -webkit-backdrop-filter: blur(26px) saturate(180%);
+  }
+  .toolbar .tbtn {
+    background: rgba(255, 255, 255, .72);
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, .85);
+  }
+  .chip {
+    background: rgba(255, 255, 255, .8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-color: rgba(255, 255, 255, .9);
+  }
+  .act-card {
+    background: rgba(255, 255, 255, .85);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+  }
+  .banner { background: linear-gradient(135deg, rgba(246,211,101,.9), rgba(253,160,133,.9)); }
+  @media (prefers-reduced-motion: reduce) {
+    .glowbg i { animation: none !important; }
+  }
+    /* ===== APPLE STYLE ===== */
+  body, button, input, textarea, select {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro SC", "SF Pro Display", "SF Pro Text",
+      "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  header h1, .bcz-card, .fill-in, .poem-text {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro SC", "SF Pro Display", "SF Pro Text",
+      "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  header h1 { letter-spacing: 1px; font-weight: 700; }
+  .summary, .cal-card, details.panel, .group, .modal, .zt-card, .stat {
+    background: rgba(255, 255, 255, .5);
+    backdrop-filter: blur(28px) saturate(190%);
+    -webkit-backdrop-filter: blur(28px) saturate(190%);
+    border-color: rgba(255, 255, 255, .9);
+    box-shadow: 0 14px 44px -16px rgba(20, 40, 70, .18), inset 0 1px 0 rgba(255, 255, 255, .75);
+  }
+  .card {
+    background: rgba(255, 255, 255, .72);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    box-shadow: 0 8px 26px -12px rgba(20, 40, 70, .18), inset 0 1px 0 rgba(255, 255, 255, .8);
+  }
+  .quiz-card {
+    background: rgba(255, 255, 255, .8);
+    backdrop-filter: blur(30px) saturate(190%);
+    -webkit-backdrop-filter: blur(30px) saturate(190%);
+    box-shadow: 0 26px 70px rgba(0, 0, 0, .22), inset 0 1px 0 rgba(255, 255, 255, .85);
+  }
+  .toolbar .tbtn, .chip, details.panel .mini-btn {
+    background: rgba(255, 255, 255, .72);
+    backdrop-filter: blur(14px) saturate(170%);
+    -webkit-backdrop-filter: blur(14px) saturate(170%);
+    border-color: rgba(255, 255, 255, .9);
+  }
+  .act-card {
+    background: rgba(255, 255, 255, .8);
+    backdrop-filter: blur(30px) saturate(190%);
+    -webkit-backdrop-filter: blur(30px) saturate(190%);
+    box-shadow: 0 26px 70px rgba(0, 0, 0, .28), inset 0 1px 0 rgba(255, 255, 255, .85);
+  }
+  .bcz-card { letter-spacing: .3px; }
+  .fill-q, .zt-q { letter-spacing: .3px; }
+    /* ===== TRUE GLASS ===== */
+  .glowbg i { opacity: .7; }
+  .summary, .cal-card, details.panel, .group, .modal, .zt-card, .stat {
+    background: rgba(255, 255, 255, .26);
+    backdrop-filter: blur(36px) saturate(210%);
+    -webkit-backdrop-filter: blur(36px) saturate(210%);
+    border-color: rgba(255, 255, 255, .62);
+    box-shadow: 0 8px 30px rgba(20, 40, 70, .10), inset 0 1px 0 rgba(255, 255, 255, .55);
+  }
+  .card {
+    background: rgba(255, 255, 255, .34);
+    backdrop-filter: blur(24px) saturate(200%);
+    -webkit-backdrop-filter: blur(24px) saturate(200%);
+    box-shadow: 0 6px 22px -10px rgba(20, 40, 70, .14), inset 0 1px 0 rgba(255, 255, 255, .65);
+  }
+  .quiz-card {
+    background: rgba(255, 255, 255, .48);
+    backdrop-filter: blur(38px) saturate(210%);
+    -webkit-backdrop-filter: blur(38px) saturate(210%);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, .18), inset 0 1px 0 rgba(255, 255, 255, .75);
+  }
+  .toolbar .tbtn, .chip, details.panel .mini-btn {
+    background: rgba(255, 255, 255, .4);
+    backdrop-filter: blur(18px) saturate(190%);
+    -webkit-backdrop-filter: blur(18px) saturate(190%);
+    border-color: rgba(255, 255, 255, .75);
+  }
+  .act-card {
+    background: rgba(255, 255, 255, .55);
+    backdrop-filter: blur(40px) saturate(210%);
+    -webkit-backdrop-filter: blur(40px) saturate(210%);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, .22), inset 0 1px 0 rgba(255, 255, 255, .8);
+  }
+  .swipe-hint { font-size: .74rem; color: #9aa7b8; margin-top: 8px; text-align: center; }
+  .zt-card.done.ok { box-shadow: 0 0 0 2px rgba(46,139,87,.25), 0 8px 30px rgba(20,40,70,.10); }
+  .zt-card.done.no { box-shadow: 0 0 0 2px rgba(192,57,43,.22), 0 8px 30px rgba(20,40,70,.10); }
+    /* ===== CLEAN APPLE ===== */
+  body { background: #ffffff; }
+  .glowbg { display: none; }
+  .summary, .cal-card, details.panel, .group, .modal, .zt-card, .stat, .card, .quiz-card, .act-card, .toolbar .tbtn, .chip, details.panel .mini-btn {
+    background: #ffffff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .summary, .cal-card, details.panel, .group, .modal, .zt-card, .card {
+    border-color: #e8e8ed !important;
+    box-shadow: 0 6px 20px -14px rgba(0,0,0,.12) !important;
+  }
+  .toolbar .tbtn, .chip, details.panel .mini-btn {
+    border-color: #e8e8ed !important;
+    box-shadow: none !important;
+  }
+  .summary { border-radius: 22px; padding: 22px 24px; }
+  .ring .num { font-size: 1.4rem; }
+  .stat { background: #f5f5f7 !important; border: none !important; box-shadow: none !important; }
+  header h1 { font-size: 1.7rem; font-weight: 700; letter-spacing: -1px; }
+  header .sub { font-size: .88rem; color: #86868b; }
+  .hint { color: #86868b; font-size: .78rem; }
+  .group > summary { font-weight: 650; letter-spacing: .2px; }
+  .group .cards { padding: 12px; }
+  .card { border-radius: 16px; }
+  .card .t { font-size: 1.06rem; font-weight: 650; letter-spacing: -.2px; }
+  .card .a, .card .chev { color: #a1a1a6; }
+  .poem-text { font-size: 1.12rem; line-height: 2.1; color: #1d1d1f; }
+  .fill-q, .bcz-card { color: #1d1d1f; }
+  .zt-q { color: #1d1d1f; }
+  .zt-title { font-weight: 700; letter-spacing: .2px; }
+  .big-btn { border-radius: 999px; font-weight: 650; }
+  .mini-btn { border-radius: 12px; }
+  .ck { border-radius: 14px; }
+  .banner { border-radius: 18px; }
+  .cal-card .tt { font-weight: 650; }
+  details.panel > summary { font-weight: 650; }
+  details.panel .mini-btn { background: #ffffff !important; }
+  #selftest { display: none; }
+  .toast {
+    position: fixed; left: 50%; bottom: 40px; transform: translateX(-50%); z-index: 99;
+    background: rgba(31,40,55,.92); color: #fff; border-radius: 24px; padding: 10px 20px;
+    font-size: .9rem; max-width: 86%; text-align: center; opacity: 0; pointer-events: none; transition: opacity .25s;
+  }
+  .toast.show { opacity: 1; }
+
+</style>
+</head>
+<body>
+<div class="glowbg"><i class="g1"></i><i class="g2"></i><i class="g3"></i></div>
+
+<div class="wrap">
+  <header>
+    <h1>📚 文言文常用实词 120 打卡</h1>
+    <div class="sub">高考必背 120 实词 + 补充 6 词 · 每个义项附课本原句 · 商用版 V1.0</div>
+    <div class="wm" id="wm"></div>
+  </header>
+  <div class="save-state" id="saveState"></div>
+
+  <div class="hint">点开一个词 → 看义项和课本原句 → 点「掌握」；顶部「开始练习」是高考句子选义题</div>
+  <div class="warn" id="storageWarn">⚠️ 当前浏览器无法保存记录，进度只在本次使用中有效。请换用手机自带浏览器或微信打开。</div>
+
+  <div class="chips" id="chips"></div>
+  <div class="toolbar">
+    <button class="tbtn go" onclick="startQuiz()">🎯 开始练习</button>
+    <button class="tbtn go" onclick="startFill()">📝 填词练习</button>
+    <button class="tbtn" onclick="openSettings()">⚙️ 设置</button>
+    <button class="tbtn" onclick="openChildModal('add', null)">🧒 添加孩子</button>
+  </div>
+
+  <div class="summary">
+    <div class="ring">
+      <svg width="104" height="104" viewBox="0 0 104 104">
+        <circle cx="52" cy="52" r="34" fill="none" stroke="#e8e2d2" stroke-width="10"/>
+        <circle id="ringFg" cx="52" cy="52" r="34" fill="none" stroke="#2e8b57" stroke-width="10" stroke-linecap="round"/>
+      </svg>
+      <div class="num" id="ringNum">0<small>/126</small></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="k">练习正确率</div><div class="v" id="stPrac">0%</div><div class="k" id="stPracSub">已练 0 题</div></div>
+      <div class="stat"><div class="k">连续打卡</div><div class="v heat" id="stStreak">0 天</div></div>
+      <div class="stat"><div class="k">今日状态</div><div class="v" id="stToday">—</div></div>
+      <div class="stat"><div class="k">核心 120</div><div class="v" id="stCore">0 / 120</div></div>
+    </div>
+  </div>
+
+  <button class="big-btn" id="todayBtn" onclick="checkin()">📅 今日打卡</button>
+  <div class="banner" id="banner">🎉 太棒了！全部实词都掌握了！</div>
+
+  <div class="cal-card">
+    <div class="tt">📆 最近 35 天打卡日历</div>
+    <div class="cal" id="cal"></div>
+  </div>
+
+  <input class="search" id="searchBox" placeholder="🔍 搜索：实词、拼音或义项，如「爱」「ben」「吝惜」" oninput="doSearch(this.value)">
+  <div style="display:flex;gap:8px;margin-bottom:4px">
+    <button class="chip" onclick="filterGroup('all')">全部</button>
+    <button class="chip" onclick="filterGroup('core')">核心120</button>
+    <button class="chip" onclick="filterGroup('extra')">补充6</button>
+  </div>
+
+  <details class="panel" id="settingsPanel">
+    <summary>⚙️ 备份与设置</summary>
+    <div class="inner">
+      <div class="actinfo" id="actInfo"></div>
+      <button class="mini-btn" onclick="reactivate()">🔑 重新激活</button>
+      <label style="font-size:.85rem;color:#4a3f2f">孩子管理（切换在顶部，可添加、改名、删除）</label>
+      <div id="childList" style="display:grid;gap:8px"></div>
+      <div class="row">
+        <button class="mini-btn" onclick="exportFile()">⬇️ 下载备份</button>
+        <button class="mini-btn" onclick="copyBackup()">📋 复制备份</button>
+      </div>
+      <div class="row">
+        <button class="mini-btn" onclick="resetAll()">🧹 清空当前孩子记录</button>
+        <label class="mini-btn" style="text-align:center;cursor:pointer">选择备份文件恢复
+          <input type="file" accept=".json,application/json" style="display:none" onchange="importFile(event)">
+        </label>
+      </div>
+      <div id="dlAnchor"></div>
+      <textarea id="importArea" placeholder="也可以把「复制备份」得到的内容粘贴到这里，再点恢复"></textarea>
+      <button class="mini-btn" onclick="importFromText()">♻️ 从粘贴内容恢复</button>
+      <label style="font-size:.85rem;color:#5c4b3a;display:block;margin-top:4px">开发者激活码（输入后本机所有产品免激活）</label>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="devCodeInput" placeholder="输入开发者激活码" autocomplete="off" style="flex:1;border:1px solid #ddd0bc;border-radius:10px;padding:9px;font-size:.85rem;font-family:inherit;background:#fbf6ec;min-width:0">
+        <button class="mini-btn" onclick="devUnlockSettings()" style="margin:0">激活</button>
+      </div>
+      <div id="devStatusLine" style="font-size:.8rem;color:#8a7a62">未开启</div>
+    </div>
+  </details>
+
+  <div id="app"></div>
+  <div id="selftest"></div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3 id="modalTitle">添加孩子</h3>
+    <div class="emoji-row" id="modalEmojiRow"></div>
+    <input type="text" id="childName" maxlength="8" placeholder="孩子名字（如：大宝）">
+    <div class="mrow">
+      <button type="button" class="ok" onclick="saveChild()">保存</button>
+      <button type="button" class="no" onclick="closeModal()">取消</button>
+    </div>
+  </div>
+</div>
+
+<div class="quiz-bg" id="quizBg">
+  <div class="quiz-card" id="quizBox"></div>
+</div>
+
+<div class="quiz-bg" id="fillBg">
+  <div class="quiz-card" id="fillBox"></div>
+</div>
+
+<div class="activation" id="activation">
+  <div class="act-card">
+    <div class="logo">📚</div>
+    <h2>文言文常用实词 120 打卡</h2>
+    <div class="tip">请先激活：输入购买时登记的姓名和随购买提供的授权码。<br>没有授权码请联系卖家。</div>
+    <form onsubmit="event.preventDefault();activate()">
+      <input type="text" id="actName" maxlength="12" placeholder="买家姓名">
+      <input type="text" id="actCode" maxlength="16" placeholder="授权码（如 SC-XXXX-XXXX）">
+      <button type="submit" class="go">激活</button>
+    </form>
+    <div class="err" id="actErr"></div>
+  </div>
+</div>
+
+<script>
+
+
+function fnv1a(s){let h=0x811c9dc5;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0;}return h>>>0;}
+function makeCode(name){const h=fnv1a((name||"").trim()+"|"+"sc120-2026-secret-key").toString(36).toUpperCase().padStart(8,"0");return "SC-"+h.slice(0,4)+"-"+h.slice(4);}
+function checkCode(name,code){const norm=String(code||"").toUpperCase().replace(/[^A-Z0-9]/g,"");return norm===makeCode(name).replace(/-/g,"");}
+
+const WORDS = [{"w": "爱", "p": "ài", "s": [{"m": "喜爱，爱护", "x": "爱其子，择师而教之", "r": "《师说》"}, {"m": "爱惜，吝惜", "x": "齐国虽褊小，吾何爱一牛", "r": "《齐桓晋文之事》"}, {"m": "喜爱，欣赏", "x": "予独爱莲之出淤泥而不染", "r": "《爱莲说》"}, {"m": "通“薆”，隐蔽", "x": "爱而不见，搔首踟蹰", "r": "《诗经·静女》"}]}, {"w": "安", "p": "ān", "s": [{"m": "安稳，安定", "x": "风雨不动安如山", "r": "《茅屋为秋风所破歌》"}, {"m": "安逸，安乐", "x": "然后知生于忧患，而死于安乐也", "r": "《生于忧患，死于安乐》"}, {"m": "安身，养", "x": "衣食所安，弗敢专也", "r": "《曹刿论战》"}, {"m": "怎么，哪里", "x": "安能摧眉折腰事权贵", "r": "《梦游天姥吟留别》"}]}, {"w": "被", "p": "bèi", "s": [{"m": "通“披”，穿在身上", "x": "将军身被坚执锐", "r": "《陈涉世家》"}, {"m": "通“披”，披散", "x": "被发行吟泽畔", "r": "《屈原列传》"}, {"m": "遭受，蒙受", "x": "信而见疑，忠而被谤", "r": "《屈原列传》"}, {"m": "表被动", "x": "予犹记周公之被逮", "r": "《五人墓碑记》"}]}, {"w": "倍", "p": "bèi", "s": [{"m": "通“背”，违背，背叛", "x": "愿伯具言臣之不敢倍德也", "r": "《鸿门宴》"}, {"m": "加倍，成倍", "x": "尝以十倍之地，百万之众", "r": "《过秦论》"}, {"m": "更加，越发", "x": "每逢佳节倍思亲", "r": "《九月九日忆山东兄弟》"}]}, {"w": "本", "p": "běn", "s": [{"m": "树根，根本", "x": "臣闻求木之长者，必固其根本", "r": "《谏太宗十思疏》"}, {"m": "本性，本心", "x": "此之谓失其本心", "r": "《鱼我所欲也》"}, {"m": "本来，原来", "x": "予本非文人画士", "r": "《病梅馆记》"}, {"m": "推究，考察", "x": "抑本其成败之迹，而皆自于人欤", "r": "《伶官传序》"}]}, {"w": "鄙", "p": "bǐ", "s": [{"m": "边邑，边境", "x": "越国以鄙远", "r": "《烛之武退秦师》"}, {"m": "浅陋，目光短浅", "x": "肉食者鄙，未能远谋", "r": "《曹刿论战》"}, {"m": "谦辞，粗俗", "x": "敢竭鄙怀，恭疏短引", "r": "《滕王阁序》"}]}, {"w": "兵", "p": "bīng", "s": [{"m": "兵器，武器", "x": "收天下之兵，聚之咸阳", "r": "《过秦论》"}, {"m": "士兵，军队", "x": "赵亦盛设兵以待秦", "r": "《廉颇蔺相如列传》"}, {"m": "战争，军事", "x": "六国破灭，非兵不利", "r": "《六国论》"}]}, {"w": "病", "p": "bìng", "s": [{"m": "疾病", "x": "君之病在肠胃", "r": "《扁鹊见蔡桓公》"}, {"m": "困苦，困顿", "x": "向吾不为斯役，则久已病矣", "r": "《捕蛇者说》"}, {"m": "毛病，缺点", "x": "人皆嗤吾固陋，吾不以为病", "r": "《训俭示康》"}, {"m": "担忧，忧虑", "x": "君子病无能焉，不病人之不己知也", "r": "《论语》"}]}, {"w": "察", "p": "chá", "s": [{"m": "仔细看，观察", "x": "徐而察之", "r": "《石钟山记》"}, {"m": "明察，了解", "x": "察邻国之政，无如寡人之用心者", "r": "《寡人之于国也》"}, {"m": "考察，举荐", "x": "前太守臣逵察臣孝廉", "r": "《陈情表》"}]}, {"w": "朝", "p": "cháo/zhāo", "s": [{"m": "zhāo 早晨", "x": "朝闻道，夕死可矣", "r": "《论语》"}, {"m": "cháo 朝见，朝拜", "x": "相如每朝时，常称病", "r": "《廉颇蔺相如列传》"}, {"m": "cháo 朝廷", "x": "于是入朝见威王", "r": "《邹忌讽齐王纳谏》"}, {"m": "cháo 朝代", "x": "逮奉圣朝，沐浴清化", "r": "《陈情表》"}]}, {"w": "曾", "p": "céng/zēng", "s": [{"m": "céng 曾经", "x": "相逢何必曾相识", "r": "《琵琶行》"}, {"m": "zēng 通“增”，增加", "x": "曾益其所不能", "r": "《生于忧患，死于安乐》"}, {"m": "zēng 竟然，连……都", "x": "老臣病足，曾不能疾走", "r": "《触龙说赵太后》"}]}, {"w": "乘", "p": "chéng/shèng", "s": [{"m": "chéng 驾，乘坐", "x": "独与迈乘小舟，至绝壁下", "r": "《石钟山记》"}, {"m": "chéng 登上", "x": "乘彼垝垣，以望复关", "r": "《诗经·氓》"}, {"m": "chéng 趁着，凭借", "x": "因利乘便，宰割天下", "r": "《过秦论》"}, {"m": "shèng 一车四马", "x": "然秦以区区之地，致万乘之势", "r": "《过秦论》"}]}, {"w": "诚", "p": "chéng", "s": [{"m": "诚心，真心", "x": "帝感其诚", "r": "《愚公移山》"}, {"m": "确实，的确", "x": "臣诚知不如徐公美", "r": "《邹忌讽齐王纳谏》"}, {"m": "如果，果真", "x": "诚能见可欲，则思知足以自戒", "r": "《谏太宗十思疏》"}]}, {"w": "除", "p": "chú", "s": [{"m": "台阶", "x": "扶辇下除，触柱折辕", "r": "《苏武传》"}, {"m": "清除，去掉", "x": "为汉家除残去秽", "r": "《赤壁之战》"}, {"m": "任命，授职", "x": "寻蒙国恩，除臣洗马", "r": "《陈情表》"}, {"m": "修治", "x": "即除魏阉废祠之址以葬之", "r": "《五人墓碑记》"}]}, {"w": "辞", "p": "cí", "s": [{"m": "言辞，文辞", "x": "辞甚畅达", "r": "《送东阳马生序》"}, {"m": "告别，辞别", "x": "停数日，辞去", "r": "《桃花源记》"}, {"m": "推辞，不接受", "x": "臣死且不避，卮酒安足辞", "r": "《鸿门宴》"}, {"m": "借口，托辞", "x": "辞曰：“臣之壮也，犹不如人”", "r": "《烛之武退秦师》"}]}, {"w": "从", "p": "cóng", "s": [{"m": "跟随", "x": "吾从而师之", "r": "《师说》"}, {"m": "使……跟从，带领", "x": "沛公旦日从百余骑来见项王", "r": "《鸿门宴》"}, {"m": "由，自", "x": "从小丘西行百二十步", "r": "《小石潭记》"}, {"m": "通“纵”，合纵", "x": "合从缔交，相与为一", "r": "《过秦论》"}]}, {"w": "殆", "p": "dài", "s": [{"m": "危险", "x": "知彼知己，百战不殆", "r": "《孙子·谋攻》"}, {"m": "大概，恐怕", "x": "殆有神护者", "r": "《项脊轩志》"}, {"m": "几乎，接近", "x": "且燕赵处秦革灭殆尽之际", "r": "《六国论》"}, {"m": "精神困乏而无所得", "x": "学而不思则罔，思而不学则殆", "r": "《论语》"}]}, {"w": "当", "p": "dāng/dàng", "s": [{"m": "对着，面对", "x": "木兰当户织", "r": "《木兰诗》"}, {"m": "在，处在", "x": "当是时也", "r": "《过秦论》"}, {"m": "应当，应该", "x": "当立者乃公子扶苏", "r": "《陈涉世家》"}, {"m": "阻挡，抵挡", "x": "一夫当关，万夫莫开", "r": "《蜀道难》"}, {"m": "判处，判罪", "x": "汉使张胜谋杀单于近臣，当死", "r": "《苏武传》"}]}, {"w": "道", "p": "dào", "s": [{"m": "道路", "x": "会天大雨，道不通", "r": "《陈涉世家》"}, {"m": "道理，规律", "x": "臣之所好者道也", "r": "《庖丁解牛》"}, {"m": "主张，学说", "x": "于是废先王之道", "r": "《过秦论》"}, {"m": "风尚", "x": "师道之不传也久矣", "r": "《师说》"}, {"m": "说，讲", "x": "不足为外人道也", "r": "《桃花源记》"}, {"m": "取道", "x": "从郦山下，道芷阳间行", "r": "《鸿门宴》"}]}, {"w": "得", "p": "dé", "s": [{"m": "得到，获得", "x": "积善成德，而神明自得", "r": "《劝学》"}, {"m": "心得，收获", "x": "古人之观于天地，往往有得", "r": "《游褒禅山记》"}, {"m": "能够", "x": "安得广厦千万间", "r": "《茅屋为秋风所破歌》"}, {"m": "通“德”，感恩", "x": "所识穷乏者得我与", "r": "《鱼我所欲也》"}, {"m": "得当，合适", "x": "此言得之", "r": "《六国论》"}]}, {"w": "度", "p": "dù/duó", "s": [{"m": "dù 法度，制度", "x": "内立法度，务耕织", "r": "《过秦论》"}, {"m": "dù 限度", "x": "乐盘游则思三驱以为度", "r": "《谏太宗十思疏》"}, {"m": "dù 越过", "x": "关山度若飞", "r": "《木兰诗》"}, {"m": "duó 估计，推测", "x": "度我至军中，公乃入", "r": "《鸿门宴》"}, {"m": "duó 衡量", "x": "试使山东之国与陈涉度长絜大", "r": "《过秦论》"}]}, {"w": "非", "p": "fēi", "s": [{"m": "不是", "x": "六国破灭，非兵不利", "r": "《六国论》"}, {"m": "不", "x": "君子生非异也", "r": "《劝学》"}, {"m": "没有", "x": "非刘豫州莫可以当曹操者", "r": "《赤壁之战》"}, {"m": "不对，错误", "x": "觉今是而昨非", "r": "《归去来兮辞》"}, {"m": "责怪，非难", "x": "举世非之而不加沮", "r": "《逍遥游》"}]}, {"w": "复", "p": "fù", "s": [{"m": "回来，返回", "x": "复行数十步，豁然开朗", "r": "《桃花源记》"}, {"m": "恢复", "x": "师道之不复，可知矣", "r": "《师说》"}, {"m": "再，又", "x": "山重水复疑无路", "r": "《游山西村》"}, {"m": "回答", "x": "不敢出一言以复", "r": "《送东阳马生序》"}, {"m": "通“覆”，遮盖", "x": "复之以掌，虚若无物", "r": "《促织》"}]}, {"w": "负", "p": "fù", "s": [{"m": "背，用背驮", "x": "命夸娥氏二子负二山", "r": "《愚公移山》"}, {"m": "辜负，对不起", "x": "誓天不相负", "r": "《孔雀东南飞》"}, {"m": "依仗，凭借", "x": "秦贪，负其强", "r": "《廉颇蔺相如列传》"}, {"m": "违背，背弃", "x": "决负约不偿城", "r": "《廉颇蔺相如列传》"}, {"m": "失败", "x": "胜负之数，存亡之理", "r": "《六国论》"}]}, {"w": "盖", "p": "gài", "s": [{"m": "车盖", "x": "日初出大如车盖", "r": "《两小儿辩日》"}, {"m": "遮盖", "x": "枝枝相覆盖，叶叶相交通", "r": "《孔雀东南飞》"}, {"m": "大概，恐怕", "x": "盖将自其变者而观之", "r": "《赤壁赋》"}, {"m": "原因，因为", "x": "盖失强援，不能独完", "r": "《六国论》"}, {"m": "发语词", "x": "盖儒者所争，尤在于名实", "r": "《答司马谏议书》"}]}, {"w": "故", "p": "gù", "s": [{"m": "缘故，原因", "x": "既克，公问其故", "r": "《曹刿论战》"}, {"m": "所以，因此", "x": "故不积跬步，无以至千里", "r": "《劝学》"}, {"m": "旧的，原来的", "x": "温故而知新", "r": "《论语》"}, {"m": "故意", "x": "广故数言欲亡", "r": "《陈涉世家》"}, {"m": "老朋友", "x": "君安与项伯有故", "r": "《鸿门宴》"}, {"m": "衰老", "x": "暮去朝来颜色故", "r": "《琵琶行》"}]}, {"w": "顾", "p": "gù", "s": [{"m": "回头看，看", "x": "顾野有麦场", "r": "《狼》"}, {"m": "拜访，探望", "x": "三顾臣于草庐之中", "r": "《出师表》"}, {"m": "顾念，顾惜", "x": "赢得仓皇北顾", "r": "《永遇乐·京口北固亭怀古》"}, {"m": "只是，不过", "x": "顾计不知所出耳", "r": "《荆轲刺秦王》"}, {"m": "反而，却", "x": "人之立志，顾不如蜀鄙之僧哉", "r": "《为学》"}]}, {"w": "固", "p": "gù", "s": [{"m": "坚固，险固", "x": "秦孝公据崤函之固", "r": "《过秦论》"}, {"m": "巩固", "x": "固国不以山溪之险", "r": "《得道多助，失道寡助》"}, {"m": "固执，顽固", "x": "汝心之固，固不可彻", "r": "《愚公移山》"}, {"m": "本来", "x": "人固有一死", "r": "《报任安书》"}, {"m": "坚决", "x": "蔺相如固止之", "r": "《廉颇蔺相如列传》"}]}, {"w": "归", "p": "guī", "s": [{"m": "回去，回家", "x": "太守归而宾客从也", "r": "《醉翁亭记》"}, {"m": "归还", "x": "而其归书也必速", "r": "《黄生借书说》"}, {"m": "归依，归附", "x": "微斯人，吾谁与归", "r": "《岳阳楼记》"}, {"m": "女子出嫁", "x": "后五年，吾妻来归", "r": "《项脊轩志》"}, {"m": "归向", "x": "周公吐哺，天下归心", "r": "《短歌行》"}]}, {"w": "国", "p": "guó", "s": [{"m": "国家", "x": "国破山河在，城春草木深", "r": "《春望》"}, {"m": "国都，京城", "x": "去国怀乡，忧谗畏讥", "r": "《岳阳楼记》"}, {"m": "诸侯国", "x": "六国破灭，非兵不利", "r": "《六国论》"}, {"m": "地区，地域", "x": "此用武之国", "r": "《隆中对》"}]}, {"w": "过", "p": "guò", "s": [{"m": "经过，走过", "x": "雷霆乍惊，宫车过也", "r": "《阿房宫赋》"}, {"m": "超过", "x": "裘马过世家焉", "r": "《促织》"}, {"m": "过错，过失", "x": "则知明而行无过矣", "r": "《劝学》"}, {"m": "责备", "x": "闻大王有意督过之", "r": "《鸿门宴》"}, {"m": "拜访，探望", "x": "一日，大母过余曰", "r": "《项脊轩志》"}]}, {"w": "何", "p": "hé", "s": [{"m": "什么", "x": "大王来何操", "r": "《鸿门宴》"}, {"m": "为什么", "x": "何辞为", "r": "《鸿门宴》"}, {"m": "多么", "x": "水何澹澹，山岛竦峙", "r": "《观沧海》"}, {"m": "怎么", "x": "何不按兵束甲，北面而事之", "r": "《赤壁之战》"}]}, {"w": "恨", "p": "hèn", "s": [{"m": "怨恨", "x": "此恨绵绵无绝期", "r": "《长恨歌》"}, {"m": "遗憾", "x": "此三者，吾遗恨也", "r": "《伶官传序》"}, {"m": "感到遗憾", "x": "未尝不叹息痛恨于桓、灵也", "r": "《出师表》"}]}, {"w": "胡", "p": "hú", "s": [{"m": "为什么", "x": "胡为乎遑遑欲何之", "r": "《归去来兮辞》"}, {"m": "胡人，北方少数民族", "x": "胡人不敢南下而牧马", "r": "《过秦论》"}]}, {"w": "患", "p": "huàn", "s": [{"m": "忧患，祸患", "x": "然后知生于忧患，而死于安乐也", "r": "《生于忧患，死于安乐》"}, {"m": "担忧，担心", "x": "欲勿予，即患秦兵之来", "r": "《廉颇蔺相如列传》"}]}, {"w": "或", "p": "huò", "s": [{"m": "有的人", "x": "或曰：六国互丧，率赂秦耶", "r": "《六国论》"}, {"m": "有时", "x": "或命巾车，或棹孤舟", "r": "《归去来兮辞》"}, {"m": "或许，也许", "x": "当与秦相较，或未易量", "r": "《六国论》"}]}, {"w": "疾", "p": "jí", "s": [{"m": "疾病", "x": "臣少多疾病，九岁不行", "r": "《陈情表》"}, {"m": "痛恨", "x": "尝问天下所疾恶者", "r": "《张衡传》"}, {"m": "快，急速", "x": "虽乘奔御风，不以疾也", "r": "《三峡》"}, {"m": "强，猛烈", "x": "声非加疾也，而闻者彰", "r": "《劝学》"}]}, {"w": "及", "p": "jí", "s": [{"m": "等到，到了", "x": "及至始皇，奋六世之余烈", "r": "《过秦论》"}, {"m": "到，达到", "x": "及郡下，诣太守", "r": "《桃花源记》"}, {"m": "来得及", "x": "战、守、迁皆不及施", "r": "《指南录后序》"}, {"m": "比得上", "x": "徐公何能及君也", "r": "《邹忌讽齐王纳谏》"}, {"m": "连词，和", "x": "太子及宾客知其事者", "r": "《荆轲刺秦王》"}]}, {"w": "即", "p": "jí", "s": [{"m": "就，立即", "x": "项伯即入见沛公", "r": "《鸿门宴》"}, {"m": "接近，靠近", "x": "匪来贸丝，来即我谋", "r": "《诗经·氓》"}, {"m": "就是", "x": "即今之傫然在墓者也", "r": "《五人墓碑记》"}, {"m": "假如，如果", "x": "即谋单于，何以复加", "r": "《苏武传》"}]}, {"w": "既", "p": "jì", "s": [{"m": "已经", "x": "既克，公问其故", "r": "《曹刿论战》"}, {"m": "……以后", "x": "既加冠，益慕圣贤之道", "r": "《送东阳马生序》"}, {"m": "既然", "x": "既来之，则安之", "r": "《季氏将伐颛臾》"}, {"m": "与“又”呼应，既……又……", "x": "既窈窕以寻壑，亦崎岖而经丘", "r": "《归去来兮辞》"}]}, {"w": "假", "p": "jiǎ/jià", "s": [{"m": "借助，凭借", "x": "假舟楫者，非能水也", "r": "《劝学》"}, {"m": "假的，不真实", "x": "乃悟前狼假寐，盖以诱敌", "r": "《狼》"}, {"m": "假期", "x": "因求假暂归", "r": "《孔雀东南飞》"}, {"m": "宽容", "x": "愿大王少假借之", "r": "《荆轲刺秦王》"}]}, {"w": "间", "p": "jiān/jiàn", "s": [{"m": "jiān 中间，期间", "x": "奉命于危难之间", "r": "《出师表》"}, {"m": "jiān 量词，间", "x": "安得广厦千万间", "r": "《茅屋为秋风所破歌》"}, {"m": "jiàn 缝隙", "x": "彼节者有间，而刀刃者无厚", "r": "《庖丁解牛》"}, {"m": "jiàn 离间", "x": "谗人间之，可谓穷矣", "r": "《屈原列传》"}, {"m": "jiàn 间或，偶尔", "x": "数月之后，时时而间进", "r": "《邹忌讽齐王纳谏》"}, {"m": "jiàn 从小路", "x": "从郦山下，道芷阳间行", "r": "《鸿门宴》"}, {"m": "jiàn 参与", "x": "肉食者谋之，又何间焉", "r": "《曹刿论战》"}]}, {"w": "见", "p": "jiàn/xiàn", "s": [{"m": "看见", "x": "见渔人，乃大惊", "r": "《桃花源记》"}, {"m": "拜见，谒见", "x": "曹刿请见", "r": "《曹刿论战》"}, {"m": "接见", "x": "秦王坐章台见相如", "r": "《廉颇蔺相如列传》"}, {"m": "表被动", "x": "信而见疑，忠而被谤", "r": "《屈原列传》"}, {"m": "通“现”，出现", "x": "图穷而匕首见", "r": "《荆轲刺秦王》"}]}, {"w": "解", "p": "jiě", "s": [{"m": "剖开，分解", "x": "庖丁为文惠君解牛", "r": "《庖丁解牛》"}, {"m": "解开，解开束缚", "x": "解其棕缚", "r": "《病梅馆记》"}, {"m": "理解，懂得", "x": "其为惑也，终不解矣", "r": "《师说》"}, {"m": "解除，消除", "x": "可以解燕国之患", "r": "《荆轲刺秦王》"}]}, {"w": "进", "p": "jìn", "s": [{"m": "进献，进言", "x": "群臣进谏，门庭若市", "r": "《邹忌讽齐王纳谏》"}, {"m": "出仕做官", "x": "是进亦忧，退亦忧", "r": "《岳阳楼记》"}, {"m": "超过", "x": "臣之所好者道也，进乎技矣", "r": "《庖丁解牛》"}]}, {"w": "尽", "p": "jìn", "s": [{"m": "完，尽头", "x": "林尽水源，便得一山", "r": "《桃花源记》"}, {"m": "竭尽，尽力", "x": "尽吾志也而不能至者，可以无悔矣", "r": "《游褒禅山记》"}, {"m": "死，自杀", "x": "转侧床头，惟思自尽", "r": "《促织》"}]}, {"w": "就", "p": "jiù", "s": [{"m": "接近，靠近", "x": "金就砺则利", "r": "《劝学》"}, {"m": "登上，走上", "x": "于是荆轲遂就车而去", "r": "《荆轲刺秦王》"}, {"m": "成就", "x": "然嬴欲就公子之名", "r": "《信陵君窃符救赵》"}, {"m": "完成", "x": "草创未就", "r": "《报任安书》"}, {"m": "就职，赴任", "x": "连辟公府不就", "r": "《张衡传》"}]}, {"w": "举", "p": "jǔ", "s": [{"m": "举起，抬起", "x": "举酒属客，诵明月之诗", "r": "《赤壁赋》"}, {"m": "拿，用", "x": "吾不能举全吴之地", "r": "《赤壁之战》"}, {"m": "全，都", "x": "举世非之而不加沮", "r": "《逍遥游》"}, {"m": "攻占，攻克", "x": "戍卒叫，函谷举", "r": "《阿房宫赋》"}, {"m": "推荐，选拔", "x": "举孝廉不行", "r": "《张衡传》"}, {"m": "尽", "x": "杀人如不能举", "r": "《鸿门宴》"}]}, {"w": "绝", "p": "jué", "s": [{"m": "断绝", "x": "则请立太子为王，以绝秦望", "r": "《廉颇蔺相如列传》"}, {"m": "横渡", "x": "非能水也，而绝江河", "r": "《劝学》"}, {"m": "停止，消失", "x": "哀转久绝", "r": "《三峡》"}, {"m": "极，非常", "x": "佛印绝类弥勒", "r": "《核舟记》"}, {"m": "与世隔绝", "x": "率妻子邑人来此绝境", "r": "《桃花源记》"}, {"m": "高超，绝妙", "x": "满坐宾客无不以为妙绝", "r": "《口技》"}]}, {"w": "堪", "p": "kān", "s": [{"m": "经得起，忍受", "x": "人不堪其忧，回也不改其乐", "r": "《论语》"}, {"m": "能够，可以", "x": "出师一表真名世，千载谁堪伯仲间", "r": "《书愤》"}, {"m": "胜任", "x": "不堪吏人妇，岂合令郎君", "r": "《孔雀东南飞》"}]}, {"w": "克", "p": "kè", "s": [{"m": "能够", "x": "善始者实繁，克终者盖寡", "r": "《谏太宗十思疏》"}, {"m": "战胜，攻下", "x": "既克，公问其故", "r": "《曹刿论战》"}, {"m": "克制", "x": "克己复礼为仁", "r": "《论语》"}]}, {"w": "类", "p": "lèi", "s": [{"m": "种类，类别", "x": "仰观宇宙之大，俯察品类之盛", "r": "《兰亭集序》"}, {"m": "类似，像", "x": "佛印绝类弥勒", "r": "《核舟记》"}, {"m": "事例", "x": "举类迩而见义远", "r": "《屈原列传》"}]}, {"w": "怜", "p": "lián", "s": [{"m": "同情，怜悯", "x": "可怜身上衣正单，心忧炭贱愿天寒", "r": "《卖炭翁》"}, {"m": "怜爱", "x": "丈夫亦爱怜其少子乎", "r": "《触龙说赵太后》"}, {"m": "可爱", "x": "可怜九月初三夜，露似真珠月似弓", "r": "《暮江吟》"}]}, {"w": "弥", "p": "mí", "s": [{"m": "更加，越发", "x": "奉之弥繁，侵之愈急", "r": "《六国论》"}, {"m": "满，遍", "x": "夜雪初霁，荠麦弥望", "r": "《扬州慢》"}]}, {"w": "莫", "p": "mò", "s": [{"m": "没有谁，没有什么", "x": "莫不中音", "r": "《庖丁解牛》"}, {"m": "不，不要", "x": "莫辞更坐弹一曲", "r": "《琵琶行》"}, {"m": "通“暮”，晚", "x": "莫春者，春服既成", "r": "《论语·侍坐》"}]}, {"w": "乃", "p": "nǎi", "s": [{"m": "于是，就", "x": "乃重修岳阳楼", "r": "《岳阳楼记》"}, {"m": "竟然", "x": "今其智乃反不能及", "r": "《师说》"}, {"m": "才", "x": "度我至军中，公乃入", "r": "《鸿门宴》"}, {"m": "是，就是", "x": "当立者乃公子扶苏", "r": "《陈涉世家》"}, {"m": "你的", "x": "尔其无忘乃父之志", "r": "《伶官传序》"}]}, {"w": "内", "p": "nèi", "s": [{"m": "里面，内部", "x": "内立法度，务耕织", "r": "《过秦论》"}, {"m": "内心，内室", "x": "内无应门五尺之僮", "r": "《陈情表》"}, {"m": "通“纳”，接纳", "x": "距关，毋内诸侯", "r": "《鸿门宴》"}]}, {"w": "期", "p": "qī/jī", "s": [{"m": "期限", "x": "度已失期", "r": "《陈涉世家》"}, {"m": "约定", "x": "与人期行，相委而去", "r": "《陈太丘与友期行》"}, {"m": "期望", "x": "富贵非吾愿，帝乡不可期", "r": "《归去来兮辞》"}, {"m": "jī 满一年", "x": "期年之后，虽欲言，无可进者", "r": "《邹忌讽齐王纳谏》"}]}, {"w": "奇", "p": "qí/jī", "s": [{"m": "奇特，奇异", "x": "以事秦之心礼天下之奇才", "r": "《六国论》"}, {"m": "认为……奇异", "x": "邑人奇之，稍稍宾客其父", "r": "《伤仲永》"}, {"m": "佳，好", "x": "今日违情义，恐此事非奇", "r": "《孔雀东南飞》"}, {"m": "jī 零数", "x": "舟首尾长约八分有奇", "r": "《核舟记》"}]}, {"w": "迁", "p": "qiān", "s": [{"m": "迁移", "x": "战、守、迁皆不及施", "r": "《指南录后序》"}, {"m": "官职调动", "x": "迁客骚人，多会于此", "r": "《岳阳楼记》"}, {"m": "放逐，流放", "x": "顷襄王怒而迁之", "r": "《屈原列传》"}]}, {"w": "请", "p": "qǐng", "s": [{"m": "请求", "x": "请奉盆缶，以相娱乐", "r": "《廉颇蔺相如列传》"}, {"m": "请允许我", "x": "请以战喻", "r": "《寡人之于国也》"}, {"m": "谒见，拜见", "x": "公子闻之，往请，欲厚遗之", "r": "《信陵君窃符救赵》"}, {"m": "请示", "x": "既而以吴民之乱请于朝", "r": "《五人墓碑记》"}]}, {"w": "穷", "p": "qióng", "s": [{"m": "穷尽，尽头", "x": "四时之景不同，而乐亦无穷也", "r": "《醉翁亭记》"}, {"m": "走到尽头", "x": "则其好游者不能穷也", "r": "《游褒禅山记》"}, {"m": "困厄，不得志", "x": "穷则独善其身，达则兼善天下", "r": "《孟子》"}, {"m": "处境困难", "x": "穷且益坚，不坠青云之志", "r": "《滕王阁序》"}]}, {"w": "求", "p": "qiú", "s": [{"m": "寻求，寻找", "x": "求木之长者，必固其根本", "r": "《谏太宗十思疏》"}, {"m": "要求，追求", "x": "君子食无求饱，居无求安", "r": "《论语》"}, {"m": "请求", "x": "秦以城求璧而赵不许", "r": "《廉颇蔺相如列传》"}, {"m": "探求", "x": "以其求思之深而无不在也", "r": "《游褒禅山记》"}]}, {"w": "取", "p": "qǔ", "s": [{"m": "取得，提取", "x": "青，取之于蓝，而青于蓝", "r": "《劝学》"}, {"m": "攻取，夺取", "x": "秦以攻取之外，小则获邑", "r": "《六国论》"}, {"m": "选取", "x": "二者不可得兼，舍生而取义者也", "r": "《鱼我所欲也》"}, {"m": "通“娶”，娶妻", "x": "今若遣此妇，终老不复取", "r": "《孔雀东南飞》"}]}, {"w": "去", "p": "qù", "s": [{"m": "离开", "x": "去国怀乡，忧谗畏讥", "r": "《岳阳楼记》"}, {"m": "距离", "x": "连峰去天不盈尺", "r": "《蜀道难》"}, {"m": "过去的", "x": "我从去年辞帝京，谪居卧病浔阳城", "r": "《琵琶行》"}, {"m": "前往，到……去", "x": "公然抱茅入竹去", "r": "《茅屋为秋风所破歌》"}]}, {"w": "劝", "p": "quàn", "s": [{"m": "勉励，鼓励", "x": "果行，国人皆劝", "r": "《勾践灭吴》"}, {"m": "劝说，劝告", "x": "劝君更尽一杯酒", "r": "《送元二使安西》"}, {"m": "劝勉（篇名）", "x": "君子曰：学不可以已", "r": "《劝学》"}]}, {"w": "却", "p": "què", "s": [{"m": "退，使……退却", "x": "却匈奴七百余里", "r": "《过秦论》"}, {"m": "击退", "x": "李牧连却之", "r": "《六国论》"}, {"m": "回头", "x": "却坐促弦弦转急", "r": "《琵琶行》"}, {"m": "还，再", "x": "何当共剪西窗烛，却话巴山夜雨时", "r": "《夜雨寄北》"}, {"m": "再，又（表转折）", "x": "却看妻子愁何在，漫卷诗书喜欲狂", "r": "《闻官军收河南河北》"}]}, {"w": "如", "p": "rú", "s": [{"m": "像，如同", "x": "如鸣珮环，心乐之", "r": "《小石潭记》"}, {"m": "及，比得上", "x": "吾尝终日而思矣，不如须臾之所学也", "r": "《劝学》"}, {"m": "如果", "x": "如有地动，尊则振龙", "r": "《张衡传》"}, {"m": "到，往", "x": "坐须臾，沛公起如厕", "r": "《鸿门宴》"}, {"m": "或者", "x": "方六七十，如五六十", "r": "《论语·侍坐》"}]}, {"w": "若", "p": "ruò", "s": [{"m": "像，如同", "x": "其翼若垂天之云", "r": "《逍遥游》"}, {"m": "你，你的", "x": "若入前为寿", "r": "《鸿门宴》"}, {"m": "如果", "x": "若使烛之武见秦君，师必退", "r": "《烛之武退秦师》"}, {"m": "及，比得上", "x": "曾不若孀妻弱子", "r": "《愚公移山》"}]}, {"w": "善", "p": "shàn", "s": [{"m": "好，好的行为", "x": "积善成德，而神明自得", "r": "《劝学》"}, {"m": "擅长", "x": "君子生非异也，善假于物也", "r": "《劝学》"}, {"m": "好好地", "x": "不如因善遇之", "r": "《鸿门宴》"}, {"m": "与……交好", "x": "素善留侯张良", "r": "《鸿门宴》"}, {"m": "认为……好", "x": "王曰：“善。”乃下令", "r": "《邹忌讽齐王纳谏》"}, {"m": "通“缮”，擦拭", "x": "善刀而藏之", "r": "《庖丁解牛》"}]}, {"w": "少", "p": "shǎo/shào", "s": [{"m": "shào 年轻", "x": "群贤毕至，少长咸集", "r": "《兰亭集序》"}, {"m": "shǎo 稍微", "x": "愿大王少假借之", "r": "《荆轲刺秦王》"}, {"m": "shǎo 一会儿", "x": "少焉，月出于东山之上", "r": "《赤壁赋》"}, {"m": "shǎo 不多，少", "x": "险以远，则至者少", "r": "《游褒禅山记》"}]}, {"w": "涉", "p": "shè", "s": [{"m": "徒步渡水", "x": "送子涉淇，至于顿丘", "r": "《诗经·氓》"}, {"m": "涉猎，粗略地阅读", "x": "但当涉猎，见往事耳", "r": "《孙权劝学》"}, {"m": "经历", "x": "涉险", "r": "成语"}]}, {"w": "胜", "p": "shèng", "s": [{"m": "尽，完", "x": "刑人如恐不胜", "r": "《鸿门宴》"}, {"m": "胜利", "x": "此所谓战胜于朝廷", "r": "《邹忌讽齐王纳谏》"}, {"m": "优美的，美好的", "x": "胜地不常，盛筵难再", "r": "《滕王阁序》"}, {"m": "承受，禁得起", "x": "臣不胜犬马怖惧之情", "r": "《陈情表》"}, {"m": "超过，胜过", "x": "质胜文则野，文胜质则史", "r": "《论语》"}]}, {"w": "识", "p": "shí/zhì", "s": [{"m": "认识，知道", "x": "同是天涯沦落人，相逢何必曾相识", "r": "《琵琶行》"}, {"m": "认识的人", "x": "所识穷乏者得我与", "r": "《鱼我所欲也》"}, {"m": "zhì 通“志”，记住", "x": "默而识之，学而不厌", "r": "《论语》"}]}, {"w": "使", "p": "shǐ", "s": [{"m": "派遣", "x": "秦王使使者告赵王", "r": "《廉颇蔺相如列传》"}, {"m": "让，致使", "x": "使六国各爱其人，则足以拒秦", "r": "《阿房宫赋》"}, {"m": "出使", "x": "臣舍人蔺相如可使", "r": "《廉颇蔺相如列传》"}, {"m": "使者", "x": "求人可使报秦者", "r": "《廉颇蔺相如列传》"}, {"m": "假使", "x": "向使三国各爱其地", "r": "《六国论》"}]}, {"w": "是", "p": "shì", "s": [{"m": "正确，对", "x": "觉今是而昨非", "r": "《归去来兮辞》"}, {"m": "这，此", "x": "是日观道中石刻", "r": "《登泰山记》"}, {"m": "判断动词，是", "x": "问今是何世", "r": "《桃花源记》"}, {"m": "宾语前置的标志", "x": "无乃尔是过与", "r": "《季氏将伐颛臾》"}]}, {"w": "适", "p": "shì", "s": [{"m": "到，往", "x": "适千里者，三月聚粮", "r": "《逍遥游》"}, {"m": "出嫁", "x": "贫贱有此女，始适还家门", "r": "《孔雀东南飞》"}, {"m": "刚才", "x": "适得府君书，明日来迎汝", "r": "《孔雀东南飞》"}, {"m": "适合，适应", "x": "少无适俗韵，性本爱丘山", "r": "《归园田居》"}]}, {"w": "书", "p": "shū", "s": [{"m": "书信", "x": "适得府君书，明日来迎汝", "r": "《孔雀东南飞》"}, {"m": "文书，奏章", "x": "上书谏寡人者，受中赏", "r": "《邹忌讽齐王纳谏》"}, {"m": "书写，写", "x": "乃丹书帛曰“陈胜王”", "r": "《陈涉世家》"}, {"m": "书籍", "x": "家贫，无从致书以观", "r": "《送东阳马生序》"}]}, {"w": "孰", "p": "shú", "s": [{"m": "谁，哪一个", "x": "吾与徐公孰美", "r": "《邹忌讽齐王纳谏》"}, {"m": "通“熟”，仔细", "x": "唯大王与群臣孰计议之", "r": "《廉颇蔺相如列传》"}, {"m": "与……相比，哪一个更", "x": "我孰与城北徐公美", "r": "《邹忌讽齐王纳谏》"}]}, {"w": "属", "p": "shǔ/zhǔ", "s": [{"m": "zhǔ 连接，连缀", "x": "常有高猿长啸，属引凄异", "r": "《三峡》"}, {"m": "zhǔ 通“嘱”，嘱托", "x": "属予作文以记之", "r": "《岳阳楼记》"}, {"m": "zhǔ 撰写", "x": "衡少善属文", "r": "《张衡传》"}, {"m": "shǔ 归属，隶属", "x": "名属教坊第一部", "r": "《琵琶行》"}, {"m": "shǔ 类，辈", "x": "有宁越、徐尚之属为之谋", "r": "《过秦论》"}, {"m": "zhǔ 劝酒", "x": "举匏樽以相属", "r": "《赤壁赋》"}]}, {"w": "数", "p": "shù/shǔ/shuò", "s": [{"m": "shù 数目，数量", "x": "愿令得补黑衣之数", "r": "《触龙说赵太后》"}, {"m": "shù 命运，规律", "x": "胜负之数，存亡之理", "r": "《六国论》"}, {"m": "shǔ 计算", "x": "珠可历历数也", "r": "《核舟记》"}, {"m": "shuò 屡次，多次", "x": "范增数目项王", "r": "《鸿门宴》"}]}, {"w": "率", "p": "shuài", "s": [{"m": "率领，带领", "x": "率疲弊之卒，将数百之众", "r": "《过秦论》"}, {"m": "全都，一概", "x": "六国互丧，率赂秦耶", "r": "《六国论》"}, {"m": "轻率", "x": "子路率尔而对曰", "r": "《论语·侍坐》"}]}, {"w": "说", "p": "shuō/shuì/yuè", "s": [{"m": "shuō 讲，说", "x": "说尽心中无限事", "r": "《琵琶行》"}, {"m": "shuì 劝说，游说", "x": "范增说项羽曰", "r": "《鸿门宴》"}, {"m": "yuè 通“悦”，高兴", "x": "学而时习之，不亦说乎", "r": "《论语》"}, {"m": "shuō 说法，主张", "x": "是说也，人常疑之", "r": "《石钟山记》"}]}, {"w": "私", "p": "sī", "s": [{"m": "私人的，自己的", "x": "以先国家之急而后私仇也", "r": "《廉颇蔺相如列传》"}, {"m": "偏爱", "x": "宫妇左右莫不私王", "r": "《邹忌讽齐王纳谏》"}, {"m": "私下，偷偷地", "x": "燕王私握臣手", "r": "《廉颇蔺相如列传》"}]}, {"w": "素", "p": "sù", "s": [{"m": "白色的生绢", "x": "十三能织素，十四学裁衣", "r": "《孔雀东南飞》"}, {"m": "一向，向来", "x": "素善留侯张良", "r": "《鸿门宴》"}, {"m": "朴素，不加装饰", "x": "可以调素琴，阅金经", "r": "《陋室铭》"}]}, {"w": "汤", "p": "tāng/shāng", "s": [{"m": "热水，开水", "x": "臣请就汤镬", "r": "《廉颇蔺相如列传》"}, {"m": "汤药", "x": "臣侍汤药，未曾废离", "r": "《陈情表》"}, {"m": "shāng 水势浩大", "x": "浩浩汤汤，横无际涯", "r": "《岳阳楼记》"}, {"m": "用热水焐", "x": "疾在腠理，汤熨之所及也", "r": "《扁鹊见蔡桓公》"}]}, {"w": "涕", "p": "tì", "s": [{"m": "眼泪", "x": "出门登车去，涕落百余行", "r": "《孔雀东南飞》"}, {"m": "流泪", "x": "儿涕而去", "r": "《促织》"}, {"m": "眼泪", "x": "临表涕零，不知所言", "r": "《出师表》"}]}, {"w": "通", "p": "tōng", "s": [{"m": "通行，通过", "x": "会天大雨，道不通", "r": "《陈涉世家》"}, {"m": "通晓，懂得", "x": "鸣之而不能通其意", "r": "《马说》"}, {"m": "普遍", "x": "六艺经传皆通习之", "r": "《师说》"}, {"m": "量词，遍", "x": "著我绣夹裙，事事四五通", "r": "《孔雀东南飞》"}]}, {"w": "徒", "p": "tú", "s": [{"m": "同类的人", "x": "郯子之徒，其贤不及孔子", "r": "《师说》"}, {"m": "只，仅仅", "x": "徒慕君之高义也", "r": "《廉颇蔺相如列传》"}, {"m": "白白地", "x": "少壮不努力，老大徒伤悲", "r": "《长歌行》"}, {"m": "服劳役的人", "x": "氓隶之人，而迁徙之徒也", "r": "《过秦论》"}]}, {"w": "退", "p": "tuì", "s": [{"m": "后退，退却", "x": "入门上家堂，进退无颜仪", "r": "《孔雀东南飞》"}, {"m": "退隐，不在朝做官", "x": "是进亦忧，退亦忧", "r": "《岳阳楼记》"}, {"m": "返回", "x": "退将复修吾初服", "r": "《离骚》"}]}, {"w": "亡", "p": "wáng/wú", "s": [{"m": "逃亡，逃跑", "x": "今亡亦死，举大计亦死", "r": "《陈涉世家》"}, {"m": "灭亡", "x": "燕虽小国而后亡", "r": "《六国论》"}, {"m": "丢失", "x": "秦无亡矢遗镞之费", "r": "《过秦论》"}, {"m": "死亡", "x": "存亡之理，当与秦相较", "r": "《六国论》"}, {"m": "wú 通“无”，没有", "x": "河曲智叟亡以应", "r": "《愚公移山》"}]}, {"w": "王", "p": "wáng/wàng", "s": [{"m": "wáng 国王，君王", "x": "王侯将相宁有种乎", "r": "《陈涉世家》"}, {"m": "wàng 称王，统治天下", "x": "沛公欲王关中", "r": "《鸿门宴》"}]}, {"w": "望", "p": "wàng", "s": [{"m": "远望，眺望", "x": "吾视其辙乱，望其旗靡", "r": "《曹刿论战》"}, {"m": "盼望，期望", "x": "日夜望将军至", "r": "《鸿门宴》"}, {"m": "名望，声望", "x": "先达德隆望尊", "r": "《送东阳马生序》"}, {"m": "农历十五", "x": "壬戌之秋，七月既望", "r": "《赤壁赋》"}, {"m": "怨恨", "x": "若望仆不相师", "r": "《报任安书》"}]}, {"w": "恶", "p": "è/wù/wū", "s": [{"m": "è 坏，不好的", "x": "廉君宣恶言", "r": "《廉颇蔺相如列传》"}, {"m": "wù 厌恶，憎恨", "x": "死亦我所恶", "r": "《鱼我所欲也》"}, {"m": "wù 嫉妒", "x": "表恶其能而不能用也", "r": "《赤壁之战》"}, {"m": "wū 怎么，哪里", "x": "彼且恶乎待哉", "r": "《逍遥游》"}]}, {"w": "微", "p": "wēi", "s": [{"m": "微小，细微", "x": "微风鼓浪，水石相搏", "r": "《石钟山记》"}, {"m": "隐约，不显露", "x": "微闻有鼠作作索索", "r": "《口技》"}, {"m": "如果没有", "x": "微夫人之力不及此", "r": "《烛之武退秦师》"}, {"m": "暗中，悄悄地", "x": "微指左公处", "r": "《左忠毅公逸事》"}, {"m": "含蓄精妙", "x": "其文约，其辞微", "r": "《屈原列传》"}]}, {"w": "悉", "p": "xī", "s": [{"m": "全，都", "x": "赵王悉召群臣议", "r": "《廉颇蔺相如列传》"}, {"m": "详尽，全部", "x": "此悉贞良死节之臣", "r": "《出师表》"}]}, {"w": "相", "p": "xiāng/xiàng", "s": [{"m": "xiāng 互相", "x": "同是天涯沦落人，相逢何必曾相识", "r": "《琵琶行》"}, {"m": "xiāng 表示动作偏指一方", "x": "及时相遣归", "r": "《孔雀东南飞》"}, {"m": "xiàng 相貌", "x": "儿已薄禄相", "r": "《孔雀东南飞》"}, {"m": "xiàng 帮助，辅佐", "x": "至于幽暗昏惑而无物以相之", "r": "《游褒禅山记》"}]}, {"w": "谢", "p": "xiè", "s": [{"m": "道歉", "x": "旦日不可不蚤自来谢项王", "r": "《鸿门宴》"}, {"m": "感谢", "x": "哙拜谢，起，立而饮之", "r": "《鸿门宴》"}, {"m": "辞别，谢绝", "x": "阿母谢媒人", "r": "《孔雀东南飞》"}, {"m": "告诉，劝告", "x": "多谢后世人，戒之慎勿忘", "r": "《孔雀东南飞》"}, {"m": "凋落", "x": "及花之既谢", "r": "《芙蕖》"}]}, {"w": "信", "p": "xìn", "s": [{"m": "诚信，真诚", "x": "信而见疑，忠而被谤", "r": "《屈原列传》"}, {"m": "相信，信任", "x": "愿陛下亲之信之", "r": "《出师表》"}, {"m": "使者，媒人", "x": "自可断来信，徐徐更谓之", "r": "《孔雀东南飞》"}, {"m": "随意，任凭", "x": "低眉信手续续弹", "r": "《琵琶行》"}, {"m": "确实，实在", "x": "烟涛微茫信难求", "r": "《梦游天姥吟留别》"}, {"m": "通“伸”，伸张", "x": "欲信大义于天下", "r": "《隆中对》"}]}, {"w": "兴", "p": "xīng/xìng", "s": [{"m": "xīng 兴起，发生", "x": "积土成山，风雨兴焉", "r": "《劝学》"}, {"m": "xīng 起来", "x": "夙兴夜寐，靡有朝矣", "r": "《诗经·氓》"}, {"m": "xīng 使兴盛", "x": "忧劳可以兴国，逸豫可以亡身", "r": "《伶官传序》"}, {"m": "xìng 兴致，兴趣", "x": "遥襟甫畅，逸兴遄飞", "r": "《滕王阁序》"}]}, {"w": "行", "p": "xíng/háng", "s": [{"m": "xíng 行走", "x": "三人行，必有我师焉", "r": "《论语》"}, {"m": "xíng 实行，施行", "x": "余嘉其能行古道", "r": "《师说》"}, {"m": "xíng 品行", "x": "则知明而行无过矣", "r": "《劝学》"}, {"m": "xíng 将要", "x": "善万物之得时，感吾生之行休", "r": "《归去来兮辞》"}, {"m": "háng 行列，队伍", "x": "陈胜、吴广皆次当行", "r": "《陈涉世家》"}, {"m": "háng 量词", "x": "出门登车去，涕落百余行", "r": "《孔雀东南飞》"}]}, {"w": "幸", "p": "xìng", "s": [{"m": "幸运", "x": "知幸与不幸，则其读书也必专", "r": "《黄生借书说》"}, {"m": "幸亏", "x": "儿已薄禄相，幸复得此妇", "r": "《孔雀东南飞》"}, {"m": "希望", "x": "幸可广问讯，不得便相许", "r": "《孔雀东南飞》"}, {"m": "宠爱", "x": "而如姬最幸", "r": "《信陵君窃符救赵》"}, {"m": "皇帝到某处", "x": "缦立远视，而望幸焉", "r": "《阿房宫赋》"}]}, {"w": "修", "p": "xiū", "s": [{"m": "修建，修理", "x": "乃重修岳阳楼", "r": "《岳阳楼记》"}, {"m": "修整，整治", "x": "修守战之具", "r": "《过秦论》"}, {"m": "长，高", "x": "邹忌修八尺有余", "r": "《邹忌讽齐王纳谏》"}, {"m": "美好", "x": "老冉冉其将至兮，恐修名之不立", "r": "《离骚》"}]}, {"w": "徐", "p": "xú", "s": [{"m": "缓慢，慢慢地", "x": "徐而察之，则山下皆石穴罅", "r": "《石钟山记》"}, {"m": "缓缓地", "x": "清风徐来，水波不兴", "r": "《赤壁赋》"}]}, {"w": "许", "p": "xǔ", "s": [{"m": "答应，允许", "x": "均之二策，宁许以负秦曲", "r": "《廉颇蔺相如列传》"}, {"m": "赞同", "x": "杂然相许", "r": "《愚公移山》"}, {"m": "大约，左右", "x": "潭中鱼可百许头", "r": "《小石潭记》"}, {"m": "处所", "x": "先生不知何许人也", "r": "《五柳先生传》"}, {"m": "期望", "x": "塞上长城空自许", "r": "《书愤》"}]}, {"w": "阳", "p": "yáng", "s": [{"m": "山的南面，水的北面", "x": "泰山之阳，汶水西流", "r": "《登泰山记》"}, {"m": "阳光", "x": "斜阳草树，寻常巷陌", "r": "《永遇乐·京口北固亭怀古》"}, {"m": "通“佯”，假装", "x": "皆阳应曰", "r": "《记王忠肃公翱事》"}]}, {"w": "要", "p": "yào/yāo", "s": [{"m": "yāo 通“邀”，邀请", "x": "张良出，要项伯", "r": "《鸿门宴》"}, {"m": "yào 要害，关键", "x": "良将劲弩守要害之处", "r": "《过秦论》"}]}, {"w": "宜", "p": "yí", "s": [{"m": "应当，应该", "x": "理固宜然", "r": "《六国论》"}, {"m": "应当", "x": "牡丹之爱，宜乎众矣", "r": "《爱莲说》"}, {"m": "应该", "x": "将军宜枉驾顾之", "r": "《隆中对》"}]}, {"w": "遗", "p": "yí/wèi", "s": [{"m": "yí 丢失，遗失", "x": "秦无亡矢遗镞之费", "r": "《过秦论》"}, {"m": "yí 遗留，留下", "x": "此三者，吾遗恨也", "r": "《伶官传序》"}, {"m": "yí 遗留下的", "x": "以光先帝遗德", "r": "《出师表》"}, {"m": "wèi 送给，给予", "x": "是以先帝简拔以遗陛下", "r": "《出师表》"}, {"m": "yí 弃，丢弃", "x": "小学而大遗，吾未见其明也", "r": "《师说》"}]}, {"w": "贻", "p": "yí", "s": [{"m": "赠送", "x": "作《师说》以贻之", "r": "《师说》"}, {"m": "遗留，留下", "x": "贻笑大方", "r": "成语"}]}, {"w": "易", "p": "yì", "s": [{"m": "交换", "x": "秦王以十五城请易寡人之璧", "r": "《廉颇蔺相如列传》"}, {"m": "改变", "x": "缙绅而能不易其志者", "r": "《五人墓碑记》"}, {"m": "容易", "x": "天下事有难易乎", "r": "《为学》"}]}, {"w": "阴", "p": "yīn", "s": [{"m": "山的北面，水的南面", "x": "泰山之阳，汶水西流；其阴，济水东流", "r": "《登泰山记》"}, {"m": "阴暗", "x": "朝晖夕阴，气象万千", "r": "《岳阳楼记》"}, {"m": "暗中，暗地里", "x": "阴知奸党名姓", "r": "《张衡传》"}, {"m": "阴冷", "x": "阴风怒号，浊浪排空", "r": "《岳阳楼记》"}]}, {"w": "右", "p": "yòu", "s": [{"m": "右边", "x": "左佩刀，右备容臭", "r": "《送东阳马生序》"}, {"m": "上，尊位（古以右为尊）", "x": "位在廉颇之右", "r": "《廉颇蔺相如列传》"}]}, {"w": "再", "p": "zài", "s": [{"m": "两次", "x": "一鼓作气，再而衰，三而竭", "r": "《曹刿论战》"}, {"m": "两次，又", "x": "后秦击赵者再，李牧连却之", "r": "《六国论》"}, {"m": "拜两次", "x": "再拜献大王足下", "r": "《鸿门宴》"}]}, {"w": "造", "p": "zào", "s": [{"m": "到，往", "x": "造饮辄尽，期在必醉", "r": "《五柳先生传》"}, {"m": "制造，建造", "x": "公输盘为楚造云梯之械", "r": "《公输》"}]}, {"w": "知", "p": "zhī/zhì", "s": [{"m": "知道，了解", "x": "温故而知新，可以为师矣", "r": "《论语》"}, {"m": "主持，掌管", "x": "吾与之共知越国之政", "r": "《勾践灭吴》"}, {"m": "感觉，觉得", "x": "不知东方之既白", "r": "《赤壁赋》"}, {"m": "zhì 通“智”，智慧", "x": "则知明而行无过矣", "r": "《劝学》"}]}, {"w": "致", "p": "zhì", "s": [{"m": "表达，传达", "x": "听妇前致词", "r": "《石壕吏》"}, {"m": "招致，引来", "x": "不爱珍器重宝肥饶之地，以致天下之士", "r": "《过秦论》"}, {"m": "达到", "x": "假舆马者，非利足也，而致千里", "r": "《劝学》"}, {"m": "取得，得到", "x": "家贫，无从致书以观", "r": "《送东阳马生序》"}, {"m": "情趣", "x": "虽世殊事异，所以兴怀，其致一也", "r": "《兰亭集序》"}]}, {"w": "质", "p": "zhì", "s": [{"m": "抵押，人质", "x": "必以长安君为质，兵乃出", "r": "《触龙说赵太后》"}, {"m": "质地，底子", "x": "永州之野产异蛇，黑质而白章", "r": "《捕蛇者说》"}, {"m": "资质，天资", "x": "非天质之卑，则心不若余之专耳", "r": "《送东阳马生序》"}, {"m": "通“锧”，刑具", "x": "君不如肉袒伏斧质请罪", "r": "《廉颇蔺相如列传》"}, {"m": "询问", "x": "余立侍左右，援疑质理", "r": "《送东阳马生序》"}]}, {"w": "治", "p": "zhì", "s": [{"m": "治理，管理", "x": "文武并用，垂拱而治", "r": "《谏太宗十思疏》"}, {"m": "医治", "x": "君有疾在腠理，不治将恐深", "r": "《扁鹊见蔡桓公》"}, {"m": "惩处，治罪", "x": "不效，则治臣之罪", "r": "《出师表》"}]}, {"w": "诸", "p": "zhū", "s": [{"m": "众，各", "x": "赵王与大将军廉颇诸大臣谋", "r": "《廉颇蔺相如列传》"}, {"m": "兼词，“之于”", "x": "投诸渤海之尾，隐土之北", "r": "《愚公移山》"}, {"m": "兼词，“之乎”", "x": "王尝语庄子以好乐，有诸", "r": "《庄暴见孟子》"}]}, {"w": "贼", "p": "zéi", "e": 1, "s": [{"m": "强盗", "x": "贼二人得我，我幸皆杀之矣", "r": "《童区寄传》"}, {"m": "祸害", "x": "淫侈之俗日日以长，是天下之大贼也", "r": "《论积贮疏》"}]}, {"w": "族", "p": "zú", "e": 1, "s": [{"m": "类，辈", "x": "士大夫之族，曰师曰弟子云者", "r": "《师说》"}, {"m": "灭族", "x": "族秦者秦也，非天下也", "r": "《阿房宫赋》"}]}, {"w": "卒", "p": "zú/cù", "e": 1, "s": [{"m": "士兵，士卒", "x": "良将劲弩守要害之处，信臣精卒陈利兵而谁何", "r": "《过秦论》"}, {"m": "终于", "x": "卒相与欢，为刎颈之交", "r": "《廉颇蔺相如列传》"}, {"m": "死", "x": "年六十二，永和四年卒", "r": "《张衡传》"}, {"m": "cù 通“猝”，突然", "x": "五万兵难卒合", "r": "《赤壁之战》"}]}, {"w": "走", "p": "zǒu", "e": 1, "s": [{"m": "跑", "x": "两股战战，几欲先走", "r": "《口技》"}, {"m": "逃跑", "x": "弃甲曳兵而走", "r": "《寡人之于国也》"}]}, {"w": "左", "p": "zuǒ", "e": 1, "s": [{"m": "左边", "x": "左手持刀尺，右手执绫罗", "r": "《孔雀东南飞》"}, {"m": "降职（左迁）", "x": "予左迁九江郡司马", "r": "《琵琶行》"}, {"m": "侍从，身边亲近的人", "x": "左右或欲引相如去", "r": "《廉颇蔺相如列传》"}]}, {"w": "坐", "p": "zuò", "e": 1, "s": [{"m": "坐下，坐着", "x": "项王、项伯东向坐", "r": "《鸿门宴》"}, {"m": "座位", "x": "因击沛公于坐，杀之", "r": "《鸿门宴》"}, {"m": "犯罪，定罪", "x": "王曰：“何坐？”曰：“坐盗。”", "r": "《晏子使楚》"}, {"m": "因为，由于", "x": "停车坐爱枫林晚", "r": "《山行》"}]}];
+const FILL = [{"t": "爱", "q": "＿＿其子，择师而教之", "a": "爱", "n": "喜爱，爱护 · 《师说》"}, {"t": "爱", "q": "齐国虽褊小，吾何＿＿一牛", "a": "爱", "n": "爱惜，吝惜 · 《齐桓晋文之事》"}, {"t": "爱", "q": "予独＿＿莲之出淤泥而不染", "a": "爱", "n": "喜爱，欣赏 · 《爱莲说》"}, {"t": "爱", "q": "＿＿而不见，搔首踟蹰", "a": "爱", "n": "通“薆”，隐蔽 · 《诗经·静女》"}, {"t": "安", "q": "风雨不动＿＿如山", "a": "安", "n": "安稳，安定 · 《茅屋为秋风所破歌》"}, {"t": "安", "q": "然后知生于忧患，而死于＿＿乐也", "a": "安", "n": "安逸，安乐 · 《生于忧患，死于安乐》"}, {"t": "安", "q": "衣食所＿＿，弗敢专也", "a": "安", "n": "安身，养 · 《曹刿论战》"}, {"t": "安", "q": "＿＿能摧眉折腰事权贵", "a": "安", "n": "怎么，哪里 · 《梦游天姥吟留别》"}, {"t": "被", "q": "将军身＿＿坚执锐", "a": "被", "n": "通“披”，穿在身上 · 《陈涉世家》"}, {"t": "被", "q": "＿＿发行吟泽畔", "a": "被", "n": "通“披”，披散 · 《屈原列传》"}, {"t": "被", "q": "信而见疑，忠而＿＿谤", "a": "被", "n": "遭受，蒙受 · 《屈原列传》"}, {"t": "被", "q": "予犹记周公之＿＿逮", "a": "被", "n": "表被动 · 《五人墓碑记》"}, {"t": "倍", "q": "愿伯具言臣之不敢＿＿德也", "a": "倍", "n": "通“背”，违背，背叛 · 《鸿门宴》"}, {"t": "倍", "q": "尝以十＿＿之地，百万之众", "a": "倍", "n": "加倍，成倍 · 《过秦论》"}, {"t": "倍", "q": "每逢佳节＿＿思亲", "a": "倍", "n": "更加，越发 · 《九月九日忆山东兄弟》"}, {"t": "本", "q": "臣闻求木之长者，必固其根＿＿", "a": "本", "n": "树根，根本 · 《谏太宗十思疏》"}, {"t": "本", "q": "此之谓失其＿＿心", "a": "本", "n": "本性，本心 · 《鱼我所欲也》"}, {"t": "本", "q": "予＿＿非文人画士", "a": "本", "n": "本来，原来 · 《病梅馆记》"}, {"t": "本", "q": "抑＿＿其成败之迹，而皆自于人欤", "a": "本", "n": "推究，考察 · 《伶官传序》"}, {"t": "鄙", "q": "越国以＿＿远", "a": "鄙", "n": "边邑，边境 · 《烛之武退秦师》"}, {"t": "鄙", "q": "肉食者＿＿，未能远谋", "a": "鄙", "n": "浅陋，目光短浅 · 《曹刿论战》"}, {"t": "鄙", "q": "敢竭＿＿怀，恭疏短引", "a": "鄙", "n": "谦辞，粗俗 · 《滕王阁序》"}, {"t": "兵", "q": "收天下之＿＿，聚之咸阳", "a": "兵", "n": "兵器，武器 · 《过秦论》"}, {"t": "兵", "q": "赵亦盛设＿＿以待秦", "a": "兵", "n": "士兵，军队 · 《廉颇蔺相如列传》"}, {"t": "兵", "q": "六国破灭，非＿＿不利", "a": "兵", "n": "战争，军事 · 《六国论》"}, {"t": "病", "q": "君之＿＿在肠胃", "a": "病", "n": "疾病 · 《扁鹊见蔡桓公》"}, {"t": "病", "q": "向吾不为斯役，则久已＿＿矣", "a": "病", "n": "困苦，困顿 · 《捕蛇者说》"}, {"t": "病", "q": "人皆嗤吾固陋，吾不以为＿＿", "a": "病", "n": "毛病，缺点 · 《训俭示康》"}, {"t": "病", "q": "君子＿＿无能焉，不病人之不己知也", "a": "病", "n": "担忧，忧虑 · 《论语》"}, {"t": "察", "q": "徐而＿＿之", "a": "察", "n": "仔细看，观察 · 《石钟山记》"}, {"t": "察", "q": "＿＿邻国之政，无如寡人之用心者", "a": "察", "n": "明察，了解 · 《寡人之于国也》"}, {"t": "察", "q": "前太守臣逵＿＿臣孝廉", "a": "察", "n": "考察，举荐 · 《陈情表》"}, {"t": "朝", "q": "＿＿闻道，夕死可矣", "a": "朝", "n": "zhāo 早晨 · 《论语》"}, {"t": "朝", "q": "相如每＿＿时，常称病", "a": "朝", "n": "cháo 朝见，朝拜 · 《廉颇蔺相如列传》"}, {"t": "朝", "q": "于是入＿＿见威王", "a": "朝", "n": "cháo 朝廷 · 《邹忌讽齐王纳谏》"}, {"t": "朝", "q": "逮奉圣＿＿，沐浴清化", "a": "朝", "n": "cháo 朝代 · 《陈情表》"}, {"t": "曾", "q": "相逢何必＿＿相识", "a": "曾", "n": "céng 曾经 · 《琵琶行》"}, {"t": "曾", "q": "＿＿益其所不能", "a": "曾", "n": "zēng 通“增”，增加 · 《生于忧患，死于安乐》"}, {"t": "曾", "q": "老臣病足，＿＿不能疾走", "a": "曾", "n": "zēng 竟然，连……都 · 《触龙说赵太后》"}, {"t": "乘", "q": "独与迈＿＿小舟，至绝壁下", "a": "乘", "n": "chéng 驾，乘坐 · 《石钟山记》"}, {"t": "乘", "q": "＿＿彼垝垣，以望复关", "a": "乘", "n": "chéng 登上 · 《诗经·氓》"}, {"t": "乘", "q": "因利＿＿便，宰割天下", "a": "乘", "n": "chéng 趁着，凭借 · 《过秦论》"}, {"t": "乘", "q": "然秦以区区之地，致万＿＿之势", "a": "乘", "n": "shèng 一车四马 · 《过秦论》"}, {"t": "诚", "q": "帝感其＿＿", "a": "诚", "n": "诚心，真心 · 《愚公移山》"}, {"t": "诚", "q": "臣＿＿知不如徐公美", "a": "诚", "n": "确实，的确 · 《邹忌讽齐王纳谏》"}, {"t": "诚", "q": "＿＿能见可欲，则思知足以自戒", "a": "诚", "n": "如果，果真 · 《谏太宗十思疏》"}, {"t": "除", "q": "扶辇下＿＿，触柱折辕", "a": "除", "n": "台阶 · 《苏武传》"}, {"t": "除", "q": "为汉家＿＿残去秽", "a": "除", "n": "清除，去掉 · 《赤壁之战》"}, {"t": "除", "q": "寻蒙国恩，＿＿臣洗马", "a": "除", "n": "任命，授职 · 《陈情表》"}, {"t": "除", "q": "即＿＿魏阉废祠之址以葬之", "a": "除", "n": "修治 · 《五人墓碑记》"}, {"t": "辞", "q": "＿＿甚畅达", "a": "辞", "n": "言辞，文辞 · 《送东阳马生序》"}, {"t": "辞", "q": "停数日，＿＿去", "a": "辞", "n": "告别，辞别 · 《桃花源记》"}, {"t": "辞", "q": "臣死且不避，卮酒安足＿＿", "a": "辞", "n": "推辞，不接受 · 《鸿门宴》"}, {"t": "辞", "q": "＿＿曰：“臣之壮也，犹不如人”", "a": "辞", "n": "借口，托辞 · 《烛之武退秦师》"}, {"t": "从", "q": "吾＿＿而师之", "a": "从", "n": "跟随 · 《师说》"}, {"t": "从", "q": "沛公旦日＿＿百余骑来见项王", "a": "从", "n": "使……跟从，带领 · 《鸿门宴》"}, {"t": "从", "q": "＿＿小丘西行百二十步", "a": "从", "n": "由，自 · 《小石潭记》"}, {"t": "从", "q": "合＿＿缔交，相与为一", "a": "从", "n": "通“纵”，合纵 · 《过秦论》"}, {"t": "殆", "q": "知彼知己，百战不＿＿", "a": "殆", "n": "危险 · 《孙子·谋攻》"}, {"t": "殆", "q": "＿＿有神护者", "a": "殆", "n": "大概，恐怕 · 《项脊轩志》"}, {"t": "殆", "q": "且燕赵处秦革灭＿＿尽之际", "a": "殆", "n": "几乎，接近 · 《六国论》"}, {"t": "殆", "q": "学而不思则罔，思而不学则＿＿", "a": "殆", "n": "精神困乏而无所得 · 《论语》"}, {"t": "当", "q": "木兰＿＿户织", "a": "当", "n": "对着，面对 · 《木兰诗》"}, {"t": "当", "q": "＿＿是时也", "a": "当", "n": "在，处在 · 《过秦论》"}, {"t": "当", "q": "＿＿立者乃公子扶苏", "a": "当", "n": "应当，应该 · 《陈涉世家》"}, {"t": "当", "q": "一夫＿＿关，万夫莫开", "a": "当", "n": "阻挡，抵挡 · 《蜀道难》"}, {"t": "当", "q": "汉使张胜谋杀单于近臣，＿＿死", "a": "当", "n": "判处，判罪 · 《苏武传》"}, {"t": "道", "q": "会天大雨，＿＿不通", "a": "道", "n": "道路 · 《陈涉世家》"}, {"t": "道", "q": "臣之所好者＿＿也", "a": "道", "n": "道理，规律 · 《庖丁解牛》"}, {"t": "道", "q": "于是废先王之＿＿", "a": "道", "n": "主张，学说 · 《过秦论》"}, {"t": "道", "q": "师＿＿之不传也久矣", "a": "道", "n": "风尚 · 《师说》"}, {"t": "道", "q": "不足为外人＿＿也", "a": "道", "n": "说，讲 · 《桃花源记》"}, {"t": "道", "q": "从郦山下，＿＿芷阳间行", "a": "道", "n": "取道 · 《鸿门宴》"}, {"t": "得", "q": "积善成德，而神明自＿＿", "a": "得", "n": "得到，获得 · 《劝学》"}, {"t": "得", "q": "古人之观于天地，往往有＿＿", "a": "得", "n": "心得，收获 · 《游褒禅山记》"}, {"t": "得", "q": "安＿＿广厦千万间", "a": "得", "n": "能够 · 《茅屋为秋风所破歌》"}, {"t": "得", "q": "所识穷乏者＿＿我与", "a": "得", "n": "通“德”，感恩 · 《鱼我所欲也》"}, {"t": "得", "q": "此言＿＿之", "a": "得", "n": "得当，合适 · 《六国论》"}, {"t": "度", "q": "内立法＿＿，务耕织", "a": "度", "n": "dù 法度，制度 · 《过秦论》"}, {"t": "度", "q": "乐盘游则思三驱以为＿＿", "a": "度", "n": "dù 限度 · 《谏太宗十思疏》"}, {"t": "度", "q": "关山＿＿若飞", "a": "度", "n": "dù 越过 · 《木兰诗》"}, {"t": "度", "q": "＿＿我至军中，公乃入", "a": "度", "n": "duó 估计，推测 · 《鸿门宴》"}, {"t": "度", "q": "试使山东之国与陈涉＿＿长絜大", "a": "度", "n": "duó 衡量 · 《过秦论》"}, {"t": "非", "q": "六国破灭，＿＿兵不利", "a": "非", "n": "不是 · 《六国论》"}, {"t": "非", "q": "君子生＿＿异也", "a": "非", "n": "不 · 《劝学》"}, {"t": "非", "q": "＿＿刘豫州莫可以当曹操者", "a": "非", "n": "没有 · 《赤壁之战》"}, {"t": "非", "q": "觉今是而昨＿＿", "a": "非", "n": "不对，错误 · 《归去来兮辞》"}, {"t": "非", "q": "举世＿＿之而不加沮", "a": "非", "n": "责怪，非难 · 《逍遥游》"}, {"t": "复", "q": "＿＿行数十步，豁然开朗", "a": "复", "n": "回来，返回 · 《桃花源记》"}, {"t": "复", "q": "师道之不＿＿，可知矣", "a": "复", "n": "恢复 · 《师说》"}, {"t": "复", "q": "山重水＿＿疑无路", "a": "复", "n": "再，又 · 《游山西村》"}, {"t": "复", "q": "不敢出一言以＿＿", "a": "复", "n": "回答 · 《送东阳马生序》"}, {"t": "复", "q": "＿＿之以掌，虚若无物", "a": "复", "n": "通“覆”，遮盖 · 《促织》"}, {"t": "负", "q": "命夸娥氏二子＿＿二山", "a": "负", "n": "背，用背驮 · 《愚公移山》"}, {"t": "负", "q": "誓天不相＿＿", "a": "负", "n": "辜负，对不起 · 《孔雀东南飞》"}, {"t": "负", "q": "秦贪，＿＿其强", "a": "负", "n": "依仗，凭借 · 《廉颇蔺相如列传》"}, {"t": "负", "q": "决＿＿约不偿城", "a": "负", "n": "违背，背弃 · 《廉颇蔺相如列传》"}, {"t": "负", "q": "胜＿＿之数，存亡之理", "a": "负", "n": "失败 · 《六国论》"}, {"t": "盖", "q": "日初出大如车＿＿", "a": "盖", "n": "车盖 · 《两小儿辩日》"}, {"t": "盖", "q": "枝枝相覆＿＿，叶叶相交通", "a": "盖", "n": "遮盖 · 《孔雀东南飞》"}, {"t": "盖", "q": "＿＿将自其变者而观之", "a": "盖", "n": "大概，恐怕 · 《赤壁赋》"}, {"t": "盖", "q": "＿＿失强援，不能独完", "a": "盖", "n": "原因，因为 · 《六国论》"}, {"t": "盖", "q": "＿＿儒者所争，尤在于名实", "a": "盖", "n": "发语词 · 《答司马谏议书》"}, {"t": "故", "q": "既克，公问其＿＿", "a": "故", "n": "缘故，原因 · 《曹刿论战》"}, {"t": "故", "q": "＿＿不积跬步，无以至千里", "a": "故", "n": "所以，因此 · 《劝学》"}, {"t": "故", "q": "温＿＿而知新", "a": "故", "n": "旧的，原来的 · 《论语》"}, {"t": "故", "q": "广＿＿数言欲亡", "a": "故", "n": "故意 · 《陈涉世家》"}, {"t": "故", "q": "君安与项伯有＿＿", "a": "故", "n": "老朋友 · 《鸿门宴》"}, {"t": "故", "q": "暮去朝来颜色＿＿", "a": "故", "n": "衰老 · 《琵琶行》"}, {"t": "顾", "q": "＿＿野有麦场", "a": "顾", "n": "回头看，看 · 《狼》"}, {"t": "顾", "q": "三＿＿臣于草庐之中", "a": "顾", "n": "拜访，探望 · 《出师表》"}, {"t": "顾", "q": "赢得仓皇北＿＿", "a": "顾", "n": "顾念，顾惜 · 《永遇乐·京口北固亭怀古》"}, {"t": "顾", "q": "＿＿计不知所出耳", "a": "顾", "n": "只是，不过 · 《荆轲刺秦王》"}, {"t": "顾", "q": "人之立志，＿＿不如蜀鄙之僧哉", "a": "顾", "n": "反而，却 · 《为学》"}, {"t": "固", "q": "秦孝公据崤函之＿＿", "a": "固", "n": "坚固，险固 · 《过秦论》"}, {"t": "固", "q": "＿＿国不以山溪之险", "a": "固", "n": "巩固 · 《得道多助，失道寡助》"}, {"t": "固", "q": "汝心之＿＿，固不可彻", "a": "固", "n": "固执，顽固 · 《愚公移山》"}, {"t": "固", "q": "人＿＿有一死", "a": "固", "n": "本来 · 《报任安书》"}, {"t": "固", "q": "蔺相如＿＿止之", "a": "固", "n": "坚决 · 《廉颇蔺相如列传》"}, {"t": "归", "q": "太守＿＿而宾客从也", "a": "归", "n": "回去，回家 · 《醉翁亭记》"}, {"t": "归", "q": "而其＿＿书也必速", "a": "归", "n": "归还 · 《黄生借书说》"}, {"t": "归", "q": "微斯人，吾谁与＿＿", "a": "归", "n": "归依，归附 · 《岳阳楼记》"}, {"t": "归", "q": "后五年，吾妻来＿＿", "a": "归", "n": "女子出嫁 · 《项脊轩志》"}, {"t": "归", "q": "周公吐哺，天下＿＿心", "a": "归", "n": "归向 · 《短歌行》"}, {"t": "国", "q": "＿＿破山河在，城春草木深", "a": "国", "n": "国家 · 《春望》"}, {"t": "国", "q": "去＿＿怀乡，忧谗畏讥", "a": "国", "n": "国都，京城 · 《岳阳楼记》"}, {"t": "国", "q": "六＿＿破灭，非兵不利", "a": "国", "n": "诸侯国 · 《六国论》"}, {"t": "国", "q": "此用武之＿＿", "a": "国", "n": "地区，地域 · 《隆中对》"}, {"t": "过", "q": "雷霆乍惊，宫车＿＿也", "a": "过", "n": "经过，走过 · 《阿房宫赋》"}, {"t": "过", "q": "裘马＿＿世家焉", "a": "过", "n": "超过 · 《促织》"}, {"t": "过", "q": "则知明而行无＿＿矣", "a": "过", "n": "过错，过失 · 《劝学》"}, {"t": "过", "q": "闻大王有意督＿＿之", "a": "过", "n": "责备 · 《鸿门宴》"}, {"t": "过", "q": "一日，大母＿＿余曰", "a": "过", "n": "拜访，探望 · 《项脊轩志》"}, {"t": "何", "q": "大王来＿＿操", "a": "何", "n": "什么 · 《鸿门宴》"}, {"t": "何", "q": "＿＿辞为", "a": "何", "n": "为什么 · 《鸿门宴》"}, {"t": "何", "q": "水＿＿澹澹，山岛竦峙", "a": "何", "n": "多么 · 《观沧海》"}, {"t": "何", "q": "＿＿不按兵束甲，北面而事之", "a": "何", "n": "怎么 · 《赤壁之战》"}, {"t": "恨", "q": "此＿＿绵绵无绝期", "a": "恨", "n": "怨恨 · 《长恨歌》"}, {"t": "恨", "q": "此三者，吾遗＿＿也", "a": "恨", "n": "遗憾 · 《伶官传序》"}, {"t": "恨", "q": "未尝不叹息痛＿＿于桓、灵也", "a": "恨", "n": "感到遗憾 · 《出师表》"}, {"t": "胡", "q": "＿＿为乎遑遑欲何之", "a": "胡", "n": "为什么 · 《归去来兮辞》"}, {"t": "胡", "q": "＿＿人不敢南下而牧马", "a": "胡", "n": "胡人，北方少数民族 · 《过秦论》"}, {"t": "患", "q": "然后知生于忧＿＿，而死于安乐也", "a": "患", "n": "忧患，祸患 · 《生于忧患，死于安乐》"}, {"t": "患", "q": "欲勿予，即＿＿秦兵之来", "a": "患", "n": "担忧，担心 · 《廉颇蔺相如列传》"}, {"t": "或", "q": "＿＿曰：六国互丧，率赂秦耶", "a": "或", "n": "有的人 · 《六国论》"}, {"t": "或", "q": "＿＿命巾车，或棹孤舟", "a": "或", "n": "有时 · 《归去来兮辞》"}, {"t": "或", "q": "当与秦相较，＿＿未易量", "a": "或", "n": "或许，也许 · 《六国论》"}, {"t": "疾", "q": "臣少多＿＿病，九岁不行", "a": "疾", "n": "疾病 · 《陈情表》"}, {"t": "疾", "q": "尝问天下所＿＿恶者", "a": "疾", "n": "痛恨 · 《张衡传》"}, {"t": "疾", "q": "虽乘奔御风，不以＿＿也", "a": "疾", "n": "快，急速 · 《三峡》"}, {"t": "疾", "q": "声非加＿＿也，而闻者彰", "a": "疾", "n": "强，猛烈 · 《劝学》"}, {"t": "及", "q": "＿＿至始皇，奋六世之余烈", "a": "及", "n": "等到，到了 · 《过秦论》"}, {"t": "及", "q": "＿＿郡下，诣太守", "a": "及", "n": "到，达到 · 《桃花源记》"}, {"t": "及", "q": "战、守、迁皆不＿＿施", "a": "及", "n": "来得及 · 《指南录后序》"}, {"t": "及", "q": "徐公何能＿＿君也", "a": "及", "n": "比得上 · 《邹忌讽齐王纳谏》"}, {"t": "及", "q": "太子＿＿宾客知其事者", "a": "及", "n": "连词，和 · 《荆轲刺秦王》"}, {"t": "即", "q": "项伯＿＿入见沛公", "a": "即", "n": "就，立即 · 《鸿门宴》"}, {"t": "即", "q": "匪来贸丝，来＿＿我谋", "a": "即", "n": "接近，靠近 · 《诗经·氓》"}, {"t": "即", "q": "＿＿今之傫然在墓者也", "a": "即", "n": "就是 · 《五人墓碑记》"}, {"t": "即", "q": "＿＿谋单于，何以复加", "a": "即", "n": "假如，如果 · 《苏武传》"}, {"t": "既", "q": "＿＿克，公问其故", "a": "既", "n": "已经 · 《曹刿论战》"}, {"t": "既", "q": "＿＿加冠，益慕圣贤之道", "a": "既", "n": "……以后 · 《送东阳马生序》"}, {"t": "既", "q": "＿＿来之，则安之", "a": "既", "n": "既然 · 《季氏将伐颛臾》"}, {"t": "既", "q": "＿＿窈窕以寻壑，亦崎岖而经丘", "a": "既", "n": "与“又”呼应，既……又…… · 《归去来兮辞》"}, {"t": "假", "q": "＿＿舟楫者，非能水也", "a": "假", "n": "借助，凭借 · 《劝学》"}, {"t": "假", "q": "乃悟前狼＿＿寐，盖以诱敌", "a": "假", "n": "假的，不真实 · 《狼》"}, {"t": "假", "q": "因求＿＿暂归", "a": "假", "n": "假期 · 《孔雀东南飞》"}, {"t": "假", "q": "愿大王少＿＿借之", "a": "假", "n": "宽容 · 《荆轲刺秦王》"}, {"t": "间", "q": "奉命于危难之＿＿", "a": "间", "n": "jiān 中间，期间 · 《出师表》"}, {"t": "间", "q": "安得广厦千万＿＿", "a": "间", "n": "jiān 量词，间 · 《茅屋为秋风所破歌》"}, {"t": "间", "q": "彼节者有＿＿，而刀刃者无厚", "a": "间", "n": "jiàn 缝隙 · 《庖丁解牛》"}, {"t": "间", "q": "谗人＿＿之，可谓穷矣", "a": "间", "n": "jiàn 离间 · 《屈原列传》"}, {"t": "间", "q": "数月之后，时时而＿＿进", "a": "间", "n": "jiàn 间或，偶尔 · 《邹忌讽齐王纳谏》"}, {"t": "间", "q": "从郦山下，道芷阳＿＿行", "a": "间", "n": "jiàn 从小路 · 《鸿门宴》"}, {"t": "间", "q": "肉食者谋之，又何＿＿焉", "a": "间", "n": "jiàn 参与 · 《曹刿论战》"}, {"t": "见", "q": "＿＿渔人，乃大惊", "a": "见", "n": "看见 · 《桃花源记》"}, {"t": "见", "q": "曹刿请＿＿", "a": "见", "n": "拜见，谒见 · 《曹刿论战》"}, {"t": "见", "q": "秦王坐章台＿＿相如", "a": "见", "n": "接见 · 《廉颇蔺相如列传》"}, {"t": "见", "q": "信而＿＿疑，忠而被谤", "a": "见", "n": "表被动 · 《屈原列传》"}, {"t": "见", "q": "图穷而匕首＿＿", "a": "见", "n": "通“现”，出现 · 《荆轲刺秦王》"}, {"t": "解", "q": "庖丁为文惠君＿＿牛", "a": "解", "n": "剖开，分解 · 《庖丁解牛》"}, {"t": "解", "q": "＿＿其棕缚", "a": "解", "n": "解开，解开束缚 · 《病梅馆记》"}, {"t": "解", "q": "其为惑也，终不＿＿矣", "a": "解", "n": "理解，懂得 · 《师说》"}, {"t": "解", "q": "可以＿＿燕国之患", "a": "解", "n": "解除，消除 · 《荆轲刺秦王》"}, {"t": "进", "q": "群臣＿＿谏，门庭若市", "a": "进", "n": "进献，进言 · 《邹忌讽齐王纳谏》"}, {"t": "进", "q": "是＿＿亦忧，退亦忧", "a": "进", "n": "出仕做官 · 《岳阳楼记》"}, {"t": "进", "q": "臣之所好者道也，＿＿乎技矣", "a": "进", "n": "超过 · 《庖丁解牛》"}, {"t": "尽", "q": "林＿＿水源，便得一山", "a": "尽", "n": "完，尽头 · 《桃花源记》"}, {"t": "尽", "q": "＿＿吾志也而不能至者，可以无悔矣", "a": "尽", "n": "竭尽，尽力 · 《游褒禅山记》"}, {"t": "尽", "q": "转侧床头，惟思自＿＿", "a": "尽", "n": "死，自杀 · 《促织》"}, {"t": "就", "q": "金＿＿砺则利", "a": "就", "n": "接近，靠近 · 《劝学》"}, {"t": "就", "q": "于是荆轲遂＿＿车而去", "a": "就", "n": "登上，走上 · 《荆轲刺秦王》"}, {"t": "就", "q": "然嬴欲＿＿公子之名", "a": "就", "n": "成就 · 《信陵君窃符救赵》"}, {"t": "就", "q": "草创未＿＿", "a": "就", "n": "完成 · 《报任安书》"}, {"t": "就", "q": "连辟公府不＿＿", "a": "就", "n": "就职，赴任 · 《张衡传》"}, {"t": "举", "q": "＿＿酒属客，诵明月之诗", "a": "举", "n": "举起，抬起 · 《赤壁赋》"}, {"t": "举", "q": "吾不能＿＿全吴之地", "a": "举", "n": "拿，用 · 《赤壁之战》"}, {"t": "举", "q": "＿＿世非之而不加沮", "a": "举", "n": "全，都 · 《逍遥游》"}, {"t": "举", "q": "戍卒叫，函谷＿＿", "a": "举", "n": "攻占，攻克 · 《阿房宫赋》"}, {"t": "举", "q": "＿＿孝廉不行", "a": "举", "n": "推荐，选拔 · 《张衡传》"}, {"t": "举", "q": "杀人如不能＿＿", "a": "举", "n": "尽 · 《鸿门宴》"}, {"t": "绝", "q": "则请立太子为王，以＿＿秦望", "a": "绝", "n": "断绝 · 《廉颇蔺相如列传》"}, {"t": "绝", "q": "非能水也，而＿＿江河", "a": "绝", "n": "横渡 · 《劝学》"}, {"t": "绝", "q": "哀转久＿＿", "a": "绝", "n": "停止，消失 · 《三峡》"}, {"t": "绝", "q": "佛印＿＿类弥勒", "a": "绝", "n": "极，非常 · 《核舟记》"}, {"t": "绝", "q": "率妻子邑人来此＿＿境", "a": "绝", "n": "与世隔绝 · 《桃花源记》"}, {"t": "绝", "q": "满坐宾客无不以为妙＿＿", "a": "绝", "n": "高超，绝妙 · 《口技》"}, {"t": "堪", "q": "人不＿＿其忧，回也不改其乐", "a": "堪", "n": "经得起，忍受 · 《论语》"}, {"t": "堪", "q": "出师一表真名世，千载谁＿＿伯仲间", "a": "堪", "n": "能够，可以 · 《书愤》"}, {"t": "堪", "q": "不＿＿吏人妇，岂合令郎君", "a": "堪", "n": "胜任 · 《孔雀东南飞》"}, {"t": "克", "q": "善始者实繁，＿＿终者盖寡", "a": "克", "n": "能够 · 《谏太宗十思疏》"}, {"t": "克", "q": "既＿＿，公问其故", "a": "克", "n": "战胜，攻下 · 《曹刿论战》"}, {"t": "克", "q": "＿＿己复礼为仁", "a": "克", "n": "克制 · 《论语》"}, {"t": "类", "q": "仰观宇宙之大，俯察品＿＿之盛", "a": "类", "n": "种类，类别 · 《兰亭集序》"}, {"t": "类", "q": "佛印绝＿＿弥勒", "a": "类", "n": "类似，像 · 《核舟记》"}, {"t": "类", "q": "举＿＿迩而见义远", "a": "类", "n": "事例 · 《屈原列传》"}, {"t": "怜", "q": "可＿＿身上衣正单，心忧炭贱愿天寒", "a": "怜", "n": "同情，怜悯 · 《卖炭翁》"}, {"t": "怜", "q": "丈夫亦爱＿＿其少子乎", "a": "怜", "n": "怜爱 · 《触龙说赵太后》"}, {"t": "怜", "q": "可＿＿九月初三夜，露似真珠月似弓", "a": "怜", "n": "可爱 · 《暮江吟》"}, {"t": "弥", "q": "奉之＿＿繁，侵之愈急", "a": "弥", "n": "更加，越发 · 《六国论》"}, {"t": "弥", "q": "夜雪初霁，荠麦＿＿望", "a": "弥", "n": "满，遍 · 《扬州慢》"}, {"t": "莫", "q": "＿＿不中音", "a": "莫", "n": "没有谁，没有什么 · 《庖丁解牛》"}, {"t": "莫", "q": "＿＿辞更坐弹一曲", "a": "莫", "n": "不，不要 · 《琵琶行》"}, {"t": "莫", "q": "＿＿春者，春服既成", "a": "莫", "n": "通“暮”，晚 · 《论语·侍坐》"}, {"t": "乃", "q": "＿＿重修岳阳楼", "a": "乃", "n": "于是，就 · 《岳阳楼记》"}, {"t": "乃", "q": "今其智＿＿反不能及", "a": "乃", "n": "竟然 · 《师说》"}, {"t": "乃", "q": "度我至军中，公＿＿入", "a": "乃", "n": "才 · 《鸿门宴》"}, {"t": "乃", "q": "当立者＿＿公子扶苏", "a": "乃", "n": "是，就是 · 《陈涉世家》"}, {"t": "乃", "q": "尔其无忘＿＿父之志", "a": "乃", "n": "你的 · 《伶官传序》"}, {"t": "内", "q": "＿＿立法度，务耕织", "a": "内", "n": "里面，内部 · 《过秦论》"}, {"t": "内", "q": "＿＿无应门五尺之僮", "a": "内", "n": "内心，内室 · 《陈情表》"}, {"t": "内", "q": "距关，毋＿＿诸侯", "a": "内", "n": "通“纳”，接纳 · 《鸿门宴》"}, {"t": "期", "q": "度已失＿＿", "a": "期", "n": "期限 · 《陈涉世家》"}, {"t": "期", "q": "与人＿＿行，相委而去", "a": "期", "n": "约定 · 《陈太丘与友期行》"}, {"t": "期", "q": "富贵非吾愿，帝乡不可＿＿", "a": "期", "n": "期望 · 《归去来兮辞》"}, {"t": "期", "q": "＿＿年之后，虽欲言，无可进者", "a": "期", "n": "jī 满一年 · 《邹忌讽齐王纳谏》"}, {"t": "奇", "q": "以事秦之心礼天下之＿＿才", "a": "奇", "n": "奇特，奇异 · 《六国论》"}, {"t": "奇", "q": "邑人＿＿之，稍稍宾客其父", "a": "奇", "n": "认为……奇异 · 《伤仲永》"}, {"t": "奇", "q": "今日违情义，恐此事非＿＿", "a": "奇", "n": "佳，好 · 《孔雀东南飞》"}, {"t": "奇", "q": "舟首尾长约八分有＿＿", "a": "奇", "n": "jī 零数 · 《核舟记》"}, {"t": "迁", "q": "战、守、＿＿皆不及施", "a": "迁", "n": "迁移 · 《指南录后序》"}, {"t": "迁", "q": "＿＿客骚人，多会于此", "a": "迁", "n": "官职调动 · 《岳阳楼记》"}, {"t": "迁", "q": "顷襄王怒而＿＿之", "a": "迁", "n": "放逐，流放 · 《屈原列传》"}, {"t": "请", "q": "＿＿奉盆缶，以相娱乐", "a": "请", "n": "请求 · 《廉颇蔺相如列传》"}, {"t": "请", "q": "＿＿以战喻", "a": "请", "n": "请允许我 · 《寡人之于国也》"}, {"t": "请", "q": "公子闻之，往＿＿，欲厚遗之", "a": "请", "n": "谒见，拜见 · 《信陵君窃符救赵》"}, {"t": "请", "q": "既而以吴民之乱＿＿于朝", "a": "请", "n": "请示 · 《五人墓碑记》"}, {"t": "穷", "q": "四时之景不同，而乐亦无＿＿也", "a": "穷", "n": "穷尽，尽头 · 《醉翁亭记》"}, {"t": "穷", "q": "则其好游者不能＿＿也", "a": "穷", "n": "走到尽头 · 《游褒禅山记》"}, {"t": "穷", "q": "＿＿则独善其身，达则兼善天下", "a": "穷", "n": "困厄，不得志 · 《孟子》"}, {"t": "穷", "q": "＿＿且益坚，不坠青云之志", "a": "穷", "n": "处境困难 · 《滕王阁序》"}, {"t": "求", "q": "＿＿木之长者，必固其根本", "a": "求", "n": "寻求，寻找 · 《谏太宗十思疏》"}, {"t": "求", "q": "君子食无＿＿饱，居无求安", "a": "求", "n": "要求，追求 · 《论语》"}, {"t": "求", "q": "秦以城＿＿璧而赵不许", "a": "求", "n": "请求 · 《廉颇蔺相如列传》"}, {"t": "求", "q": "以其＿＿思之深而无不在也", "a": "求", "n": "探求 · 《游褒禅山记》"}, {"t": "取", "q": "青，＿＿之于蓝，而青于蓝", "a": "取", "n": "取得，提取 · 《劝学》"}, {"t": "取", "q": "秦以攻＿＿之外，小则获邑", "a": "取", "n": "攻取，夺取 · 《六国论》"}, {"t": "取", "q": "二者不可得兼，舍生而＿＿义者也", "a": "取", "n": "选取 · 《鱼我所欲也》"}, {"t": "取", "q": "今若遣此妇，终老不复＿＿", "a": "取", "n": "通“娶”，娶妻 · 《孔雀东南飞》"}, {"t": "去", "q": "＿＿国怀乡，忧谗畏讥", "a": "去", "n": "离开 · 《岳阳楼记》"}, {"t": "去", "q": "连峰＿＿天不盈尺", "a": "去", "n": "距离 · 《蜀道难》"}, {"t": "去", "q": "我从＿＿年辞帝京，谪居卧病浔阳城", "a": "去", "n": "过去的 · 《琵琶行》"}, {"t": "去", "q": "公然抱茅入竹＿＿", "a": "去", "n": "前往，到……去 · 《茅屋为秋风所破歌》"}, {"t": "劝", "q": "果行，国人皆＿＿", "a": "劝", "n": "勉励，鼓励 · 《勾践灭吴》"}, {"t": "劝", "q": "＿＿君更尽一杯酒", "a": "劝", "n": "劝说，劝告 · 《送元二使安西》"}, {"t": "却", "q": "＿＿匈奴七百余里", "a": "却", "n": "退，使……退却 · 《过秦论》"}, {"t": "却", "q": "李牧连＿＿之", "a": "却", "n": "击退 · 《六国论》"}, {"t": "却", "q": "＿＿坐促弦弦转急", "a": "却", "n": "回头 · 《琵琶行》"}, {"t": "却", "q": "何当共剪西窗烛，＿＿话巴山夜雨时", "a": "却", "n": "还，再 · 《夜雨寄北》"}, {"t": "却", "q": "＿＿看妻子愁何在，漫卷诗书喜欲狂", "a": "却", "n": "再，又（表转折） · 《闻官军收河南河北》"}, {"t": "如", "q": "＿＿鸣珮环，心乐之", "a": "如", "n": "像，如同 · 《小石潭记》"}, {"t": "如", "q": "吾尝终日而思矣，不＿＿须臾之所学也", "a": "如", "n": "及，比得上 · 《劝学》"}, {"t": "如", "q": "＿＿有地动，尊则振龙", "a": "如", "n": "如果 · 《张衡传》"}, {"t": "如", "q": "坐须臾，沛公起＿＿厕", "a": "如", "n": "到，往 · 《鸿门宴》"}, {"t": "如", "q": "方六七十，＿＿五六十", "a": "如", "n": "或者 · 《论语·侍坐》"}, {"t": "若", "q": "其翼＿＿垂天之云", "a": "若", "n": "像，如同 · 《逍遥游》"}, {"t": "若", "q": "＿＿入前为寿", "a": "若", "n": "你，你的 · 《鸿门宴》"}, {"t": "若", "q": "＿＿使烛之武见秦君，师必退", "a": "若", "n": "如果 · 《烛之武退秦师》"}, {"t": "若", "q": "曾不＿＿孀妻弱子", "a": "若", "n": "及，比得上 · 《愚公移山》"}, {"t": "善", "q": "积＿＿成德，而神明自得", "a": "善", "n": "好，好的行为 · 《劝学》"}, {"t": "善", "q": "君子生非异也，＿＿假于物也", "a": "善", "n": "擅长 · 《劝学》"}, {"t": "善", "q": "不如因＿＿遇之", "a": "善", "n": "好好地 · 《鸿门宴》"}, {"t": "善", "q": "素＿＿留侯张良", "a": "善", "n": "与……交好 · 《鸿门宴》"}, {"t": "善", "q": "王曰：“＿＿。”乃下令", "a": "善", "n": "认为……好 · 《邹忌讽齐王纳谏》"}, {"t": "善", "q": "＿＿刀而藏之", "a": "善", "n": "通“缮”，擦拭 · 《庖丁解牛》"}, {"t": "少", "q": "群贤毕至，＿＿长咸集", "a": "少", "n": "shào 年轻 · 《兰亭集序》"}, {"t": "少", "q": "愿大王＿＿假借之", "a": "少", "n": "shǎo 稍微 · 《荆轲刺秦王》"}, {"t": "少", "q": "＿＿焉，月出于东山之上", "a": "少", "n": "shǎo 一会儿 · 《赤壁赋》"}, {"t": "少", "q": "险以远，则至者＿＿", "a": "少", "n": "shǎo 不多，少 · 《游褒禅山记》"}, {"t": "涉", "q": "送子＿＿淇，至于顿丘", "a": "涉", "n": "徒步渡水 · 《诗经·氓》"}, {"t": "涉", "q": "但当＿＿猎，见往事耳", "a": "涉", "n": "涉猎，粗略地阅读 · 《孙权劝学》"}, {"t": "涉", "q": "＿＿险", "a": "涉", "n": "经历 · 成语"}, {"t": "胜", "q": "刑人如恐不＿＿", "a": "胜", "n": "尽，完 · 《鸿门宴》"}, {"t": "胜", "q": "此所谓战＿＿于朝廷", "a": "胜", "n": "胜利 · 《邹忌讽齐王纳谏》"}, {"t": "胜", "q": "＿＿地不常，盛筵难再", "a": "胜", "n": "优美的，美好的 · 《滕王阁序》"}, {"t": "胜", "q": "臣不＿＿犬马怖惧之情", "a": "胜", "n": "承受，禁得起 · 《陈情表》"}, {"t": "胜", "q": "质＿＿文则野，文胜质则史", "a": "胜", "n": "超过，胜过 · 《论语》"}, {"t": "识", "q": "同是天涯沦落人，相逢何必曾相＿＿", "a": "识", "n": "认识，知道 · 《琵琶行》"}, {"t": "识", "q": "所＿＿穷乏者得我与", "a": "识", "n": "认识的人 · 《鱼我所欲也》"}, {"t": "识", "q": "默而＿＿之，学而不厌", "a": "识", "n": "zhì 通“志”，记住 · 《论语》"}, {"t": "使", "q": "秦王＿＿使者告赵王", "a": "使", "n": "派遣 · 《廉颇蔺相如列传》"}, {"t": "使", "q": "＿＿六国各爱其人，则足以拒秦", "a": "使", "n": "让，致使 · 《阿房宫赋》"}, {"t": "使", "q": "臣舍人蔺相如可＿＿", "a": "使", "n": "出使 · 《廉颇蔺相如列传》"}, {"t": "使", "q": "求人可＿＿报秦者", "a": "使", "n": "使者 · 《廉颇蔺相如列传》"}, {"t": "使", "q": "向＿＿三国各爱其地", "a": "使", "n": "假使 · 《六国论》"}, {"t": "是", "q": "觉今＿＿而昨非", "a": "是", "n": "正确，对 · 《归去来兮辞》"}, {"t": "是", "q": "＿＿日观道中石刻", "a": "是", "n": "这，此 · 《登泰山记》"}, {"t": "是", "q": "问今＿＿何世", "a": "是", "n": "判断动词，是 · 《桃花源记》"}, {"t": "是", "q": "无乃尔＿＿过与", "a": "是", "n": "宾语前置的标志 · 《季氏将伐颛臾》"}, {"t": "适", "q": "＿＿千里者，三月聚粮", "a": "适", "n": "到，往 · 《逍遥游》"}, {"t": "适", "q": "贫贱有此女，始＿＿还家门", "a": "适", "n": "出嫁 · 《孔雀东南飞》"}, {"t": "适", "q": "＿＿得府君书，明日来迎汝", "a": "适", "n": "刚才 · 《孔雀东南飞》"}, {"t": "适", "q": "少无＿＿俗韵，性本爱丘山", "a": "适", "n": "适合，适应 · 《归园田居》"}, {"t": "书", "q": "适得府君＿＿，明日来迎汝", "a": "书", "n": "书信 · 《孔雀东南飞》"}, {"t": "书", "q": "上＿＿谏寡人者，受中赏", "a": "书", "n": "文书，奏章 · 《邹忌讽齐王纳谏》"}, {"t": "书", "q": "乃丹＿＿帛曰“陈胜王”", "a": "书", "n": "书写，写 · 《陈涉世家》"}, {"t": "书", "q": "家贫，无从致＿＿以观", "a": "书", "n": "书籍 · 《送东阳马生序》"}, {"t": "孰", "q": "吾与徐公＿＿美", "a": "孰", "n": "谁，哪一个 · 《邹忌讽齐王纳谏》"}, {"t": "孰", "q": "唯大王与群臣＿＿计议之", "a": "孰", "n": "通“熟”，仔细 · 《廉颇蔺相如列传》"}, {"t": "孰", "q": "我＿＿与城北徐公美", "a": "孰", "n": "与……相比，哪一个更 · 《邹忌讽齐王纳谏》"}, {"t": "属", "q": "常有高猿长啸，＿＿引凄异", "a": "属", "n": "zhǔ 连接，连缀 · 《三峡》"}, {"t": "属", "q": "＿＿予作文以记之", "a": "属", "n": "zhǔ 通“嘱”，嘱托 · 《岳阳楼记》"}, {"t": "属", "q": "衡少善＿＿文", "a": "属", "n": "zhǔ 撰写 · 《张衡传》"}, {"t": "属", "q": "名＿＿教坊第一部", "a": "属", "n": "shǔ 归属，隶属 · 《琵琶行》"}, {"t": "属", "q": "有宁越、徐尚之＿＿为之谋", "a": "属", "n": "shǔ 类，辈 · 《过秦论》"}, {"t": "属", "q": "举匏樽以相＿＿", "a": "属", "n": "zhǔ 劝酒 · 《赤壁赋》"}, {"t": "数", "q": "愿令得补黑衣之＿＿", "a": "数", "n": "shù 数目，数量 · 《触龙说赵太后》"}, {"t": "数", "q": "胜负之＿＿，存亡之理", "a": "数", "n": "shù 命运，规律 · 《六国论》"}, {"t": "数", "q": "珠可历历＿＿也", "a": "数", "n": "shǔ 计算 · 《核舟记》"}, {"t": "数", "q": "范增＿＿目项王", "a": "数", "n": "shuò 屡次，多次 · 《鸿门宴》"}, {"t": "率", "q": "＿＿疲弊之卒，将数百之众", "a": "率", "n": "率领，带领 · 《过秦论》"}, {"t": "率", "q": "六国互丧，＿＿赂秦耶", "a": "率", "n": "全都，一概 · 《六国论》"}, {"t": "率", "q": "子路＿＿尔而对曰", "a": "率", "n": "轻率 · 《论语·侍坐》"}, {"t": "说", "q": "＿＿尽心中无限事", "a": "说", "n": "shuō 讲，说 · 《琵琶行》"}, {"t": "说", "q": "范增＿＿项羽曰", "a": "说", "n": "shuì 劝说，游说 · 《鸿门宴》"}, {"t": "说", "q": "学而时习之，不亦＿＿乎", "a": "说", "n": "yuè 通“悦”，高兴 · 《论语》"}, {"t": "说", "q": "是＿＿也，人常疑之", "a": "说", "n": "shuō 说法，主张 · 《石钟山记》"}, {"t": "私", "q": "以先国家之急而后＿＿仇也", "a": "私", "n": "私人的，自己的 · 《廉颇蔺相如列传》"}, {"t": "私", "q": "宫妇左右莫不＿＿王", "a": "私", "n": "偏爱 · 《邹忌讽齐王纳谏》"}, {"t": "私", "q": "燕王＿＿握臣手", "a": "私", "n": "私下，偷偷地 · 《廉颇蔺相如列传》"}, {"t": "素", "q": "十三能织＿＿，十四学裁衣", "a": "素", "n": "白色的生绢 · 《孔雀东南飞》"}, {"t": "素", "q": "＿＿善留侯张良", "a": "素", "n": "一向，向来 · 《鸿门宴》"}, {"t": "素", "q": "可以调＿＿琴，阅金经", "a": "素", "n": "朴素，不加装饰 · 《陋室铭》"}, {"t": "汤", "q": "臣请就＿＿镬", "a": "汤", "n": "热水，开水 · 《廉颇蔺相如列传》"}, {"t": "汤", "q": "臣侍＿＿药，未曾废离", "a": "汤", "n": "汤药 · 《陈情表》"}, {"t": "汤", "q": "浩浩＿＿汤，横无际涯", "a": "汤", "n": "shāng 水势浩大 · 《岳阳楼记》"}, {"t": "汤", "q": "疾在腠理，＿＿熨之所及也", "a": "汤", "n": "用热水焐 · 《扁鹊见蔡桓公》"}, {"t": "涕", "q": "出门登车去，＿＿落百余行", "a": "涕", "n": "眼泪 · 《孔雀东南飞》"}, {"t": "涕", "q": "儿＿＿而去", "a": "涕", "n": "流泪 · 《促织》"}, {"t": "涕", "q": "临表＿＿零，不知所言", "a": "涕", "n": "眼泪 · 《出师表》"}, {"t": "通", "q": "会天大雨，道不＿＿", "a": "通", "n": "通行，通过 · 《陈涉世家》"}, {"t": "通", "q": "鸣之而不能＿＿其意", "a": "通", "n": "通晓，懂得 · 《马说》"}, {"t": "通", "q": "六艺经传皆＿＿习之", "a": "通", "n": "普遍 · 《师说》"}, {"t": "通", "q": "著我绣夹裙，事事四五＿＿", "a": "通", "n": "量词，遍 · 《孔雀东南飞》"}, {"t": "徒", "q": "郯子之＿＿，其贤不及孔子", "a": "徒", "n": "同类的人 · 《师说》"}, {"t": "徒", "q": "＿＿慕君之高义也", "a": "徒", "n": "只，仅仅 · 《廉颇蔺相如列传》"}, {"t": "徒", "q": "少壮不努力，老大＿＿伤悲", "a": "徒", "n": "白白地 · 《长歌行》"}, {"t": "徒", "q": "氓隶之人，而迁徙之＿＿也", "a": "徒", "n": "服劳役的人 · 《过秦论》"}, {"t": "退", "q": "入门上家堂，进＿＿无颜仪", "a": "退", "n": "后退，退却 · 《孔雀东南飞》"}, {"t": "退", "q": "是进亦忧，＿＿亦忧", "a": "退", "n": "退隐，不在朝做官 · 《岳阳楼记》"}, {"t": "退", "q": "＿＿将复修吾初服", "a": "退", "n": "返回 · 《离骚》"}, {"t": "亡", "q": "今＿＿亦死，举大计亦死", "a": "亡", "n": "逃亡，逃跑 · 《陈涉世家》"}, {"t": "亡", "q": "燕虽小国而后＿＿", "a": "亡", "n": "灭亡 · 《六国论》"}, {"t": "亡", "q": "秦无＿＿矢遗镞之费", "a": "亡", "n": "丢失 · 《过秦论》"}, {"t": "亡", "q": "存＿＿之理，当与秦相较", "a": "亡", "n": "死亡 · 《六国论》"}, {"t": "亡", "q": "河曲智叟＿＿以应", "a": "亡", "n": "wú 通“无”，没有 · 《愚公移山》"}, {"t": "王", "q": "＿＿侯将相宁有种乎", "a": "王", "n": "wáng 国王，君王 · 《陈涉世家》"}, {"t": "王", "q": "沛公欲＿＿关中", "a": "王", "n": "wàng 称王，统治天下 · 《鸿门宴》"}, {"t": "望", "q": "吾视其辙乱，＿＿其旗靡", "a": "望", "n": "远望，眺望 · 《曹刿论战》"}, {"t": "望", "q": "日夜＿＿将军至", "a": "望", "n": "盼望，期望 · 《鸿门宴》"}, {"t": "望", "q": "先达德隆＿＿尊", "a": "望", "n": "名望，声望 · 《送东阳马生序》"}, {"t": "望", "q": "壬戌之秋，七月既＿＿", "a": "望", "n": "农历十五 · 《赤壁赋》"}, {"t": "望", "q": "若＿＿仆不相师", "a": "望", "n": "怨恨 · 《报任安书》"}, {"t": "恶", "q": "廉君宣＿＿言", "a": "恶", "n": "è 坏，不好的 · 《廉颇蔺相如列传》"}, {"t": "恶", "q": "死亦我所＿＿", "a": "恶", "n": "wù 厌恶，憎恨 · 《鱼我所欲也》"}, {"t": "恶", "q": "表＿＿其能而不能用也", "a": "恶", "n": "wù 嫉妒 · 《赤壁之战》"}, {"t": "恶", "q": "彼且＿＿乎待哉", "a": "恶", "n": "wū 怎么，哪里 · 《逍遥游》"}, {"t": "微", "q": "＿＿风鼓浪，水石相搏", "a": "微", "n": "微小，细微 · 《石钟山记》"}, {"t": "微", "q": "＿＿闻有鼠作作索索", "a": "微", "n": "隐约，不显露 · 《口技》"}, {"t": "微", "q": "＿＿夫人之力不及此", "a": "微", "n": "如果没有 · 《烛之武退秦师》"}, {"t": "微", "q": "＿＿指左公处", "a": "微", "n": "暗中，悄悄地 · 《左忠毅公逸事》"}, {"t": "微", "q": "其文约，其辞＿＿", "a": "微", "n": "含蓄精妙 · 《屈原列传》"}, {"t": "悉", "q": "赵王＿＿召群臣议", "a": "悉", "n": "全，都 · 《廉颇蔺相如列传》"}, {"t": "悉", "q": "此＿＿贞良死节之臣", "a": "悉", "n": "详尽，全部 · 《出师表》"}, {"t": "相", "q": "同是天涯沦落人，＿＿逢何必曾相识", "a": "相", "n": "xiāng 互相 · 《琵琶行》"}, {"t": "相", "q": "及时＿＿遣归", "a": "相", "n": "xiāng 表示动作偏指一方 · 《孔雀东南飞》"}, {"t": "相", "q": "儿已薄禄＿＿", "a": "相", "n": "xiàng 相貌 · 《孔雀东南飞》"}, {"t": "相", "q": "至于幽暗昏惑而无物以＿＿之", "a": "相", "n": "xiàng 帮助，辅佐 · 《游褒禅山记》"}, {"t": "谢", "q": "旦日不可不蚤自来＿＿项王", "a": "谢", "n": "道歉 · 《鸿门宴》"}, {"t": "谢", "q": "哙拜＿＿，起，立而饮之", "a": "谢", "n": "感谢 · 《鸿门宴》"}, {"t": "谢", "q": "阿母＿＿媒人", "a": "谢", "n": "辞别，谢绝 · 《孔雀东南飞》"}, {"t": "谢", "q": "多＿＿后世人，戒之慎勿忘", "a": "谢", "n": "告诉，劝告 · 《孔雀东南飞》"}, {"t": "谢", "q": "及花之既＿＿", "a": "谢", "n": "凋落 · 《芙蕖》"}, {"t": "信", "q": "＿＿而见疑，忠而被谤", "a": "信", "n": "诚信，真诚 · 《屈原列传》"}, {"t": "信", "q": "愿陛下亲之＿＿之", "a": "信", "n": "相信，信任 · 《出师表》"}, {"t": "信", "q": "自可断来＿＿，徐徐更谓之", "a": "信", "n": "使者，媒人 · 《孔雀东南飞》"}, {"t": "信", "q": "低眉＿＿手续续弹", "a": "信", "n": "随意，任凭 · 《琵琶行》"}, {"t": "信", "q": "烟涛微茫＿＿难求", "a": "信", "n": "确实，实在 · 《梦游天姥吟留别》"}, {"t": "信", "q": "欲＿＿大义于天下", "a": "信", "n": "通“伸”，伸张 · 《隆中对》"}, {"t": "兴", "q": "积土成山，风雨＿＿焉", "a": "兴", "n": "xīng 兴起，发生 · 《劝学》"}, {"t": "兴", "q": "夙＿＿夜寐，靡有朝矣", "a": "兴", "n": "xīng 起来 · 《诗经·氓》"}, {"t": "兴", "q": "忧劳可以＿＿国，逸豫可以亡身", "a": "兴", "n": "xīng 使兴盛 · 《伶官传序》"}, {"t": "兴", "q": "遥襟甫畅，逸＿＿遄飞", "a": "兴", "n": "xìng 兴致，兴趣 · 《滕王阁序》"}, {"t": "行", "q": "三人＿＿，必有我师焉", "a": "行", "n": "xíng 行走 · 《论语》"}, {"t": "行", "q": "余嘉其能＿＿古道", "a": "行", "n": "xíng 实行，施行 · 《师说》"}, {"t": "行", "q": "则知明而＿＿无过矣", "a": "行", "n": "xíng 品行 · 《劝学》"}, {"t": "行", "q": "善万物之得时，感吾生之＿＿休", "a": "行", "n": "xíng 将要 · 《归去来兮辞》"}, {"t": "行", "q": "陈胜、吴广皆次当＿＿", "a": "行", "n": "háng 行列，队伍 · 《陈涉世家》"}, {"t": "行", "q": "出门登车去，涕落百余＿＿", "a": "行", "n": "háng 量词 · 《孔雀东南飞》"}, {"t": "幸", "q": "知＿＿与不幸，则其读书也必专", "a": "幸", "n": "幸运 · 《黄生借书说》"}, {"t": "幸", "q": "儿已薄禄相，＿＿复得此妇", "a": "幸", "n": "幸亏 · 《孔雀东南飞》"}, {"t": "幸", "q": "＿＿可广问讯，不得便相许", "a": "幸", "n": "希望 · 《孔雀东南飞》"}, {"t": "幸", "q": "而如姬最＿＿", "a": "幸", "n": "宠爱 · 《信陵君窃符救赵》"}, {"t": "幸", "q": "缦立远视，而望＿＿焉", "a": "幸", "n": "皇帝到某处 · 《阿房宫赋》"}, {"t": "修", "q": "乃重＿＿岳阳楼", "a": "修", "n": "修建，修理 · 《岳阳楼记》"}, {"t": "修", "q": "＿＿守战之具", "a": "修", "n": "修整，整治 · 《过秦论》"}, {"t": "修", "q": "邹忌＿＿八尺有余", "a": "修", "n": "长，高 · 《邹忌讽齐王纳谏》"}, {"t": "修", "q": "老冉冉其将至兮，恐＿＿名之不立", "a": "修", "n": "美好 · 《离骚》"}, {"t": "徐", "q": "＿＿而察之，则山下皆石穴罅", "a": "徐", "n": "缓慢，慢慢地 · 《石钟山记》"}, {"t": "徐", "q": "清风＿＿来，水波不兴", "a": "徐", "n": "缓缓地 · 《赤壁赋》"}, {"t": "许", "q": "均之二策，宁＿＿以负秦曲", "a": "许", "n": "答应，允许 · 《廉颇蔺相如列传》"}, {"t": "许", "q": "杂然相＿＿", "a": "许", "n": "赞同 · 《愚公移山》"}, {"t": "许", "q": "潭中鱼可百＿＿头", "a": "许", "n": "大约，左右 · 《小石潭记》"}, {"t": "许", "q": "先生不知何＿＿人也", "a": "许", "n": "处所 · 《五柳先生传》"}, {"t": "许", "q": "塞上长城空自＿＿", "a": "许", "n": "期望 · 《书愤》"}, {"t": "阳", "q": "泰山之＿＿，汶水西流", "a": "阳", "n": "山的南面，水的北面 · 《登泰山记》"}, {"t": "阳", "q": "斜＿＿草树，寻常巷陌", "a": "阳", "n": "阳光 · 《永遇乐·京口北固亭怀古》"}, {"t": "阳", "q": "皆＿＿应曰", "a": "阳", "n": "通“佯”，假装 · 《记王忠肃公翱事》"}, {"t": "要", "q": "张良出，＿＿项伯", "a": "要", "n": "yāo 通“邀”，邀请 · 《鸿门宴》"}, {"t": "要", "q": "良将劲弩守＿＿害之处", "a": "要", "n": "yào 要害，关键 · 《过秦论》"}, {"t": "宜", "q": "理固＿＿然", "a": "宜", "n": "应当，应该 · 《六国论》"}, {"t": "宜", "q": "牡丹之爱，＿＿乎众矣", "a": "宜", "n": "应当 · 《爱莲说》"}, {"t": "宜", "q": "将军＿＿枉驾顾之", "a": "宜", "n": "应该 · 《隆中对》"}, {"t": "遗", "q": "秦无亡矢＿＿镞之费", "a": "遗", "n": "yí 丢失，遗失 · 《过秦论》"}, {"t": "遗", "q": "此三者，吾＿＿恨也", "a": "遗", "n": "yí 遗留，留下 · 《伶官传序》"}, {"t": "遗", "q": "以光先帝＿＿德", "a": "遗", "n": "yí 遗留下的 · 《出师表》"}, {"t": "遗", "q": "是以先帝简拔以＿＿陛下", "a": "遗", "n": "wèi 送给，给予 · 《出师表》"}, {"t": "遗", "q": "小学而大＿＿，吾未见其明也", "a": "遗", "n": "yí 弃，丢弃 · 《师说》"}, {"t": "贻", "q": "作《师说》以＿＿之", "a": "贻", "n": "赠送 · 《师说》"}, {"t": "贻", "q": "＿＿笑大方", "a": "贻", "n": "遗留，留下 · 成语"}, {"t": "易", "q": "秦王以十五城请＿＿寡人之璧", "a": "易", "n": "交换 · 《廉颇蔺相如列传》"}, {"t": "易", "q": "缙绅而能不＿＿其志者", "a": "易", "n": "改变 · 《五人墓碑记》"}, {"t": "易", "q": "天下事有难＿＿乎", "a": "易", "n": "容易 · 《为学》"}, {"t": "阴", "q": "泰山之阳，汶水西流；其＿＿，济水东流", "a": "阴", "n": "山的北面，水的南面 · 《登泰山记》"}, {"t": "阴", "q": "朝晖夕＿＿，气象万千", "a": "阴", "n": "阴暗 · 《岳阳楼记》"}, {"t": "阴", "q": "＿＿知奸党名姓", "a": "阴", "n": "暗中，暗地里 · 《张衡传》"}, {"t": "阴", "q": "＿＿风怒号，浊浪排空", "a": "阴", "n": "阴冷 · 《岳阳楼记》"}, {"t": "右", "q": "左佩刀，＿＿备容臭", "a": "右", "n": "右边 · 《送东阳马生序》"}, {"t": "右", "q": "位在廉颇之＿＿", "a": "右", "n": "上，尊位（古以右为尊） · 《廉颇蔺相如列传》"}, {"t": "再", "q": "一鼓作气，＿＿而衰，三而竭", "a": "再", "n": "两次 · 《曹刿论战》"}, {"t": "再", "q": "后秦击赵者＿＿，李牧连却之", "a": "再", "n": "两次，又 · 《六国论》"}, {"t": "再", "q": "＿＿拜献大王足下", "a": "再", "n": "拜两次 · 《鸿门宴》"}, {"t": "造", "q": "＿＿饮辄尽，期在必醉", "a": "造", "n": "到，往 · 《五柳先生传》"}, {"t": "造", "q": "公输盘为楚＿＿云梯之械", "a": "造", "n": "制造，建造 · 《公输》"}, {"t": "知", "q": "温故而＿＿新，可以为师矣", "a": "知", "n": "知道，了解 · 《论语》"}, {"t": "知", "q": "吾与之共＿＿越国之政", "a": "知", "n": "主持，掌管 · 《勾践灭吴》"}, {"t": "知", "q": "不＿＿东方之既白", "a": "知", "n": "感觉，觉得 · 《赤壁赋》"}, {"t": "知", "q": "则＿＿明而行无过矣", "a": "知", "n": "zhì 通“智”，智慧 · 《劝学》"}, {"t": "致", "q": "听妇前＿＿词", "a": "致", "n": "表达，传达 · 《石壕吏》"}, {"t": "致", "q": "不爱珍器重宝肥饶之地，以＿＿天下之士", "a": "致", "n": "招致，引来 · 《过秦论》"}, {"t": "致", "q": "假舆马者，非利足也，而＿＿千里", "a": "致", "n": "达到 · 《劝学》"}, {"t": "致", "q": "家贫，无从＿＿书以观", "a": "致", "n": "取得，得到 · 《送东阳马生序》"}, {"t": "致", "q": "虽世殊事异，所以兴怀，其＿＿一也", "a": "致", "n": "情趣 · 《兰亭集序》"}, {"t": "质", "q": "必以长安君为＿＿，兵乃出", "a": "质", "n": "抵押，人质 · 《触龙说赵太后》"}, {"t": "质", "q": "永州之野产异蛇，黑＿＿而白章", "a": "质", "n": "质地，底子 · 《捕蛇者说》"}, {"t": "质", "q": "非天＿＿之卑，则心不若余之专耳", "a": "质", "n": "资质，天资 · 《送东阳马生序》"}, {"t": "质", "q": "君不如肉袒伏斧＿＿请罪", "a": "质", "n": "通“锧”，刑具 · 《廉颇蔺相如列传》"}, {"t": "质", "q": "余立侍左右，援疑＿＿理", "a": "质", "n": "询问 · 《送东阳马生序》"}, {"t": "治", "q": "文武并用，垂拱而＿＿", "a": "治", "n": "治理，管理 · 《谏太宗十思疏》"}, {"t": "治", "q": "君有疾在腠理，不＿＿将恐深", "a": "治", "n": "医治 · 《扁鹊见蔡桓公》"}, {"t": "治", "q": "不效，则＿＿臣之罪", "a": "治", "n": "惩处，治罪 · 《出师表》"}, {"t": "诸", "q": "赵王与大将军廉颇＿＿大臣谋", "a": "诸", "n": "众，各 · 《廉颇蔺相如列传》"}, {"t": "诸", "q": "投＿＿渤海之尾，隐土之北", "a": "诸", "n": "兼词，“之于” · 《愚公移山》"}, {"t": "诸", "q": "王尝语庄子以好乐，有＿＿", "a": "诸", "n": "兼词，“之乎” · 《庄暴见孟子》"}, {"t": "贼", "q": "＿＿二人得我，我幸皆杀之矣", "a": "贼", "n": "强盗 · 《童区寄传》"}, {"t": "贼", "q": "淫侈之俗日日以长，是天下之大＿＿也", "a": "贼", "n": "祸害 · 《论积贮疏》"}, {"t": "族", "q": "士大夫之＿＿，曰师曰弟子云者", "a": "族", "n": "类，辈 · 《师说》"}, {"t": "族", "q": "＿＿秦者秦也，非天下也", "a": "族", "n": "灭族 · 《阿房宫赋》"}, {"t": "卒", "q": "良将劲弩守要害之处，信臣精＿＿陈利兵而谁何", "a": "卒", "n": "士兵，士卒 · 《过秦论》"}, {"t": "卒", "q": "＿＿相与欢，为刎颈之交", "a": "卒", "n": "终于 · 《廉颇蔺相如列传》"}, {"t": "卒", "q": "年六十二，永和四年＿＿", "a": "卒", "n": "死 · 《张衡传》"}, {"t": "卒", "q": "五万兵难＿＿合", "a": "卒", "n": "cù 通“猝”，突然 · 《赤壁之战》"}, {"t": "走", "q": "两股战战，几欲先＿＿", "a": "走", "n": "跑 · 《口技》"}, {"t": "走", "q": "弃甲曳兵而＿＿", "a": "走", "n": "逃跑 · 《寡人之于国也》"}, {"t": "左", "q": "＿＿手持刀尺，右手执绫罗", "a": "左", "n": "左边 · 《孔雀东南飞》"}, {"t": "左", "q": "予＿＿迁九江郡司马", "a": "左", "n": "降职（左迁） · 《琵琶行》"}, {"t": "左", "q": "＿＿右或欲引相如去", "a": "左", "n": "侍从，身边亲近的人 · 《廉颇蔺相如列传》"}, {"t": "坐", "q": "项王、项伯东向＿＿", "a": "坐", "n": "坐下，坐着 · 《鸿门宴》"}, {"t": "坐", "q": "因击沛公于＿＿，杀之", "a": "坐", "n": "座位 · 《鸿门宴》"}, {"t": "坐", "q": "王曰：“何＿＿？”曰：“坐盗。”", "a": "坐", "n": "犯罪，定罪 · 《晏子使楚》"}, {"t": "坐", "q": "停车＿＿爱枫林晚", "a": "坐", "n": "因为，由于 · 《山行》"}];
+const SECRET = "sc120-2026-secret-key";
+const PREFIX = "SC";
+const TOTAL = WORDS.length;
+const CORE_N = 120;
+const LS_KEY = "sc120_v1";
+const EMOJIS = ["🧒", "👧", "👦", "🧑‍🎓", "🐼", "🦊"];
+
+let lastSavedAt = "";
+
+function fmt(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return y + "-" + m + "-" + dd;
+}
+function todayStr(offset) {
+  const d = new Date();
+  if (offset) d.setDate(d.getDate() + offset);
+  return fmt(d);
+}
+function el(id) { return document.getElementById(id); }
+function flash(msg) {
+  const t = el("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(t._h);
+  t._h = setTimeout(function () { t.classList.remove("show"); }, 1400);
+}
+
+function defaultState() {
+  return {
+    v: 2,
+    children: { c1: { name: "孩子", emoji: "🧒", master: {}, prac: 0, corr: 0, days: [] } },
+    active: "c1",
+    activated: {}
+  };
+}
+let storageOK = true;
+function migrate(o) {
+  if (!o.children && (o.master || o.days)) {
+    const s = defaultState();
+    const c = s.children.c1;
+    c.master = o.master || {}; c.days = o.days || [];
+    return s;
+  }
+  if (o.children) {
+    Object.keys(o.children).forEach(function (k) {
+      const ch = o.children[k];
+      if (!ch.master) ch.master = {};
+      if (!ch.prac) ch.prac = 0;
+      if (!ch.corr) ch.corr = 0;
+      if (!ch.days) ch.days = [];
+    });
+  }
+  return o;
+}
+function load() {
+  const s = defaultState();
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) Object.assign(s, migrate(JSON.parse(raw)));
+  } catch (e) { storageOK = false; }
+  return s;
+}
+let state = load();
+function devUnlocked() {
+  try { return localStorage.getItem("gsk_dev_ok") === "1"; } catch (e) { return false; }
+}
+
+function devUnlockSettings() {
+  const v = (document.getElementById("devCodeInput") ? document.getElementById("devCodeInput").value : "").trim();
+  const norm = String(v).toUpperCase().replace(/[^A-Z0-9]/g, "");
+  const want = "hitiken599@gmail".toUpperCase().replace(/[^A-Z0-9]/g, "");
+  const st = document.getElementById("devStatusLine");
+  if (!st) return;
+  if (norm === want) {
+    try { localStorage.setItem("gsk_dev_ok", "1"); } catch (e) {}
+    st.textContent = "✅ 开发者模式已开启（本机所有产品免激活）";
+    st.style.color = "#1d5b34";
+    setTimeout(function () { location.reload(); }, 600);
+  } else {
+    st.textContent = "❌ 开发者激活码不正确";
+    st.style.color = "#a9442f";
+  }
+}
+(function () {
+  try {
+    const st = document.getElementById("devStatusLine");
+    if (st) {
+      if (localStorage.getItem("gsk_dev_ok") === "1") {
+        st.textContent = "✅ 开发者模式已开启（本机所有产品免激活）";
+        st.style.color = "#1d5b34";
+      } else {
+        st.textContent = "未开启";
+      }
+    }
+  } catch (e) {}
+})();
+
+function save() {
+  lastSavedAt = (function () {
+    const now = new Date();
+    return now.getMonth() + 1 + "月" + now.getDate() + "日 " + now.getHours() + ":" + String(now.getMinutes()).padStart(2, "0");
+  })();
+  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+  catch (e) { storageOK = false; }
+}
+function cur() { return state.children[state.active]; }
+function childList() { return Object.keys(state.children).map(function (k) { return state.children[k]; }); }
+function childIdOf(ch) { return Object.keys(state.children).find(function (k) { return state.children[k] === ch; }); }
+function addChildRaw(name, emoji) {
+  const id = "c" + Date.now() + Math.floor(Math.random() * 1000);
+  state.children[id] = { name: name || "孩子", emoji: emoji || "🧒", master: {}, prac: 0, corr: 0, days: [] };
+  return id;
+}
+function addChild(name, emoji) { const id = addChildRaw(name, emoji); state.active = id; save(); render(); }
+function switchChild(id) { if (state.children[id]) { state.active = id; save(); render(); } }
+function renameChild(id, name) { if (state.children[id]) { state.children[id].name = name; save(); render(); } }
+function removeChild(id) {
+  const keys = Object.keys(state.children);
+  if (keys.length <= 1) { flash("至少保留一个孩子"); return; }
+  delete state.children[id];
+  if (state.active === id) state.active = keys.find(function (k) { return k !== id; });
+  save(); render();
+}
+
+function toggleMaster(word) {
+  const c = cur();
+  if (c.master[word]) delete c.master[word];
+  else { c.master[word] = todayStr(); flash("「" + word + "」已标记掌握"); }
+  save(); render();
+}
+function checkin(today) {
+  const t = today || todayStr();
+  const c = cur();
+  if (!c.days.includes(t)) c.days.push(t);
+  save(); render();
+}
+function computeStreak(days, today) {
+  const set = new Set(days || []);
+  let d = new Date(today || Date.now());
+  if (!set.has(fmt(d))) d.setDate(d.getDate() - 1);
+  let n = 0;
+  while (set.has(fmt(d))) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+
+function openSettings() {
+  const p = el("settingsPanel");
+  if (p) { p.open = true; p.scrollIntoView({ behavior: "smooth", block: "start" }); }
+}
+
+function render() {
+  if (!state.activated || !state.activated.name) return;
+  const c = cur();
+  const masterN = Object.keys(c.master).length;
+  const today = todayStr();
+  const streak = computeStreak(c.days, today);
+  const circ = 2 * Math.PI * 34;
+  el("ringFg").style.strokeDasharray = circ;
+  el("ringFg").style.strokeDashoffset = circ * (1 - masterN / TOTAL);
+  el("ringNum").innerHTML = masterN + "<small> / " + TOTAL + "</small>";
+  el("stCore").textContent = WORDS.filter(function (w) { return !w.e && c.master[w.w]; }).length + " / 120";
+  el("stPrac").textContent = (c.prac ? Math.round(c.corr / c.prac * 100) : 0) + "%";
+  el("stPracSub").textContent = "已练 " + c.prac + " 题 · 对 " + c.corr + " 题";
+  el("stStreak").textContent = streak + " 天";
+  const doneToday = c.days.includes(today);
+  const todayBtn = el("todayBtn");
+  todayBtn.textContent = doneToday ? "✓ 今日已打卡" : "📅 今日打卡";
+  todayBtn.classList.toggle("done", doneToday);
+  el("stToday").textContent = doneToday ? "✓ 已打卡" : "未打卡";
+  el("wm").textContent = "已授权：" + state.activated.name + " · " + state.activated.code;
+  el("actInfo").textContent = "授权姓名：" + state.activated.name + "  授权码：" + state.activated.code + "  激活日期：" + state.activated.date;
+  el("saveState").textContent = lastSavedAt ? "✓ 记录已自动保存在本机 · " + lastSavedAt : "✓ 记录将自动保存在本机";
+
+  const cal = el("cal");
+  cal.innerHTML = "";
+  for (let i = 34; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const s = fmt(d);
+    const n = document.createElement("div");
+    n.className = "d" + (c.days.includes(s) ? " on" : "") + (s === today ? " today" : "");
+    n.textContent = d.getDate();
+    cal.appendChild(n);
+  }
+
+  const chips = el("chips");
+  chips.innerHTML = "";
+  childList().forEach(function (ch) {
+    const b = document.createElement("button");
+    b.className = "chip" + (ch === c ? " on" : "");
+    b.textContent = ch.emoji + " " + ch.name;
+    b.onclick = function () { switchChild(childIdOf(ch)); };
+    chips.appendChild(b);
+  });
+  const addB = document.createElement("button");
+  addB.className = "chip add";
+  addB.textContent = "＋ 添加";
+  addB.onclick = function () { openChildModal("add", null); };
+  chips.appendChild(addB);
+
+  document.querySelectorAll(".card").forEach(function (card) {
+    const w = card.dataset.w;
+    const btn = card.querySelector(".ck");
+    if (btn) {
+      const on = !!c.master[w];
+      btn.classList.toggle("on", on);
+      btn.textContent = on ? "✓ 已掌握" : "掌握";
+    }
+  });
+  document.querySelectorAll(".group").forEach(function (g) {
+    const done = g.querySelectorAll(".ck.on").length;
+    const total = g.querySelectorAll(".card").length;
+    g.querySelector(".gp").textContent = done + "/" + total + " 已掌握";
+  });
+
+  const cl = el("childList");
+  cl.innerHTML = "";
+  childList().forEach(function (ch) {
+    const row = document.createElement("div");
+    row.className = "child-item";
+    row.innerHTML = "<span style='font-size:1.3rem'>" + ch.emoji + "</span><span class='nm'>" + ch.name + "</span>";
+    const rn = document.createElement("button");
+    rn.textContent = "改名";
+    rn.onclick = function () { openChildModal("edit", childIdOf(ch)); };
+    const rm = document.createElement("button");
+    rm.textContent = "删除";
+    rm.onclick = function () { if (confirm("确定删除 " + ch.name + " 的打卡记录吗？")) removeChild(childIdOf(ch)); };
+    row.appendChild(rn); row.appendChild(rm);
+    cl.appendChild(row);
+  });
+
+  el("banner").classList.toggle("show", masterN === TOTAL);
+}
+
+function toggleCard(head) { head.parentElement.classList.toggle("open"); }
+
+function hl(sentence, word) {
+  if (!word) return sentence;
+  const idx = sentence.indexOf(word);
+  if (idx < 0) return sentence;
+  return sentence.slice(0, idx) + "<b>" + word + "</b>" + sentence.slice(idx + word.length);
+}
+
+let modalMode = "add", modalId = null, modalEmoji = "🧒";
+function openChildModal(mode, id) {
+  modalMode = mode; modalId = id || null;
+  const c = id ? state.children[id] : null;
+  modalEmoji = c ? c.emoji : "🧒";
+  el("modalTitle").textContent = mode === "add" ? "添加孩子" : "修改孩子";
+  el("childName").value = c ? c.name : "";
+  const row = el("modalEmojiRow");
+  row.innerHTML = "";
+  EMOJIS.forEach(function (e) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "emoji-opt" + (e === modalEmoji ? " on" : "");
+    b.textContent = e;
+    b.onclick = function () {
+      modalEmoji = e;
+      row.querySelectorAll(".emoji-opt").forEach(function (x) { x.classList.remove("on"); });
+      b.classList.add("on");
+    };
+    row.appendChild(b);
+  });
+  el("modalBg").classList.add("show");
+}
+function closeModal() { el("modalBg").classList.remove("show"); }
+function saveChild() {
+  const name = el("childName").value.trim() || "孩子";
+  if (modalMode === "add") addChild(name, modalEmoji);
+  else renameChild(modalId, name);
+  closeModal();
+}
+
+function activate() {
+  const name = el("actName").value.trim();
+  const code = el("actCode").value.trim();
+  if (!name || !code) { el("actErr").textContent = "请填写姓名和授权码"; return; }
+  if (!checkCode(name, code)) {
+    el("actErr").textContent = "授权码不正确，请核对后重试（姓名须与购买时登记的一致）";
+    return;
+  }
+  state.activated = { name: name, code: makeCode(name), date: todayStr() };
+  save(); render();
+  el("activation").classList.remove("show");
+  flash("激活成功，欢迎使用");
+}
+function reactivate() {
+  if (!confirm("确定重新激活吗？当前授权将失效，打卡记录会保留。")) return;
+  state.activated = {};
+  save();
+  el("activation").classList.add("show");
+}
+
+function exportFile() {
+  const blob = new Blob([JSON.stringify(state)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "实词打卡备份-" + todayStr() + ".json";
+  if (window.AndroidBridge) { AndroidBridge.saveText(a.download, JSON.stringify(state), "application/json"); return; }
+  a.click();
+  setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+  flash("备份文件已生成");
+}
+function copyBackup() {
+  const txt = JSON.stringify(state);
+  function done() { flash("备份内容已复制"); }
+  function fallbackCopy() {
+    const ta = el("importArea");
+    ta.value = txt; ta.select();
+    document.execCommand("copy");
+    done();
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(done, fallbackCopy);
+  } else fallbackCopy();
+}
+function importFromText() {
+  const txt = el("importArea").value.trim();
+  if (!txt) { flash("请先粘贴备份内容"); return; }
+  try {
+    const o = JSON.parse(txt);
+    state = Object.assign(defaultState(), migrate(o));
+    if (!state.children || Object.keys(state.children).length === 0) state = defaultState();
+    save(); render();
+    flash("备份已恢复");
+  } catch (e) { flash("内容格式不对"); }
+}
+function importFile(ev) {
+  const f = ev.target.files && ev.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = function () { el("importArea").value = r.result; importFromText(); };
+  r.readAsText(f);
+}
+function resetAll() {
+  if (!confirm("确定清空当前孩子所有打卡记录吗？建议先备份。")) return;
+  if (!confirm("再次确认：真的要全部清空吗？")) return;
+  state.children[state.active] = { name: cur().name, emoji: cur().emoji, master: {}, prac: 0, corr: 0, days: [] };
+  save(); render();
+  flash("已清空当前孩子记录");
+}
+function resetAllData() {
+  if (!confirm("确定重置全部数据吗？将清空所有孩子的打卡记录、授权激活，恢复到出厂状态。")) return;
+  if (!confirm("再次确认：此操作不可恢复，建议先备份。真的要重置吗？")) return;
+  state = defaultState();
+  save();
+  render();
+  el("activation").classList.add("show");
+  flash("已重置全部数据");
+}
+
+function downloadWithRecords() {
+  const marker = "window.__EMBEDDED__ = null;";
+  const html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+  const stateJson = JSON.stringify(state).replace(/<\//g, "<\\/");
+  const src = html.replace(marker, "window.__EMBEDDED__ = " + stateJson + ";");
+  const blob = new Blob([src], { type: "text/html;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "实词打卡-带记录-" + todayStr() + ".html";
+  if (window.AndroidBridge) { AndroidBridge.saveText(a.download, src, "text/html;charset=utf-8"); return; }
+  a.click();
+  setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+  flash("已生成带记录的文件，请保存好");
+}
+function importEmbedded() {
+  try {
+    if (!window.__EMBEDDED__) return false;
+    state = Object.assign(defaultState(), migrate(window.__EMBEDDED__));
+    if (!state.children || Object.keys(state.children).length === 0) state = defaultState();
+    save(); render();
+    flash("已从文件恢复全部记录");
+    return true;
+  } catch (e) { return false; }
+}
+
+/* 练习：句子选义 */
+let qList = [], qIdx = 0, qScore = 0;
+function shuffle(a) {
+  const arr = a.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+  }
+  return arr;
+}
+function makeQuestion() {
+  const items = [];
+  WORDS.forEach(function (w) {
+    w.s.forEach(function (s, si) {
+      if (s.x && s.m) items.push({ word: w.w, m: s.m, x: s.x, key: w.w + "_" + si });
+    });
+  });
+  const q = items[Math.floor(Math.random() * items.length)];
+  const pool = shuffle(items.map(function (it) { return it.m; }).filter(function (m) { return m !== q.m; }));
+  const seen = [q.m]; const opts = [];
+  pool.forEach(function (m) {
+    if (opts.length < 3 && seen.indexOf(m) < 0) { opts.push(m); seen.push(m); }
+  });
+  const options = shuffle([q.m].concat(opts));
+  return { word: q.word, sentence: q.x, answer: q.m, options: options };
+}
+function startQuiz() {
+  qList = []; qIdx = 0; qScore = 0;
+  for (let i = 0; i < 10; i++) qList.push(makeQuestion());
+  el("quizBg").classList.add("show");
+  showQuestion();
+}
+function showQuestion() {
+  const q = qList[qIdx];
+  const box = el("quizBox");
+  let html = "<div class='qhead'><span class='prog'>第 " + (qIdx + 1) + " / 10 题 · 已对 " + qScore + " 题</span><button class='close' onclick='closeQuiz()'>✕</button></div>";
+  html += "<div class='sentence'>" + hl(q.sentence, q.word) + "</div>";
+  q.options.forEach(function (m, i) {
+    html += "<button class='opt' data-i='" + i + "' onclick='pickOpt(this, " + i + ")'>" + "ABCD".charAt(i) + ". " + m + "</button>";
+  });
+  html += "<button class='next' style='display:none' id='qNext' onclick='nextQ()'>下一题</button>";
+  box.innerHTML = html;
+}
+function pickOpt(btn, i) {
+  const q = qList[qIdx];
+  const opts = btn.parentElement.querySelectorAll(".opt");
+  opts.forEach(function (o) { o.disabled = true; });
+  const right = q.options[i] === q.answer;
+  if (right) { btn.classList.add("right"); qScore++; }
+  else {
+    btn.classList.add("wrong");
+    opts.forEach(function (o, j) { if (q.options[j] === q.answer) o.classList.add("right"); });
+  }
+  const c = cur();
+  c.prac += 1;
+  if (right) c.corr += 1;
+  save(); render();
+  const nxt = el("qNext");
+  nxt.style.display = "block";
+  nxt.textContent = qIdx === 9 ? "查看成绩" : "下一题";
+}
+function nextQ() {
+  qIdx++;
+  if (qIdx >= 10) {
+    const box = el("quizBox");
+    box.innerHTML = "<div class='qhead'><span class='prog'>练习完成</span><button class='close' onclick='closeQuiz()'>✕</button></div>"
+      + "<div class='score'>本次答对 " + qScore + " / 10 题</div>"
+      + "<button class='next' onclick='closeQuiz()'>完成</button>";
+    return;
+  }
+  showQuestion();
+}
+function closeQuiz() { el("quizBg").classList.remove("show"); }
+
+function shuffle(a) {
+  const arr = a.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+  }
+  return arr;
+}
+function normPlain(s) {
+  return String(s || "").replace(/[，。；、？！?？：:""''《》〈〉·—…\s＿_]/g, "");
+}
+function normNoParen(s) {
+  return normPlain(String(s || "").replace(/[（(][^）)]*[)）]/g, ""));
+}
+function normParenChars(s) {
+  return normPlain(String(s || "").replace(/[（）()]/g, ""));
+}
+function splitBlanks(q) {
+  return String(q || "").split(/＿+/);
+}
+function fillMatch(input, accepted) {
+  const variants = [normPlain(input), normNoParen(input), normParenChars(input)];
+  return (accepted || []).some(function (a) {
+    return variants.indexOf(normPlain(a)) >= 0
+      || variants.indexOf(normNoParen(a)) >= 0
+      || variants.indexOf(normParenChars(a)) >= 0;
+  });
+}
+let fillList = [], fillIdx = 0, fillScore = 0, fillParts = [], fillAccepted = [];
+function itQ(it) { return it.q !== undefined ? it.q : it.notes; }
+function itAns(it) { return it.a !== undefined ? it.a : it.ans; }
+function itSrc(it) { return it.t !== undefined ? it.t : (it.year ? it.year + " " + it.paper : (it.title || "")); }
+function itNote(it) { return it.n || ""; }
+function startFill() {
+  fillList = shuffle(FILL).slice(0, 10);
+  fillIdx = 0; fillScore = 0;
+  el("fillBg").classList.add("show");
+  showFill();
+}
+function showFill() {
+  const item = fillList[fillIdx];
+  const q = itQ(item);
+  fillAccepted = Array.isArray(itAns(item)) ? itAns(item) : [itAns(item)];
+  const segs = splitBlanks(q);
+  const blanks = segs.length - 1;
+  fillParts = [];
+  fillPerBlank = false;
+  if (blanks > 0 && fillAccepted.length === 1) {
+    const cand = String(fillAccepted[0]).split(/[，,；;。.？！?！]/).map(function (x) { return x.trim(); }).filter(Boolean);
+    if (cand.length === blanks) { fillPerBlank = true; fillParts = cand; }
+  }
+  let html = "<div class='progbar'><i style='width:" + Math.round((fillIdx + 1) / fillList.length * 100) + "%'></i></div>";
+  html += "<div class='qhead'><span class='prog'>第 " + (fillIdx + 1) + " / " + fillList.length + " 题 · 已对 " + fillScore + " 题</span><button class='close' onclick='closeFill()'>✕</button></div>";
+  html += "<div class='bcz-card'>";
+  if (fillPerBlank) {
+    segs.forEach(function (s, i) { html += s; if (i < segs.length - 1) html += "<input class='fill-in' id='f" + i + "' placeholder='填写' autocomplete='off'>"; });
+  } else {
+    html += String(q).replace(/＿+/g, "<input class='fill-in fill-wide' id='f0' placeholder='整句填写' autocomplete='off'>");
+  }
+  html += "</div>";
+  html += "<div class='fill-src'>" + itSrc(item) + "　" + itNote(item) + "</div>";
+  html += "<div class='fill-ans' id='fillAns'></div>";
+  html += "<button class='fill-check' id='fillCheck' onclick='checkFill()'>检查答案</button>";
+  html += "<button class='next' style='display:none' id='fillNext' onclick='nextFill()'>下一题</button>";
+  el("fillBox").innerHTML = html;
+  const bcx = el("fillBox");
+  bcx.style.animation = "none"; void bcx.offsetWidth; bcx.style.animation = "";
+  const fi = document.querySelector("#fillBox .fill-in");
+  if (fi) fi.focus();
+  bcx.dataset.mode = "question";
+  if (fi) {
+    fi.addEventListener("keydown", function (ev) {
+      if (ev.key === "Enter") {
+        ev.preventDefault();
+        const ckB = el("fillCheck");
+        if (ckB && ckB.style.display !== "none") checkFill(); else nextFill();
+      }
+    });
+  }
+  let tX0 = null;
+  bcx.ontouchstart = function (e) { if (bcx.dataset.mode === "done") tX0 = e.touches[0].clientX; };
+  bcx.ontouchend = function (e) {
+    if (bcx.dataset.mode !== "done" || tX0 === null) { tX0 = null; return; }
+    const dx = e.changedTouches[0].clientX - tX0;
+    tX0 = null;
+    if (Math.abs(dx) > 60) nextFill();
+  };
+}
+function checkFill() {
+  const item = fillList[fillIdx];
+  let ok = true;
+  if (fillPerBlank && fillParts.length > 0) {
+    for (let i = 0; i < fillParts.length; i++) {
+      const inp = el("f" + i);
+      const good = fillMatch(inp.value, [fillParts[i]]);
+      inp.classList.add(good ? "right" : "wrong");
+      if (!good) ok = false;
+    }
+  } else {
+    const inp = el("f0");
+    const good = fillMatch(inp.value, fillAccepted);
+    inp.classList.add(good ? "right" : "wrong");
+    ok = good;
+  }
+  if (ok) fillScore++;
+  const c = cur();
+  c.prac += 1;
+  if (ok) c.corr += 1;
+  save(); render();
+  const ansTxt = fillAccepted.join("<br>");
+  el("fillAns").innerHTML = ok
+    ? "<div class='ok'>✅ 太棒了！</div>"
+    : "<div class='no'>❌ 参考答案：</div><div class='show-ans'>" + ansTxt + "</div>"
+    + "<div class='swipe-hint'>👆 左右滑动卡片或点「下一题」</div>";
+  el("fillBox").dataset.mode = "done";
+  el("fillCheck").style.display = "none";
+  const nxt = el("fillNext");
+  nxt.style.display = "block";
+  nxt.textContent = fillIdx === fillList.length - 1 ? "查看成绩" : "下一题";
+}
+function nextFill() {
+  fillIdx++;
+  if (fillIdx >= fillList.length) {
+    const pct = Math.round(fillScore / fillList.length * 100);
+    const emoji = pct === 100 ? "🏆" : (pct >= 60 ? "👏" : "💪");
+    el("fillBox").innerHTML = "<div class='qhead'><span class='prog'>练习完成</span><button class='close' onclick='closeFill()'>✕</button></div>"
+      + "<div class='score'>" + emoji + " 本次答对 " + fillScore + " / " + fillList.length + " 题（" + pct + "%）</div>"
+      + "<button class='next' onclick='closeFill()'>完成</button>";
+    return;
+  }
+  showFill();
+}
+function closeFill() { el("fillBg").classList.remove("show"); }/* 筛选 */
+function doSearch(v) {
+  const kw = v.trim().toLowerCase();
+  document.querySelectorAll(".card").forEach(function (card) {
+    const txt = (card.dataset.w + " " + card.dataset.py + " " + card.dataset.all).toLowerCase();
+    card.style.display = (!kw || txt.indexOf(kw) >= 0) ? "" : "none";
+  });
+}
+function filterGroup(which) {
+  document.querySelectorAll(".card").forEach(function (card) {
+    if (which === "core") card.style.display = card.dataset.extra === "1" ? "none" : "";
+    else if (which === "extra") card.style.display = card.dataset.extra === "1" ? "" : "none";
+    else card.style.display = "";
+  });
+  el("searchBox").value = "";
+}
+
+/* 初始化 */
+function init() {
+  const app = el("app");
+  [["核心 120 实词", CORE_N], ["补充常用 6 词", TOTAL - CORE_N]].forEach(function (gInfo, gi) {
+    const g = document.createElement("details");
+    g.className = "group";
+    g.dataset.group = gi;
+    const color = gi === 0 ? "#1f4e79" : "#8e44ad";
+    g.style.background = "linear-gradient(160deg, " + color + ", " + color + "cc)";
+    g.innerHTML = "<summary>" + gInfo[0] + "<span class='cnt'></span><span class='gp'></span></summary><div class='cards'></div>";
+    g.querySelector(".cnt").textContent = gInfo[1] + " 词";
+    const cards = g.querySelector(".cards");
+    WORDS.forEach(function (w, wi) {
+      const isExtra = !!w.e;
+      if (gi === 0 && isExtra) return;
+      if (gi === 1 && !isExtra) return;
+      const senseHtml = w.s.map(function (s) {
+        return "<div class='sense'><div class='m'>" + s.m + "</div><div class='x'>" + s.x + "</div><div class='r'>" + s.r + "</div></div>";
+      }).join("");
+      const card = document.createElement("div");
+      card.className = "card";
+      card.dataset.w = w.w;
+      card.dataset.py = w.p;
+      card.dataset.extra = isExtra ? "1" : "0";
+      card.dataset.all = w.w + " " + w.p + " " + w.s.map(function (s) { return s.m + s.x + s.r; }).join(" ");
+      card.innerHTML =
+        "<button class='head' onclick='toggleCard(this)'>" +
+          "<span class='no' style='background:" + color + "'>" + (wi + 1) + "</span>" +
+          "<span class='t'>" + w.w + "</span>" +
+          "<span class='py'>" + w.p + "</span><span class='chev'>▾</span>" +
+        "</button>" +
+        "<div class='body'>" + senseHtml +
+          "<div class='checks'><button class='ck' onclick='toggleMaster(\"" + w.w + "\")'>掌握</button></div>" +
+        "</div>";
+      cards.appendChild(card);
+    });
+    app.appendChild(g);
+  });
+
+  const pinBox = el("dlAnchor");
+  const dlBlock = document.createElement("div");
+  dlBlock.style.cssText = "display:grid;gap:6px";
+  const dlLabel = document.createElement("label");
+  dlLabel.style.cssText = "font-size:.85rem;color:#4a3f2f";
+  dlLabel.textContent = "💾 最省事：下载「带记录的版本」——文件自带全部记录，发到新手机打开，记录自动恢复";
+  const dlBtn = document.createElement("button");
+  dlBtn.className = "mini-btn";
+  dlBtn.textContent = "💾 下载带记录的版本（推荐）";
+  dlBtn.onclick = downloadWithRecords;
+  dlBlock.appendChild(dlLabel);
+  dlBlock.appendChild(dlBtn);
+  pinBox.parentNode.insertBefore(dlBlock, pinBox);
+  const rsBtn = document.createElement("button");
+  rsBtn.className = "mini-btn";
+  rsBtn.style.cssText = "background:#fdecea;color:#a9442f;border-color:#f3c1bb";
+  rsBtn.textContent = "🔄 重置全部数据（清空所有记录和激活，恢复出厂）";
+  rsBtn.onclick = resetAllData;
+  pinBox.parentNode.insertBefore(rsBtn, pinBox);
+
+  importEmbedded();
+  render();
+  if (!storageOK) el("storageWarn").style.display = "block";
+  if (devUnlocked() && (!state.activated || !state.activated.name)) {
+    state.activated = { name: "开发者", code: "DEV", date: todayStr() };
+  }
+  if (!state.activated || !state.activated.name) el("activation").classList.add("show");
+  if (location.search.indexOf("selftest") >= 0) runSelfTest();
+}
+
+/* 自检 */
+function runSelfTest() {
+  state = defaultState();
+  state.activated = { name: "张三", code: makeCode("张三"), date: "2026-08-06" };
+  el("activation").classList.remove("show");
+  const codeOk = checkCode("张三", makeCode("张三"));
+  const codeBad = checkCode("张三", "SC-0000-0000");
+  toggleMaster("爱"); toggleMaster("安");
+  checkin("2026-08-06"); checkin("2026-08-05");
+  const s1 = computeStreak(cur().days, "2026-08-06");
+  const mA = Object.keys(cur().master).length;
+  const idB = addChildRaw("妹妹", "🧅");
+  switchChild(idB);
+  toggleMaster("爱");
+  const mB = Object.keys(cur().master).length;
+  const firstId = Object.keys(state.children)[0];
+  const mA2 = Object.keys(state.children[firstId].master).length;
+  WORDS.forEach(function (w) { cur().master[w.w] = "2026-08-06"; });
+  render();
+  const onN = document.querySelectorAll(".ck.on").length;
+  const banner = el("banner").classList.contains("show");
+  const q = makeQuestion();
+  const qOk = q.options.length === 4 && q.options.indexOf(q.answer) >= 0 && !!q.sentence && !!q.answer;
+  const qBtnN = document.querySelectorAll(".card").length;
+  const sp = splitBlanks("甲＿＿＿＿乙＿＿＿＿丙");
+  const spOk = sp.length === 3;
+  const fm1 = fillMatch("爱其子，择师而教之", ["爱其子，择师而教之"]);
+  const fm2 = !fillMatch("择师而教之", ["爱其子，择师而教之"]);
+  const fillOk = spOk && fm1 && fm2 && FILL.length > 100;
+  const saveTxt = el("saveState").textContent.indexOf("自动保存在本机") > -1;
+  const marker = "window.__EMBEDDED__ = null;";
+  const htmlSrc = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+  const hasMarker = htmlSrc.indexOf(marker) > -1;
+  const src2 = htmlSrc.replace(marker, "window.__EMBEDDED__ = " + JSON.stringify({ v: 2 }) + ";");
+  const embOk = src2.indexOf('window.__EMBEDDED__ = {"v":2};') > -1;
+  const fnReset = typeof resetAllData === "function";
+  const fnSet = typeof openSettings === "function" && !!el("settingsPanel");
+  let stOK = true;
+  try {
+    save();
+    state = defaultState();
+    state = load();
+    stOK = !!state.children && Object.keys(state.children).length === 2;
+  } catch (e) { stOK = false; }
+  window.__EMBEDDED__ = { v: 2, children: state.children, active: state.active, activated: state.activated };
+  try { localStorage.removeItem(LS_KEY); } catch (e) {}
+  const impBefore = Object.keys(state.children).length;
+  state = defaultState();
+  const impOk = importEmbedded() && Object.keys(state.children).length === impBefore;
+  window.__EMBEDDED__ = null;
+  const devT = (function () {
+    try {
+      localStorage.setItem("gsk_dev_ok", "1");
+      const r = devUnlocked();
+      localStorage.removeItem("gsk_dev_ok");
+      return r;
+    } catch (e) { return false; }
+  })();
+  const ok = codeOk && devT && !codeBad && s1 === 2 && mA === 2 && mB === 1 && mA2 === 2 && onN === TOTAL && banner && stOK && hasMarker && embOk && saveTxt && impOk && fnReset && fnSet && qOk && qBtnN === TOTAL && fillOk;
+  el("selftest").textContent = "SELFTEST " + (ok ? "OK" : "FAIL")
+    + " code=" + codeOk + "/" + codeBad + " streak=" + s1 + " mA=" + mA + " mB=" + mB
+    + " mA2=" + mA2 + " on=" + onN + " banner=" + banner + " storage=" + stOK
+    + " marker=" + hasMarker + "/" + embOk + " save=" + saveTxt + " imp=" + impOk
+    + " reset=" + fnReset + " set=" + fnSet + " quiz=" + qOk + " cards=" + qBtnN + "/" + TOTAL
+    + " fill=" + spOk + "/" + fm1 + "/" + fm2 + " pool=" + FILL.length;
+  el("selftest").style.display = "block";
+}
+
+document.addEventListener("DOMContentLoaded", init);
+document.addEventListener("DOMContentLoaded", function () {
+  if (location.search.indexOf("fill=1") >= 0 && typeof startFill === "function") {
+    setTimeout(startFill, 400);
+  }
+});
+
+</script>
+</body>
+</html>
