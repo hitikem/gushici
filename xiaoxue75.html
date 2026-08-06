@@ -363,6 +363,10 @@
   .card .no{box-shadow:0 3px 8px rgba(0,0,0,.15);}
   .poem-text{background:color-mix(in srgb,var(--accent) 9%, var(--card));border-left:4px solid var(--accent);border-radius:12px;color:var(--ink);font-family:var(--font-title);font-size:1.1rem;line-height:2.1;}
   .poem-text ruby rt{color:var(--secondary);font-family:var(--font-body);}
+  .read-btn{display:inline-flex;align-items:center;gap:7px;margin:10px 0 2px;border:1.5px solid var(--line);background:var(--card);color:var(--primary);border-radius:999px;padding:8px 16px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:var(--shadow);transition:all var(--t);}
+  .read-btn:hover{transform:translateY(-1px);border-color:var(--primary);box-shadow:var(--shadow-hover);}
+  .read-btn:active{transform:scale(.96);}
+  .read-btn.playing{background:var(--primary);color:#fff;border-color:var(--primary);}
   .note{color:var(--ink2);}
   .note.err{color:#A9442F;}
   .ck{border:2px solid var(--line);background:var(--card);border-radius:14px;color:var(--ink2);transition:transform var(--t),box-shadow var(--t),background var(--t),color var(--t),border-color var(--t);}
@@ -944,6 +948,35 @@ function nextFill() {
   }
   showFill();
 }
+/* 朗读功能：系统中文语音朗读整首诗 */
+function readPoem(no) {
+  const p = POEMS[no - 1];
+  if (!p) return;
+  if (!("speechSynthesis" in window)) { flash("当前设备不支持朗读"); return; }
+  try { speechSynthesis.cancel(); } catch (e) {}
+  const text = "《" + p.title + "》，" + p.author + "。" + p.full.replace(/\n/g, "。");
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "zh-CN";
+  u.rate = 0.88;
+  const btn = document.querySelector('.card[data-no="' + no + '"] .read-btn');
+  u.onstart = function () { if (btn) btn.classList.add("playing"); };
+  u.onend = u.onerror = function () { if (btn) btn.classList.remove("playing"); };
+  try {
+    const vs = speechSynthesis.getVoices();
+    const v = vs.find(function (x) { return /^zh[-_]CN/i.test(x.lang); })
+      || vs.find(function (x) { return /^zh/i.test(x.lang); });
+    if (v) u.voice = v;
+  } catch (e) {}
+  speechSynthesis.speak(u);
+  flash("正在朗读《" + p.title + "》");
+}
+/* 预热语音列表（部分浏览器异步加载） */
+(function () {
+  if (!("speechSynthesis" in window)) return;
+  try { speechSynthesis.getVoices(); } catch (e) {}
+  try { speechSynthesis.onvoiceschanged = function () { speechSynthesis.getVoices(); }; } catch (e) {}
+})();
+
 function closeFill() { el("fillBg").classList.remove("show"); }function render() {
   if (!state.activated || !state.activated.name) return;
   const c = cur();
@@ -1220,8 +1253,9 @@ function init() {
         "<span class='t'>" + p.title + "</span>" +
         "<span class='a'>" + p.author + "</span><span class='chev'>▾</span>" +
       "</button>" +
-      "<div class='body'>" +
+        "<div class='body'>" +
         "<div class='poem-text'></div>" +
+        "<button class='read-btn' onclick='readPoem(" + p.no + ")'><svg width='15' height='15' viewBox='0 0 24 24' fill='currentColor' aria-hidden='true'><path d='M3 9v6h4l5 5V4L7 9H3z'/><path d='M16.5 12c0-1.77-1-3.29-2.5-4.03v8.05c1.5-.73 2.5-2.25 2.5-4.02z'/></svg>朗读全诗</button>" +
         "<div class='note'>📖 注释：" + p.ann + "</div>" +
         "<div class='note err'>⚠️ 易错：" + p.err + "</div>" +
         "<div class='checks'>" +
@@ -1321,12 +1355,13 @@ function runSelfTest() {
       return r;
     } catch (e) { return false; }
   })();
-  const ok = codeOk && devT && fillOk && !codeBad && s1 === 2 && rA === 2 && rB === 1 && rA2 === 2 && rubyOk && pyOff && onN === 75 && banner && stOK && hasMarker && embOk && saveTxt && impOk && fnReset && fnSet;
+  const audioOk = ("speechSynthesis" in window);
+  const ok = codeOk && devT && fillOk && !codeBad && s1 === 2 && rA === 2 && rB === 1 && rA2 === 2 && rubyOk && pyOff && onN === 75 && banner && stOK && hasMarker && embOk && saveTxt && impOk && fnReset && fnSet && audioOk;
   el("selftest").textContent = "SELFTEST " + (ok ? "OK" : "FAIL")
     + " code=" + codeOk + "/" + codeBad + " streak=" + s1 + " rA=" + rA + " rB=" + rB
     + " rA2=" + rA2 + " ruby=" + rubyOk + " py=" + pyOff + " on=" + onN
     + " banner=" + banner + " storage=" + stOK + " marker=" + hasMarker + "/" + embOk
-    + " save=" + saveTxt + " imp=" + impOk + " reset=" + fnReset + " set=" + fnSet + " fill=" + spOk + "/" + fm1 + "/" + fm2 + "/" + fm3 + " pool=" + FILL.length;
+    + " save=" + saveTxt + " imp=" + impOk + " reset=" + fnReset + " set=" + fnSet + " fill=" + spOk + "/" + fm1 + "/" + fm2 + "/" + fm3 + " pool=" + FILL.length + " audio=" + audioOk;
   el("selftest").style.display = "block";
 }
 
