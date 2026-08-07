@@ -1109,10 +1109,25 @@ function activate() {
     el("actErr").textContent = "授权码不正确，请核对后重试（姓名须与购买时登记的一致）";
     return;
   }
-  state.activated = { name: name, code: makeCode(name), date: todayStr() };
-  save(); render();
-  el("activation").classList.remove("show");
-  flash("激活成功，欢迎使用！");
+  const doActivate = function () {
+    state.activated = { name: name, code: makeCode(name), date: todayStr() };
+    save(); render();
+    el("activation").classList.remove("show");
+    flash("激活成功，欢迎使用！");
+  };
+  const reject = function (msg) {
+    el("actErr").textContent = msg || "授权码无效或已被作废，请联系卖家";
+  };
+  try {
+    fetch("https://gaokao-english.pages.dev/api/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: name, code: code, product: "zk" })
+    }).then(function (r) { return r.json(); }).then(function (res) {
+      if (res && res.ok === true) doActivate();
+      else reject(res && res.reason ? res.reason : "授权码无效或已被作废，请联系卖家");
+    }).catch(function () { doActivate(); });
+  } catch (e) { doActivate(); }
 }
 function reactivate() {
   if (!confirm("确定重新激活吗？当前授权将失效，打卡记录会保留。")) return;
